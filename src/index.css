@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-nunito;
+}
+
+
+.circle {
+    width: 5px;  /* Set the width */
+    height: 5px; /* Set the height */
+    background-color: #26683A; /* Circle color */
+    border-radius: 50%; /* Makes it a circle */
+  }
+
+  .ck-editor {
+    display: flex;
+    flex-direction: column-reverse; /* Moves toolbar below the editor */
+  }
+  
+  .ck-toolbar {
+    order: 1; /* Moves toolbar to the bottom */
+  }
+  
