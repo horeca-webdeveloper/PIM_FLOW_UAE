@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import MultiAttributesHeader from "../../../components/ui/Attributes/MultiAttributesHeader";
 import CommonInput from "../../../components/common/MultiAttributes/CommonInput";
 import SelectField from "../../../components/common/MultiAttributes/CommonOption";
-import SelectComponent from "../../../components/common/SelectComponent";
 import CollapseComponent from "../../../components/common/CollapseComponent";
-const MeasurementAttributes = ({ stateData, register, errors, setValue,attributeGroups }) => {
+import MultiSelectComponent from "../../../components/common/MultiSelectComponent";
+import { Controller } from "react-hook-form";
+const MeasurementAttributes = ({ stateData, register, errors, control, setValue, attributeGroups }) => {
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
   let validation;
   if (typeof stateData.validations === "string") {
     try {
@@ -16,11 +18,16 @@ const MeasurementAttributes = ({ stateData, register, errors, setValue,attribute
     validation = stateData.validations;
   }
   useEffect(() => {
-    if (stateData.validations) {
-      setValue("attribute_group_id", stateData.attribute_groups[0].id);
-      setValue("measurment_family", validation.measurment_family ? "Yes" : "No");
-      setValue("negative", validation.negative ? "Yes" : "No");
-      setValue("decimal", validation.decimal ? "Yes" : "No");
+    if (stateData) {
+      const selectedAttributes = stateData?.attribute_groups?.map((items) => ({
+        value: items.id,
+        label: items.name
+      }));
+      setSelectedAttributes(selectedAttributes);
+      setValue("attribute_group_id", selectedAttributes);
+      setValue("measurment_family", validation?.measurment_family);
+      setValue("negative", validation?.negative ? "Yes" : "No");
+      setValue("decimal", validation?.decimal ? "Yes" : "No");
     }
   }, [stateData, setValue]);
 
@@ -44,11 +51,22 @@ const MeasurementAttributes = ({ stateData, register, errors, setValue,attribute
         {errors.code && <p className="text-red-500">{errors.code.message}</p>}
 
 
-   
-        <SelectComponent
-          width="full"
-          label="Attribute Group (required)" name="attribute_group_id" option={attributeGroups} 
-          {...register("attribute_group_id", { required: "Attribute Group  required" })} />
+
+        <Controller
+          name='attribute_group_id'
+          control={control}
+          rules={{ required: `Attribute group are required` }}
+          render={({ field }) => (
+            <MultiSelectComponent
+              defaultValues={!!selectedAttributes && selectedAttributes}
+              label={`Attribute Group  required`}
+              width="100%"
+              option={attributeGroups || []}
+              isMulti={false}
+              {...field}
+            />
+          )}
+        />
 
         {errors.attribute_group_id && <p className="text-red-500">{errors.attribute_group_id.message}</p>}
       </CollapseComponent>
@@ -61,8 +79,9 @@ const MeasurementAttributes = ({ stateData, register, errors, setValue,attribute
 
           {...register("measurment_family", { required: "Measurment family  required" })}
           options={[
-            { label: "Yes", value: "Yes" },
-            { label: "No", value: "No" },
+            { label: "Inches", value: "Inches" },
+            { label: "mm", value: "mm" },
+            { label: "cm", value: "cm" },
           ]}
 
         />

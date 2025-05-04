@@ -4,13 +4,11 @@ import { COLORS } from "../../utils/colors";
 import InputComponent from "../../components/common/InputComponent";
 import HeaderComponent from "../../components/common/HeaderComponent";
 import { Apis } from "../../services/apis/Family/Api";
-
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import FullScreenLoader from "../../utils/FullScreenLoader";
 import { useForm } from "react-hook-form";
 import { notify } from "../../utils/notify";
 import MultiSelectComponent from "../../components/common/MultiSelectComponent";
-
 import AttributePopup from "../../components/ui/Families/AttributePopup";
 import CategoryAttrTable from "../../components/ui/Families/CategoryAttrTable";
 const ProductFamilyDetails = () => {
@@ -25,9 +23,7 @@ const ProductFamilyDetails = () => {
         formState: { errors },
     } = useForm();
 
-    const location = useLocation();
-    const state = location.state || {};
-    const id = state.datas;
+    const { id } = useParams();
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(4000);
     const [getAttributeDetails, setAttributeDetails] = useState([]);
@@ -41,6 +37,7 @@ const ProductFamilyDetails = () => {
     const selectedCategories = watch("categories", []);
     const selectedAttributes = watch("selectedAttr", []);
     const selectedAttrGroups = watch("attributes_groups", []);
+    const [deleteResponse,setDeleteResponse]=useState([]);
 
     const tableOptions = ["Option One", "Option Two", "Option Three", "Option Four"];
     const options = [
@@ -142,6 +139,7 @@ const ProductFamilyDetails = () => {
     }, [getAttributeDetails, setValue]);
 
     const onSubmit = (data) => {
+ 
 
         const datas = {
             // "name": data.name,
@@ -151,7 +149,7 @@ const ProductFamilyDetails = () => {
         datas.id = getAttributeDetails.data.id;
 
 
-        Apis.handleUpdateCategoryAttr(datas, setLoader, setResponse);
+         Apis.handleUpdateCategoryAttr(datas, setLoader, setResponse);
 
     };
     useEffect(() => {
@@ -164,7 +162,11 @@ const ProductFamilyDetails = () => {
         }
     }, [getResponse]);
 
+ const deleteAttributesGroups = (gid) => {
 
+    Apis.deleteAttributeGrps(gid,id, setLoader, setDeleteResponse);
+
+  }
 
     return (
         <>
@@ -236,8 +238,9 @@ const ProductFamilyDetails = () => {
                             </CollapseComponent></> : ''}
 
                         {/* for Attributes           */}
-                        {selectedType === 'Attributes' ? <>   <CollapseComponent title="General properties">
-                            <CategoryAttrTable tableHeading={th} options={tableOptions} datas={!!getAttributeDetails && getAttributeDetails.data} showCheckBox={true} showFilter={true} />
+                        {selectedType === 'Attributes' ? <>   
+                        <CollapseComponent title="General properties">
+                            <CategoryAttrTable tableHeading={th}   deleteAttributesGroups={deleteAttributesGroups} options={tableOptions} datas={!!getAttributeDetails && getAttributeDetails.data} showCheckBox={true} showFilter={true} />
 
                         </CollapseComponent>
 

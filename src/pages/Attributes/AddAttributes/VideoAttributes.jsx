@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import MultiAttributesHeader from "../../../components/ui/Attributes/MultiAttributesHeader";
 import CommonInput from "../../../components/common/MultiAttributes/CommonInput";
 import MultiKeywordInputComponent from "../../../components/common/MultiKeywordInputComponent";
-import SelectComponent from "../../../components/common/SelectComponent";
 import CollapseComponent from "../../../components/common/CollapseComponent";
-const VideoAttributes = ({ stateData, register, errors, setValue, allowedExtension, setAllowedExtension,attributeGroups }) => {
+import MultiSelectComponent from "../../../components/common/MultiSelectComponent";
+import { Controller } from "react-hook-form";
+const VideoAttributes = ({ stateData, register, errors, control, setValue, allowedExtension, setAllowedExtension, attributeGroups }) => {
   let validation;
-
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
   if (typeof stateData.validations === "string") {
     try {
       validation = JSON.parse(stateData.validations);
@@ -17,10 +18,15 @@ const VideoAttributes = ({ stateData, register, errors, setValue, allowedExtensi
     validation = stateData.validations;
   }
   useEffect(() => {
-    if (stateData.validations) {
+    if (stateData) {
 
-      setValue("attribute_group_id", stateData.attribute_groups[0].id);
-      setAllowedExtension(validation.allowedExtension)
+      const selectedAttributes = stateData?.attribute_groups?.map((items) => ({
+        value: items.id,
+        label: items.name
+      }));
+      setSelectedAttributes(selectedAttributes);
+      setValue("attribute_group_id", selectedAttributes);
+      setAllowedExtension(validation?.allowedExtension)
     }
   }, [stateData, setValue]);
 
@@ -41,11 +47,22 @@ const VideoAttributes = ({ stateData, register, errors, setValue, allowedExtensi
         />
         {errors.code && <p className="text-red-500">{errors.code.message}</p>}
 
- 
-        <SelectComponent
-          width="full"
-          label="Attribute Group (required)" name="attribute_group_id" option={attributeGroups} 
-          {...register("attribute_group_id", { required: "Attribute Group  required" })} />
+
+        <Controller
+          name='attribute_group_id'
+          control={control}
+          rules={{ required: `Attribute group are required` }}
+          render={({ field }) => (
+            <MultiSelectComponent
+              defaultValues={!!selectedAttributes && selectedAttributes}
+              label={`Attribute Group  required`}
+              width="100%"
+              option={attributeGroups || []}
+              isMulti={false}
+              {...field}
+            />
+          )}
+        />
 
         {errors.attribute_group_id && <p className="text-red-500">{errors.attribute_group_id.message}</p>}
       </CollapseComponent>

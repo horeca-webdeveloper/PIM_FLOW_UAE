@@ -4,6 +4,7 @@ import { IoCloseCircle } from "react-icons/io5";
 export default function MultiSelectComponentDanish({
   label,
   options,
+  values,
   onChange,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,6 +25,10 @@ export default function MultiSelectComponentDanish({
     };
   }, []);
 
+  useEffect(() => {
+    setSelectedItems(values);
+  }, [values]);
+
   const filteredOptions = options.filter(
     (option) =>
       !selectedItems.includes(option.name) &&
@@ -37,16 +42,17 @@ export default function MultiSelectComponentDanish({
       setSelectedItems(newSelectedItems);
       setSearchTerm("");
       setIsOpen(false);
-      onChange?.(newSelectedItems);
+      onChange(newSelectedItems);
     }
   };
 
-  const handleRemove = (nameToRemove) => {
-    const newSelectedItems = selectedItems.filter(
-      (name) => name !== nameToRemove
-    );
+  const handleRemove = (id) => {
+    console.log(id);
+    console.log(selectedItems);
+    const newSelectedItems = selectedItems.filter((item) => item?.id !== id);
+    console.log(newSelectedItems);
     setSelectedItems(newSelectedItems);
-    onChange?.(newSelectedItems);
+    onChange(newSelectedItems);
   };
 
   return (
@@ -60,7 +66,7 @@ export default function MultiSelectComponentDanish({
         className="flex flex-wrap gap-2 border border-[#A8A4A4] mt-[5px] p-2 border rounded-md min-h-[42px] cursor-text"
         onClick={() => setIsOpen(true)}
       >
-        {selectedItems.map((item) => (
+        {selectedItems?.map((item) => (
           <div
             key={item}
             className="flex items-center bg-[#BCE3C9] text-[#186737] px-2 py-1 rounded-md"
@@ -70,7 +76,7 @@ export default function MultiSelectComponentDanish({
               className="w-5 h-5 cursor-pointer text-red-500"
               onClick={(e) => {
                 e.stopPropagation();
-                handleRemove(item?.name);
+                handleRemove(item?.id);
               }}
             />
           </div>

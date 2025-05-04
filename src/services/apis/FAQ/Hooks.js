@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AiFaqFeaturesBenefitsHook, AiFaqPathHook, AiReviewsPathHook, fetchCategories, fetchFAQs } from "./Api";
+import { addFaq, AiFaqFeaturesBenefitsHook, AiFaqPathHook, AiReviewsPathHook, deleteFaq, fetchCategories, fetchCategoriesFAQs, fetchFAQs, updateFaq } from "./Api";
 
 // Hook to fetch Categoires data
 export const useFetchFAQs = (params) => {
@@ -10,12 +10,39 @@ export const useFetchFAQs = (params) => {
     });
   };
 
+  export const useFetchCategoriesFAQs = () => {
+    return useQuery({
+      queryKey: ["CategoriesFAQs"],
+      queryFn: () => fetchCategoriesFAQs(),
+    });
+  };
+
 
   export const useAiFaqPath = () => {
     return useMutation({
       mutationFn: (data) => AiFaqPathHook(data),
     });
   };
+
+  export const useAddFaqs = () => {
+      return useMutation({
+        mutationFn: (data) => addFaq(data),
+      });
+    };
+
+    export const useUpdateFaqs = () => {
+      return useMutation({
+        mutationFn: (data) => updateFaq(data),
+      });
+    };
+
+
+       export const useDeleteFaq = () => {
+          return useMutation({
+            mutationFn: (data) => deleteFaq(data),
+          });
+        };
+      
 
 
   export const useAiReviewsPath = () => {

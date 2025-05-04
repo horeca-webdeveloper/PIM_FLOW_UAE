@@ -15,8 +15,8 @@ const ImportProduct = () => {
     const [response, setResponse] = useState([]);
     const [module, setModule] = useState('Product');
     const [action, setAction] = useState('Import');
-    const [showLogs,setShowLogs]=useState(true);
-    const url="/products/import";
+    const [showLogs, setShowLogs] = useState(true);
+    const url = "/products/import";
     const {
         register,
         handleSubmit,
@@ -37,7 +37,7 @@ const ImportProduct = () => {
         // Create FormData object to send the file
         const formData = new FormData();
         formData.append("upload_file", file);
-        await Apis.importData(formData, setLoader, setResponse,url);
+        await Apis.importData(formData, setLoader, setResponse, url);
         reset();
     };
 
@@ -46,13 +46,13 @@ const ImportProduct = () => {
         {
             label: "Download Template",
             link: `/template-product-export.csv`,
-            download:true,
+            download: true,
             icon: "",
             type: "label",
-            bgColor: null,
-            textColor: COLORS.darkCharcoal,
-            fontSize: "18px",
-            fontWeight: "bold",
+            bgColor: COLORS.bgPrimary,
+            textColor: "white",
+            textSize: "14px",
+            fontWeight: "normal",
         },
         {
             label: "Start Importing",
@@ -86,13 +86,14 @@ const ImportProduct = () => {
                         <InputComponent
                             label="Upload File"
                             type="file"
+                            accept=".csv,text/csv"
                             {...register("file", { required: "File is required" })}
                         />
                         {errors.file && <p className="text-red-500">{errors.file.message}</p>}
                     </div>
                 </CollapseComponent>
 
-                <Logs module={module} action={action} setShowLogs={setShowLogs} showLogs={showLogs}/>
+                <Logs module={module} action={action} setShowLogs={setShowLogs} showLogs={showLogs} />
 
             </form>
         </>

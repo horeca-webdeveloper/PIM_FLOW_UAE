@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller } from "react-hook-form";
-import Loader from "../../../utils/Loader";
 import MultiSelectComponent from "../../common/MultiSelectComponent";
+import Loader from "../../../utils/Loader";
 
 const AttributePopup = ({ isOpen, onSubmit, onClose, getAttributes, control, errors, loader,name,label,heading, selectedAttributes }) => {
  
@@ -9,7 +9,7 @@ const AttributePopup = ({ isOpen, onSubmit, onClose, getAttributes, control, err
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-[40%] max-w-full mx-4">
+            <div className="bg-white rounded-lg w-[40%] max-w-full  mx-4 overflow-auto max-h-[90vh]">
                 <div className="flex justify-between items-center p-4 border-b">
                     <h2 className="text-lg font-medium">{heading}</h2>
                     <button
@@ -21,7 +21,9 @@ const AttributePopup = ({ isOpen, onSubmit, onClose, getAttributes, control, err
                 </div>
 
                 <div className="p-4 space-y-4">
-                    {getAttributes?.length>0?  <div>
+                    {!!getAttributes && getAttributes?.length===0?'No Attributes available':<>
+                    
+                        {!!getAttributes && getAttributes?.length>0?  <div>
                         <Controller
                             name={name}
                             control={control}
@@ -37,6 +39,8 @@ const AttributePopup = ({ isOpen, onSubmit, onClose, getAttributes, control, err
                             )}
                         />
                     </div>:<Loader/>}
+                    </>}
+              
                   
                     {/* {errors.name && <p className="text-red-500">{errors.name.message}</p>} */}
                 </div>

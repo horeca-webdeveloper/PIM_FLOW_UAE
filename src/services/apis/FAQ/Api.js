@@ -1,12 +1,33 @@
-import { AiBenefitsFeaturesApiPath, AiFaqApiPath, AiReviewsApiPath, FaqApiPath } from "../../apiRoutes";
+import { AiBenefitsFeaturesApiPath, AiFaqApiPath, AiReviewsApiPath, FaqApiPath, FaqCategoriesApiPath } from "../../apiRoutes";
 import { apiCall } from "../../AxiosFactory";
 import { apiClient } from "../../../utils/apiWrapper";
 
 export const fetchFAQs = async (params) => {
-    const {search}=params
-    return await apiCall("get", `${FaqApiPath}?search=${search}`, null);
+    const {search, page ,limit}=params
+    return await apiCall("get", `${FaqApiPath}?search=${search}&limit=${limit}&page=${page}`, null);
   };
 
+
+  export const fetchCategoriesFAQs = async () => {
+    return await apiCall("get", `${FaqCategoriesApiPath}`, null);
+  };
+
+
+
+    export const addFaq = async (data) => {
+      return await apiCall("post", `${FaqApiPath}`,data );
+    };
+
+    export const updateFaq = async (data) => {
+      const {id, ...restData} = data;
+      return await apiCall("put", `${FaqApiPath}/${id}`,restData );
+    };
+    
+
+       export const deleteFaq = async (id) => {
+          return await apiCall("delete", `${FaqApiPath}/${id}` );
+        };
+        
 
 
   const fetchFAQ = async (searchTerm, setLoader, setResponse) => {
@@ -20,6 +41,17 @@ export const fetchFAQs = async (params) => {
     } finally {
         setLoader(false);
     }
+}
+
+
+const fetchFAQCategories = async (setResponse) => {
+  try {
+      const response = await apiClient.get(`${FaqCategoriesApiPath}`);
+      setResponse(response)
+  } catch (error) {
+      console.log("error", error);
+  } finally {
+  }
 }
 
 export const AiFaqPathHook = async (data) => {
@@ -43,5 +75,6 @@ export const AiFaqFeaturesBenefitsHook = async (data) => {
 
 
 export const FaqApis = {
-  fetchFAQ
+  fetchFAQ,
+  fetchFAQCategories
 }

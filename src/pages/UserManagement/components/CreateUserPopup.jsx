@@ -8,7 +8,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const CreateUserPopup = ({ setShowPopup }) => {
   const [loader, setLoader] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
   const {
     register,
     handleSubmit,
@@ -43,6 +43,7 @@ const CreateUserPopup = ({ setShowPopup }) => {
         toast.success("User Created Successfully");
         window.location.reload();
         setShowPopup(false);
+        document.body.style.overflow = "auto";
       },
       onError: (err) => {
         setLoader(false);
@@ -131,7 +132,10 @@ const CreateUserPopup = ({ setShowPopup }) => {
           <div className="flex mt-[20px] justify-end space-x-2 mt-[10px]">
             <button
               type="button"
-              onClick={() => setShowPopup(false)}
+              onClick={() => {
+                setShowPopup(false);
+                document.body.style.overflow = "auto";
+              }}
               className="flex-1 bg-[#F1EFEF] border border-[#A8A4A4] text-[#303030] py-2 px-4 mr-2 rounded"
             >
               Cancel

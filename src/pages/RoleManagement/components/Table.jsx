@@ -110,6 +110,7 @@ const Table = ({ data, isLoading, setId, setShowDelete }) => {
                       <button
                         onClick={() => {
                           setShowDelete(true);
+                          document.body.style.overflow = "hidden";
                           setId(item?.id);
                         }}
                         className="text-red-500 hover:text-red-700"

@@ -8,13 +8,14 @@ import Loader from "../../utils/Loader";
 import { notify } from "../../utils/notify";
 import { useNavigate } from "react-router-dom";
 import CommonTable from "../../components/common/CommonTable"
+import FullScreenLoader from "../../utils/FullScreenLoader";
 const ProductFamily = () => {
     const navigate = useNavigate();
     const [show, setShow] = useState(false);
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(100000);
     const [totalPages, setTotalPages] = useState(0);
-    
+
     const [fetchAttloader, setAttrLoader] = useState(false);
     const [getFamilyData, setFamilyData] = useState([]);
     const [getCategories, setCategories] = useState([]);
@@ -71,16 +72,15 @@ const ProductFamily = () => {
     );
 
     const fetchAttrGroupByid = (id) => {
-        navigate("/product-families-details", {
-            state: { datas: id },
-        });
+        window.open(`/product-families-details/${id}`);
+
 
     }
     const deleteGroupById = (id) => {
         Apis.deleteFamily(id, setLoader, setResponse);
     }
 
-  
+
     const onSubmit = (data) => {
 
         const datas = {
@@ -108,7 +108,7 @@ const ProductFamily = () => {
         };
         fetchData();
     }, [page]); // Now listens for `page` changes as well
-    
+
     useEffect(() => {
         if (getResponse.success) {
             notify(getResponse.message);
@@ -117,7 +117,7 @@ const ProductFamily = () => {
             reset();
         }
     }, [getResponse]);
-    
+
     useEffect(() => {
         if (getFamilyDataById.success) {
             setShow(true);
@@ -125,30 +125,28 @@ const ProductFamily = () => {
             setShow(false);
         }
     }, [getFamilyDataById]);
-    
+
     useEffect(() => {
         if (getFamilyData.success && getFamilyData.total_pages !== totalPages) {
             setTotalPages(getFamilyData.total_pages);
         }
     }, [getFamilyData]); // Prevent unnecessary state updates
-    
+
     return (
         <>
-            {fetchAttloader ? <div className="w-full h-[100vh] flex items-center justify-center bg-white fixed left-0 top-0 z-[999]">
-                <Loader />
-            </div> : <div>
+            {fetchAttloader ? <FullScreenLoader bgTransparent={true} /> : <div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <HeaderComponent label="Product Families" setShow={setShow} span={`(${!!getFamilyData && getFamilyData?.total_records} Results)`} buttons={buttons} />
                     <CommonTable totalPages={totalPages}
                         changePage={changePage}
                         setPage={setPage}
-                        currentPage={page} 
+                        currentPage={page}
                         deleteData={deleteGroupById}
-                         getDatafn={fetchAttrGroupByid} 
-                         tableHeading={th}
-                          datas={!!getFamilyData && getFamilyData.data} 
-                          options={options} showCheckBox={true} showFilter={true} 
-                          disableDelete={true} />
+                        getDatafn={fetchAttrGroupByid}
+                        tableHeading={th}
+                        datas={!!getFamilyData && getFamilyData.data}
+                        options={options} showCheckBox={true} showFilter={true}
+                        disableDelete={true} />
                     {loader ? <div className="w-full h-[100vh] flex items-center justify-center  fixed left-0 top-0 z-[999]">
                         <Loader />
                     </div> : ''}

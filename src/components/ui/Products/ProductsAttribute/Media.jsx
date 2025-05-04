@@ -16,70 +16,86 @@ const Media = ({ mediaData, setMediaData }) => {
   const MAX_FILES = 10;
 
   useEffect(() => {
-    // Create a FormData object for file uploads
+    if (!mediaData) return;
+
     const formData = new FormData();
-    if (mediaData) {
-      // Initialize images
-      const existingImages =
-        mediaData?.images?.map((url) => ({
-          preview: url instanceof File ? URL.createObjectURL(url) : url,
-          file:
-            url instanceof File
-              ? url
-              : { name: url?.split("/").pop() || "Existing Image" },
-        })) || [];
-      setImageFiles([
-        ...existingImages,
-        ...Array(Math.min(MAX_FILES - existingImages.length, 5)).fill(null),
-      ]);
 
-      // Initialize videos
-      const videoPath =
-        typeof mediaData.video_path === "string"
-          ? JSON.parse(mediaData.video_path || "[]")
-          : mediaData.video_path || [];
-      const existingVideos = videoPath?.map((url) => ({
-        preview: url instanceof File ? URL.createObjectURL(url) : url,
-        file:
-          url instanceof File
-            ? url
-            : { name: url?.split("/").pop() || "Existing Video" },
-      }));
-      setVideoFiles([
-        ...existingVideos,
-        ...Array(Math.min(MAX_FILES - existingVideos.length, 5)).fill(null),
-      ]);
+    // ===== IMAGES =====
+    const existingImages = (mediaData.images || []).map((url) => {
+      const isFile = url instanceof File;
+      return {
+        preview: isFile ? URL.createObjectURL(url) : url,
+        file: isFile
+          ? url
+          : { name: url?.split("/").pop() || "Existing Image" },
+      };
+    });
+    setImageFiles([
+      ...existingImages,
+      ...Array(Math.min(MAX_FILES - existingImages.length, 5)).fill(null),
+    ]);
 
-      // Initialize documents
-      const existingDocs =
-        mediaData?.documents?.map((url) => ({
-          preview: url instanceof File ? URL.createObjectURL(url) : url,
-          file:
-            url instanceof File
-              ? url
-              : { name: url?.split("/").pop() || "Existing Document" },
-        })) || [];
-      setDocumentFiles([
-        ...existingDocs,
-        ...Array(Math.min(MAX_FILES - existingDocs.length, 5)).fill(null),
-      ]);
+    // ===== VIDEOS =====
+    const videoPath = Array.isArray(mediaData.video_path)
+      ? mediaData.video_path
+      : JSON.parse(mediaData.video_path || "[]");
 
-      // Initialize metadata
-      setMetadata({
-        images: Array(Math.max(5, existingImages.length)).fill({
+    const existingVideos = (videoPath || []).map((url) => {
+      const isFile = url instanceof File;
+      return {
+        preview: isFile ? URL.createObjectURL(url) : url,
+        file: isFile
+          ? url
+          : { name: url?.split("/").pop() || "Existing Video" },
+      };
+    });
+    setVideoFiles([
+      ...existingVideos,
+      ...Array(Math.min(MAX_FILES - existingVideos.length, 5)).fill(null),
+    ]);
+
+    // ===== DOCUMENTS =====
+    const existingDocs = (mediaData.documents || []).map((doc) => {
+      const url = doc?.path;
+      const isFile = url instanceof File;
+      return {
+        preview: isFile ? URL.createObjectURL(url) : url,
+        file: isFile
+          ? url
+          : {
+              name:
+                doc?.title?.trim() ||
+                url?.split("/").pop() ||
+                "Document Uploaded",
+            },
+      };
+    });
+    setDocumentFiles([
+      ...existingDocs,
+      ...Array(Math.min(MAX_FILES - existingDocs.length, 5)).fill(null),
+    ]);
+
+    // ===== METADATA =====
+    setMetadata({
+      images: Array(Math.max(5, existingImages.length))
+        .fill()
+        .map(() => ({
           fileName: "",
           altText: "",
-        }),
-        videos: Array(Math.max(5, existingVideos.length)).fill({
+        })),
+      videos: Array(Math.max(5, existingVideos.length))
+        .fill()
+        .map(() => ({
           fileName: "",
           altText: "",
-        }),
-        documents: Array(Math.max(5, existingDocs.length)).fill({
+        })),
+      documents: Array(Math.max(5, existingDocs.length))
+        .fill()
+        .map(() => ({
           fileName: "",
           altText: "",
-        }),
-      });
-    }
+        })),
+    });
   }, [mediaData]);
 
   const handleFileUpload = async (e, index, type) => {
@@ -275,6 +291,7 @@ const Media = ({ mediaData, setMediaData }) => {
                       </div>
                     )}
                     <button
+                      type="button"
                       onClick={() => removeFile(type, index)}
                       className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
                     >

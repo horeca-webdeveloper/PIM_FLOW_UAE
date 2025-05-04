@@ -29,7 +29,9 @@ const UserManagement = () => {
         setDeleteLoading(false);
         console.log(data);
         toast.success("User Deleted Successfully");
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       },
       onError: (err) => {
         setDeleteLoading(false);
@@ -39,9 +41,9 @@ const UserManagement = () => {
   };
   return (
     <>
-      <UserManagementHeader setShowPopup={setShowPopup} heading={"User"} />
+      <UserManagementHeader setShowPopup={setShowPopup} heading={"Users"} />
       <Table
-        data={data}
+        data={[]}
         isLoading={isLoading}
         setEditData={setEditData}
         setShowEdit={setShowEdit}

@@ -5,32 +5,12 @@ import Loader from "../../../utils/Loader";
 import saveIcon from "../../../../src/assets/icons/saveIcon.png"
 
 const BrandHeader = ({
+  brandName,
   handleCreateProduct,
   updateProductLoading,
-  general,
-  setGeneralData,
-  data,
+   
 }) => {
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value, type } = e.target;
-
-    // Remove `e`, `E`, `+`, and `-` from the input value
-    // Handle different input types
-    let sanitizedValue;
-    if (type == "number") {
-      // Remove non-numeric characters except decimal point
-      sanitizedValue = value.replace(/[eE+-]/g, "");
-      // Convert to number or 0 if empty
-      sanitizedValue = sanitizedValue === "" ? "" : Number(sanitizedValue);
-    } else if (type === "checkbox") {
-      sanitizedValue = e.target.checked;
-    } else {
-      sanitizedValue = value;
-    }
-
-    setGeneralData((prev) => ({ ...prev, [name]: sanitizedValue }));
-  };
+   
   return (
     <div className=" border-b border-[#26683A] pb-[10px] p-0 flex justify-between items-start">
       {/* Left Section */}
@@ -47,7 +27,7 @@ const BrandHeader = ({
         <div className="flex flex-col items-between  h-[100px] ">
           <div className="flex">
             <h3 className="text-[18px] font-medium text-[#303030]">
-             Home Page:
+           {brandName}
             </h3>
             <br/>
     

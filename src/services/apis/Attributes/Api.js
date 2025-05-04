@@ -116,6 +116,4 @@ export const Apis = {
     handleFetchAttributeById,
     fetchAttributeGroups,
     fetchCategoryAttributeGroups
-
-
 }

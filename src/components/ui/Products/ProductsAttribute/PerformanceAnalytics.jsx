@@ -24,7 +24,19 @@ const PerformanceAnalytics = ({
   } = useFetchProducts({
     page: 1,
     per_page: 100,
+    search: "",
   });
+
+  
+
+  // Format products from values using useMemo
+  const formattedGetFBT = useMemo(() => {
+    if (!performanceAnalytics?.frequently_bought_together) return [];
+    return performanceAnalytics?.frequently_bought_together.map((product) => ({
+      id: Number(product.id),
+      name: product.sku || "", // adjust if sku is optional
+    }));
+  }, [performanceAnalytics?.frequently_bought_together]);
 
   // Format products data for MultiSelectComponent
   const formattedProducts = useMemo(() => {
@@ -62,16 +74,12 @@ const PerformanceAnalytics = ({
   const [selectedItem, setSelectedItem] = useState(null);
 
   const handleSelectionChange = (items) => {
-    console.log("Selected Items:", items); // ✅ Debugging - logs array of objects
-
     const selectedIds = items.map((item) => item.id); // ✅ Extract only IDs
-
+    console.log(selectedIds);
     setPerformanceAnalytics((prev) => ({
       ...prev,
-      frequently_bought_together: selectedIds, // ✅ Store array of IDs only
+      frequently_bought_together_value: selectedIds, // ✅ Store array of IDs only
     }));
-
-    console.log("Final Selected IDs:", selectedIds); // ✅ Debugging
   };
 
   return (
@@ -89,7 +97,7 @@ const PerformanceAnalytics = ({
           <span className="mr-1 cursor-pointer">
             1 missing required attribute
           </span>
-          <button className="ml-1">
+          <button type="button" className="ml-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -113,6 +121,7 @@ const PerformanceAnalytics = ({
           <MultiSelectComponentDanish
             label="Frequently Bought Together"
             options={formattedProducts}
+            values={formattedGetFBT}
             onChange={handleSelectionChange}
           />
           <div className="flex gap-4 w-[100%]">

@@ -1,151 +1,201 @@
 import React, { useState } from "react";
-import { FaEdit, FaFilter, FaSearch, FaTrash } from "react-icons/fa";
-import { formatDate } from "../../../utils/formatDate";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { InputText } from "primereact/inputtext";
+import { formatDate } from "../../../utils/formatDate"; // Ensure this works with proper date input
 import { urls } from "../../../config/baseUrls";
-import PaginationComponent from "../../common/PaginationComponent";
-import { useNavigate } from "react-router-dom";
-const AttributesTable = ({ deleteAttribute, datas, setShowModal, setUpdateDatas, setPage, totalPages, changePage, currentPage }) => {
-  const navigate = useNavigate();
-  const updateBtnClick = (row) => {
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
-    navigate("/MutliAttributes", {
-      state: { datas: row.id },
+const AttributesTable = ({
+  deleteAttribute,
+  datas,
+  updateAttributeTypes,
+  setPage,
+  totalPages,
+  changePage,
+  currentPage,
+}) => {
+  const [globalFilter, setGlobalFilter] = useState("");
+  const cellClass = "px-3 py-2 text-sm text-gray-500 border text-left";
+  const headerClass = "px-3 py-2 text-sm font-medium text-gray-700 border text-center whitespace-nowrap";
+
+  // Preprocess the data to add group names as a field and parse updated_at to Date
+  const processedData = datas?.map((item) => ({
+    ...item,
+    groupNames: item?.attribute_groups?.map((g) => g.name).join(", ") || "",
+    updated_at: item.updated_at ? new Date(item.updated_at) : null, // Ensure valid Date object
+  }));
+
+  const exportCSV = () => {
+    const csvContent = [
+      ["Attribute Name", "Code", "Data Type", "Group", "Last Updated"],
+      ...datas.map((item) => [
+        item.name,
+        item.code,
+        item.type,
+        item.attribute_groups.map((g) => g.name).join(", "),
+        formatDate(item.updated_at), // Ensure this works with the Date object
+      ]),
+    ];
+    const worksheet = XLSX.utils.aoa_to_sheet(csvContent);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const buffer = XLSX.write(workbook, { bookType: "csv", type: "array" });
+    const blob = new Blob([buffer], { type: "text/csv" });
+    saveAs(blob, "attributes.csv");
+  };
+
+  const exportExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      datas.map((item) => ({
+        Name: item.name,
+        Code: item.code,
+        Type: item.type,
+        Group: item.attribute_groups.map((g) => g.name).join(", "),
+        Updated: formatDate(item.updated_at), // Ensure this works with the Date object
+      }))
+    );
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    saveAs(blob, "attributes.xlsx");
+  };
+
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Attributes List", 14, 10);
+    const tableColumn = ["Name", "Code", "Type", "Group", "Updated"];
+    const tableRows = datas.map((item) => [
+      item.name,
+      item.code,
+      item.type,
+      item.attribute_groups.map((g) => g.name).join(", "),
+      formatDate(item.updated_at), // Ensure this works with the Date object
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
     });
-    // setUpdateDatas(row);
-    // setShowModal(true);
-  }
+
+    doc.save("attributes.pdf");
+  };
+
+  const actionBodyTemplate = (rowData) => (
+    <div className="p-1 mt-0 ml-2 mr-2 w-[100px] bg-[#FAFBFD] border-[#BCBCBC] flex items-center justify-center space-x-3 border rounded-md">
+      <a
+        href={`/MutliAttributes/${rowData.id}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src={`${urls.hostUrl}/icons/pencil-write.png`}
+          alt="edit"
+          className="cursor-pointer"
+        />
+      </a>
+      <div className="w-px h-6 bg-[#979797]"></div>
+      <img
+        src={`${urls.hostUrl}/icons/bin.png`}
+        alt="delete"
+        className="cursor-pointer"
+        onClick={() => deleteAttribute(rowData.id)}
+      />
+    </div>
+  );
+
   return (
-    <div className="p-0 bg-white border-t border-l border-r border-[#BCBCBC] rounded-md mt-[20px] ">
-      {/* Tabs */}
-      <div className="flex px-4 py-2 items-center justify-between bg-white rounded-md">
-        <div>
-          {/* {["Option One", "Option Two", "Option Three", "Option Four"].map(
-            (option, index) => (
+    <div className="p-0 bg-white border-t border-l border-r border-[#BCBCBC] rounded-md mt-[20px]">
+      {/* Top Controls */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 gap-4">
+        <InputText
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          placeholder="Search..."
+          className="border border-gray-300 rounded-md px-3 py-2 w-full md:w-1/2 focus:outline-none"
+        />
+      </div>
+      <div className="overflow-x-auto text-sm capitalize">
+        <DataTable
+          value={processedData} // Use processed data with Date objects
+          paginator
+          rows={20}
+          currentPageReportTemplate={`Showing {first} to {last} of {totalRecords}`}
+          globalFilter={globalFilter}
+          header="List of Attributes"
+          className="p-datatable-gridlines "
+          responsiveLayout="scroll"
+          stripedRows
+        >
+          <Column
+            field="name"
+            header="Attribute Name"
+            sortable
+            filter
+            bodyClassName={cellClass}
+            headerClassName={headerClass}
+          />
+          <Column
+            field="code"
+            header="Code"
+            sortable
+            filter
+            bodyClassName={cellClass}
+            headerClassName={headerClass}
+          />
+          <Column
+            field="type"
+            header="Data Type"
+            sortable
+            filter
+            bodyClassName={cellClass}
+            headerClassName={headerClass}
+          />
+          <Column
+            field="groupNames"
+            header="Group"
+            sortable
+            filter
+            bodyClassName={cellClass}
+            headerClassName={headerClass}
+          />
+          <Column
+            field="updated_at" // Field should be Date object
+            header="Last Updated"
+            sortable
+            // filter
+            dataType="date"
+            body={(rowData) => formatDate(rowData.updated_at)} // Use the formatDate function
+            bodyClassName={cellClass}
+            headerClassName={headerClass}
+          />
+          <Column
+            header="Update Type"
+            body={(rowData) => (
               <button
-                type="button"
-                key={index}
-                className="px-6 py-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] hover:bg-gray-200 transition-all"
+                onClick={() => updateAttributeTypes(rowData)}
+                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
               >
-                {option}
+                Update Type
               </button>
-            )
-          )} */}
-        </div>
-        <div className="flex  justify-between ">
-          <div className="p-1 mt-0 ml-2 mr-2 w-[100px] bg-[#FAFBFD] border-[#BCBCBC] flex items-center justify-center space-x-3 border rounded-md">
-            <button className="text-blue-500 hover:text-blue-700">
-              <img src={`${urls.hostUrl}/icons/search.png`} alt="search" />
-            </button>
-
-            {/* Divider */}
-            <div className="w-px h-6 bg-[#979797]"></div>
-
-            <button className="text-red-500 hover:text-red-700">
-              <img src={`${urls.hostUrl}/icons/filter.png`} alt="filter" />
-            </button>
-
-
-          </div>
-          <button className="text-red-500 p-2 bg-[#FAFBFD] hover:text-red-700 ml-1 border rounded-md">
-            <img src={`${urls.hostUrl}/icons/sorting.png`} alt="sorting" />
-          </button>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="overflow-auto bg-white ">
-        <table className="w-full  text-left border-collapse">
-          <thead className="bg-gray-200 text-gray-700 text-sm">
-            <tr className="border border-[#BCBCBC]">
-              {/* <th className="p-3 w-10 border border-[#BCBCBC]">
-                <input type="checkbox" />
-              </th> */}
-              <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                Attribute Name
-              </th>
-              <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                Code
-              </th>
-              <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                Data Type
-              </th>
-              <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                Group
-              </th>
-              <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                Last Updated
-              </th>
-              <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {datas?.length > 0 ? (
-              datas.map((row) => (
-                <tr
-                  key={row.id}
-                  className="hover:bg-gray-100 transition border-b border-[#BCBCBC]"
-                >
-                  {/* <td className="p-3 border-b border-[#BCBCBC]">
-                    <input type="checkbox" />
-                  </td> */}
-                  <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC] capitalize">
-                    {row.name}
-                  </td>
-                  <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                    {row.code}
-                  </td>
-                  <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                    {row.type}
-                  </td>
-                  <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                    {row.attribute_groups.length > 0 && (
-                      <span>
-                        {row.attribute_groups.map((item) => item.name).join(", ")}
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">
-                    {formatDate(row.updated_at)}
-                  </td>
-
-
-                  <td className="p-3 items-center">
-                    <div className="flex  justify-center space-x-3 w-[100px] p-1 border rounded-md border-[#BCBCBC]">
-                      <span className="text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => updateBtnClick(row)} >
-                        <img src={`${urls.hostUrl}/icons/pencil-write.png`} alt="edit" />
-                      </span>
-
-
-                      <div className="w-px h-5 bg-gray-300"></div>
-
-                      <span className="text-red-500 hover:text-red-700 cursor-pointer" onClick={() => deleteAttribute(row.id)}>
-                        <img src={`${urls.hostUrl}/icons/bin.png`} alt="trash" />
-                      </span>
-
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={7}
-                  className="p-4 text-center text-gray-500 border border-[#BCBCBC]"
-                >
-                  No Data Available
-                </td>
-              </tr>
             )}
-          </tbody>
-        </table>
+            bodyClassName={cellClass}
+            headerClassName={headerClass}
+          />
+          <Column
+            header="Action"
+            body={actionBodyTemplate}
+            bodyClassName={cellClass}
+            headerClassName={headerClass}
+          />
+        </DataTable>
       </div>
-
-      <PaginationComponent setPage={setPage}
-        totalPages={totalPages}
-        changePage={changePage}
-        currentPage={currentPage} />
     </div>
   );
 };

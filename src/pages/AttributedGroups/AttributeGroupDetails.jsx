@@ -4,7 +4,7 @@ import { COLORS } from "../../utils/colors";
 import InputComponent from "../../components/common/InputComponent";
 import HeaderComponent from "../../components/common/HeaderComponent";
 import { Apis } from "../../services/apis/Family/Api";
-import { useLocation } from "react-router-dom";
+import { useLocation,useParams } from "react-router-dom";
 import FullScreenLoader from "../../utils/FullScreenLoader";
 import { useForm, Controller } from "react-hook-form";
 import { notify } from "../../utils/notify";
@@ -23,9 +23,7 @@ const AttributeGroupDetails = () => {
         formState: { errors },
     } = useForm();
 
-    const location = useLocation();
-    const state = location.state || {};
-    const id = state.datas;
+    const {id} =useParams();
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(20);
     const [totalPages, setTotalPages] = useState(0);
@@ -280,7 +278,8 @@ const AttributeGroupDetails = () => {
 
                         {/* for Variants */}
                         {selectedType === 'Variants' ? <>   <CollapseComponent title="General properties">
-                            <InputComponent label="Attribute Group (Required)"
+                        <p>In progress...</p>
+                            {/* <InputComponent label="Attribute Group (Required)"
                                 {...register("name", { required: "Name is required" })}
                                 type="text" name="name"
                                 placeholder="Text Field" />
@@ -290,14 +289,12 @@ const AttributeGroupDetails = () => {
 
                             <MultiSelectComponent label="Product Family (required)"
                                 defaultValues={selectedCategories}
-                                option={!!getAttributeDetails && getAttributeDetails?.data?.[0]?.categories} />
+                                option={!!getAttributeDetails && getAttributeDetails?.data?.[0]?.categories} /> */}
 
                         </CollapseComponent>
 
                             <CollapseComponent title="Label translations">
-                                <InputComponent label="English (United States)" type="text" name="text" placeholder="Text Field" />
-                                <InputComponent label="Spanish (Spain)" type="text" name="text" placeholder="Text Field" />
-                                <InputComponent label="Chinese (China)" type="text" name="text" placeholder="Text Field" />
+                            <p>In progress...</p>
                             </CollapseComponent></> : ''}
                     </> : ''}
 

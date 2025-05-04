@@ -1,4 +1,4 @@
-import { RolesApiPath } from "../../apiRoutes";
+import { RolesApiPath, RolesPermissionApiPath } from "../../apiRoutes";
 import { apiCall } from "../../AxiosFactory";
 
 export const fetchRolesNameId = async () => {
@@ -12,8 +12,14 @@ export const fetchRoles = async (id) => {
 };
 
 
-export const fetchAllRoles = async () => {
-  return await apiCall("get", `${RolesApiPath}`, null);
+export const fetchRolesPermission = async () => {
+  return await apiCall("get", `${RolesPermissionApiPath}`, null);
+};
+
+
+export const fetchAllRoles = async (data) => {
+  const {page, length}=data
+  return await apiCall("get", `${RolesApiPath}?page=${page}&length=${length}`, null);
 };
 
 

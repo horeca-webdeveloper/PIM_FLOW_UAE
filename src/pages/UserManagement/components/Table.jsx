@@ -96,6 +96,7 @@ const Table = ({
                       <button
                         onClick={() => {
                           setShowEdit(true);
+                          document.body.style.overflow = "hidden";
                           setEditData(item);
                         }}
                         className="text-blue-500 hover:text-blue-700"
@@ -118,6 +119,7 @@ const Table = ({
                       <button
                         onClick={() => {
                           setShowDelete(true);
+                          document.body.style.overflow = "hidden";
                           setId(item?.id);
                         }}
                         className="text-red-500 hover:text-red-700"

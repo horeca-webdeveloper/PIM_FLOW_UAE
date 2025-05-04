@@ -6,11 +6,12 @@ import { notify } from "../../utils/notify";
 import { Apis } from "../../services/apis/Attributes/Api";
 import FullScreenLoader from "../../utils/FullScreenLoader";
 import { useNavigate } from "react-router-dom";
+
 const Attributes = () => {
   const navigate = useNavigate();
   const [type, setType] = useState(null);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(100000);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [fetchAttloader, setAttrLoader] = useState(false);
@@ -26,7 +27,10 @@ const Attributes = () => {
       setPage(newPage);
     }
   };
-
+  const updateAttributeTypes=(data)=>{
+    setUpdateDatas(data)
+      setShowModal(true);
+  }
   useEffect(() => {
     Apis.fetchAttributes(page, limit, setAttrLoader, setAttibutes);
   }, []);
@@ -34,9 +38,9 @@ const Attributes = () => {
   useEffect(() => {
     if (getResponse.success) {
       notify(getResponse.message);
-      navigate("/MutliAttributes", {
-        state: { datas: getResponse.data.id },
-      });
+   
+      window.location.href=`/MutliAttributes/${getResponse.data.id}`
+    
       setShowModal(false);
     }
 
@@ -52,7 +56,7 @@ const Attributes = () => {
       Apis.fetchAttributes(page, limit, setAttrLoader, setAttibutes);
     }
   }, [getDeleteResponse]);
-  const options = ["Option One", "Option Two", "Option Three", "Option Four"];
+ 
   const th = [
     { title: "ID", key: "id" },
     { title: "Attribute Name", key: "name" },
@@ -86,8 +90,10 @@ const Attributes = () => {
             setUpdateDatas={setUpdateDatas}
           />
 
-            {/* <CommonTable  deleteData={deleteAttributes} getDatafn={fetchAttrGroupByid} tableHeading={th} options={options}  datas={!!getAttributes && getAttributes.data}   showFilter={true} /> */}
+        
+         
             <AttributesTable
+            updateAttributeTypes={updateAttributeTypes}
               totalPages={totalPages}
               changePage={changePage}
               setPage={setPage}
@@ -96,6 +102,7 @@ const Attributes = () => {
               datas={!!getAttributes && getAttributes.data}
               setShowModal={setShowModal}
               setUpdateDatas={setUpdateDatas}
+              
             />
 
 

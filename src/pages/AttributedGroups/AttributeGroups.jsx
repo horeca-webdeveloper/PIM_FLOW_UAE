@@ -7,12 +7,13 @@ import { Apis } from "../../services/apis/Family/Api";
 import Loader from "../../utils/Loader";
 import { notify } from "../../utils/notify";
 import { useNavigate } from "react-router-dom";
+import FullScreenLoader from "../../utils/FullScreenLoader";
 import CommonTable from "../../components/common/CommonTable"
 const AttributeGroups = () => {
     const navigate = useNavigate();
     const [show, setShow] = useState(false);
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(100000);
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [fetchAttloader, setAttrLoader] = useState(false);
@@ -78,9 +79,8 @@ const AttributeGroups = () => {
     );
 
     const fetchAttrGroupByid = (id) => {
-        navigate("/attribute-groups-details", {
-            state: { datas: id },
-        });
+        window.open(`/attribute-groups-details/${id}`);
+
 
     }
     const deleteGroupById = (id) => {
@@ -97,6 +97,7 @@ const AttributeGroups = () => {
 
     useEffect(() => {
         if (getFamilyData.success) {
+            
             setTotalPages(getFamilyData.total_pages)
             setTotalRecords(getFamilyData.total_records)
         }
@@ -104,12 +105,11 @@ const AttributeGroups = () => {
     useEffect(() => {
         Apis.fetchFamilies(page, limit, setAttrLoader, setFamilyData);
     }, [page]);
-    const onSubmit = (data) => {
 
+    const onSubmit = (data) => {
         const datas = {
             "name": data.name,
             "category_ids": data?.category?.map(categories => categories.value)
-
         }
         if (getFamilyDataById.success) {
             datas.id = getFamilyDataById.data.id;
@@ -142,17 +142,14 @@ const AttributeGroups = () => {
 
     return (
         <>
-            {fetchAttloader ? <div className="w-full h-[100vh] flex items-center justify-center bg-white fixed left-0 top-0 z-[999]">
-                <Loader />
-            </div> : <div>
+             {fetchAttloader ? <FullScreenLoader bgTransparent={true} /> :  <div>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <HeaderComponent label="Attribute Group List" setShow={setShow} span={`(${!!getFamilyData && getFamilyData?.data?.length} Results)`} buttons={buttons} />
+                    <HeaderComponent label="Attribute Group List" setShow={setShow} span={`(${totalRecords} Results)`} buttons={buttons} />
                     <CommonTable
                         totalPages={totalPages}
                         changePage={changePage}
                         setPage={setPage}
                         currentPage={page}
-
                         deleteData={deleteGroupById} getDatafn={fetchAttrGroupByid} tableHeading={th} datas={!!getFamilyData && getFamilyData.data} options={options} showCheckBox={false} showFilter={true} />
                     {loader ? <div className="w-full h-[100vh] flex items-center justify-center  fixed left-0 top-0 z-[999]">
                         <Loader />

@@ -6,20 +6,22 @@ import { COLORS } from "../../utils/colors";
 import CreateSubCategoriesPopUp from "../../components/ui/Categories/CreateSubCategoriesPopUp";
 import { Apis } from "../../services/apis/CategoryApis/Api";
 import Loader from "../../utils/Loader";
-import { notify } from "../../utils/notify";
 import { useNavigate } from "react-router-dom";
 import CommonTable from "../../components/common/CommonTable"
-import CategoryTable from "../../components/ui/Categories/CategoryTable";
+import FullScreenLoader from "../../utils/FullScreenLoader";
+import CommonTableForPage from "../../components/common/CommonTableForPage";
+import TableForCategoriesPage from "../../components/common/TableForCategoriesPage";
 const CategoriesList = () => {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(100000);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [fetchCatloader, setCatLoader] = useState(false);
-  const [getSubCatData, setSubCatData] = useState([]);
+  const [getCatData, setCatData] = useState([]);
   const [getCategories, setCategories] = useState([]);
+  const [parentCategory, setParentCategories] = useState([]);
 
   const [getFamilyDataById, setFamilyDataById] = useState([]);
   const [loader, setLoader] = useState(false);
@@ -42,21 +44,28 @@ const CategoriesList = () => {
 
   const th = [
     {
-      title: 'Name',
-      key: 'name', // Ensure this matches the object key in datas
+      title: 'Category',
+      key: 'category_id', // Ensure this matches the object key in datas
+    },
+    {
+      title: 'Title',
+      key: 'title', // Ensure this matches the object key in datas
     },
     {
       title: 'Image',
-      key: 'Image', // Ensure this matches the object key in datas
+      key: 'banner_image',
+      type: 'image' // Ensure this matches the object key in datas
     },
     {
-      title: 'Slug',
-      key: 'slug', // Ensure this matches the object key in datas
+      title: 'Banner Link',
+      key: 'banner_link',
+      // Ensure this matches the object key in datas
     },
     {
-      title: 'Status',
-      key: 'status', // Ensure this matches the object key in datas
+      title: 'Description',
+      key: 'description', // Ensure this matches the object key in datas
     },
+
 
   ];
   const changePage = (newPage) => {
@@ -78,7 +87,7 @@ const CategoriesList = () => {
   }
   );
 
-  const fetchSubCategoryById = (uid, id, name) => {
+  const fetchCategoryById = (uid, id, name) => {
     const datas = {
       "uid": uid,
       "category": {
@@ -87,73 +96,88 @@ const CategoriesList = () => {
       }
     }
 
-    navigate("/create-sub-categories", {
+    navigate("/create-categories", {
       state: { datas: datas },
     });
 
   }
 
-  const deleteSubCatById = (id) => {
+  const deleteCatById = (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this group?");
     if (confirmDelete) {
-      Apis.deleteSubCategories(id, setLoader, setResponse);
+      Apis.deleteCategories(id, setLoader, setResponse);
     }
   }
 
   useEffect(() => {
-    Apis.fetchChildCategories(setCatLoader, setCategories);
-    Apis.fetchSubCategories(page, limit, setCatLoader, setSubCatData);
+    Apis.fetchCategories(setCatLoader, setCategories);
+    // Apis.fetchCategoriesPages(setCatLoader, setCatData);
   }, []);
 
   useEffect(() => {
-    if (getSubCatData.success) {
-      setTotalPages(getSubCatData.total_pages)
-      setTotalRecords(getSubCatData.total_records)
+    if (getCatData.success) {
+
+      setTotalPages(getCatData.total_pages)
+      setTotalRecords(getCatData.total_records)
     }
-  }, [getSubCatData]);
+  }, [getCatData]);
 
   useEffect(() => {
-    Apis.fetchSubCategories(page, limit, setCatLoader, setSubCatData);
+    // Apis.fetchCategoriesPages(setCatLoader, setCatData);
   }, [page]);
 
   useEffect(() => {
-    Apis.fetchSubCategories(page, limit, setCatLoader, setSubCatData);
+    // Apis.fetchCategoriesPages(setCatLoader, setCatData);
   }, [getResponse]);
 
 
 
   const onSubmit = (data) => {
-    navigate("/create-sub-categories", {
+    navigate("/create-categories", {
       state: { datas: data },
     });
 
   };
+  useEffect(() => {
+    if (!!getCategories && getCategories?.categories?.length) {
+
+      const parentCat = getCategories.categories.filter((it) => it.parent_id == 0);
+      setParentCategories(parentCat);
+    }
+
+  }, [getCategories]);
 
 
 
   return (
     <>
-      {fetchCatloader ? <div className="w-full h-[100vh] flex items-center justify-center bg-white fixed left-0 top-0 z-[999]">
-        <Loader />
-      </div> : <div>
+      {fetchCatloader ? <FullScreenLoader bgTransparent={true} /> : <div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <HeaderComponent label="Sub Categories List" setShow={setShow} span={`(${!!getSubCatData && getSubCatData?.data?.length} Results)`} buttons={buttons} />
-          <CategoryTable
+          <HeaderComponent label="Categories List" setShow={setShow} span={`(${!!getCatData && getCatData?.data?.length} Results)`} buttons={buttons} />
+
+
+           <TableForCategoriesPage
+          
+            title="List of categories"
             totalPages={totalPages}
             changePage={changePage}
             setPage={setPage}
             currentPage={page}
+            deleteData={deleteCatById}
+            getDatafn={fetchCategoryById} tableHeading={th}
+            datas={!!getCatData && getCatData?.data}
+            showCheckBox={false} showFilter={true}
+          />
 
-            deleteData={deleteSubCatById} getDatafn={fetchSubCategoryById} tableHeading={th} datas={!!getSubCatData && getSubCatData.data} showCheckBox={false} showFilter={true} />
-          {loader ? <div className="w-full h-[100vh] flex items-center justify-center  fixed left-0 top-0 z-[999]">
-            <Loader />
-          </div> : ''}
+
+          {loader ? <FullScreenLoader bgTransparent={true} /> : ''}
           <CreateSubCategoriesPopUp
+            title="Create Category"
             loader={loader}
             control={control}
             getFamilyDataById={getFamilyDataById}
             register={register} errors={errors} setValue={setValue}
-            getCategories={getCategories && getCategories.categories}
+            getCategories={parentCategory && parentCategory}
             isOpen={show}
             onClose={() => setShow(false)}
 

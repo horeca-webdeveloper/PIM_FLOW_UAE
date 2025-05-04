@@ -44,7 +44,7 @@ const ShippinDimension = ({ shippingDimension, setShippingDimension }) => {
           <span className="mr-1 cursor-pointer">
             13 missing required attribute
           </span>
-          <button className="ml-1">
+          <button  type="button" className="ml-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -132,13 +132,6 @@ const ShippinDimension = ({ shippingDimension, setShippingDimension }) => {
                 onChange={handleChange}
               />
               <CommonInput
-                label={"Shipping Weight"}
-                value={shippingDimension?.shipping_weight}
-                name={"shipping_weight"}
-                type={"Number"}
-                onChange={handleChange}
-              />
-              <CommonInput
                 label={"Shipping Width"}
                 value={shippingDimension?.shipping_width}
                 name={"shipping_width"}
@@ -167,6 +160,13 @@ const ShippinDimension = ({ shippingDimension, setShippingDimension }) => {
                   ""
                 }
                 options={shippingDimension?.shipping_weight_option || []}
+                onChange={handleChange}
+              />
+              <CommonInput
+                label={"Shipping Weight"}
+                value={shippingDimension?.shipping_weight}
+                name={"shipping_weight"}
+                type={"Number"}
                 onChange={handleChange}
               />
             </div>

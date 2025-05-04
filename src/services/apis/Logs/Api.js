@@ -36,5 +36,4 @@ const transactionLogsDetails = async (id, setLoader, setResponse) => {
 export const Apis = {
     transactionLogs,
     transactionLogsDetails
-
 }

@@ -10,7 +10,7 @@ const UserGeneralSetting = () => {
   return (
     <div className="h-[100vh]">
       {/* Tabs */}
-      <UserManagementHeader />
+      <UserManagementHeader heading={"General Properties"} />
       <UserGeneralSettingHeader />
 
       {/* Content Box */}

@@ -27,7 +27,7 @@ const InputComponent = ({
                     onChange={onChange}
                     placeholder={placeholder}
                     {...props}
-                    className={`w-full border border-gray-300 rounded ${type !== 'file' ? 'p-2' : 'p-1'} pr-10
+                    className={`w-full border border-gray-300 rounded ${type !== 'file' ? 'p-2 ' : 'p-1 pr-10'} 
                         focus:outline-none focus:ring-2 focus:ring-blue-500
                         file:bg-[#26683A] file:text-white file:border-none file:px-4 file:py-2 file:rounded
                         ${bgTransparent ? 'bg-transparent' : 'bg-[#F5F8F8]'} file:cursor-pointer`}

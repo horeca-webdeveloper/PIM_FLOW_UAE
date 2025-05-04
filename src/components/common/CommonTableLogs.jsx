@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaEdit, FaFilter, FaSearch, FaTrash } from "react-icons/fa";
 
 const CommonTableLogs = ({ tableHeading, datas, options, showFilter }) => {
+   
   return (
     <div className="p-0 bg-white border-t border-l border-r border-[#BCBCBC] rounded-md mt-[-15px]">
       {/* Tabs */}
@@ -51,7 +52,7 @@ const CommonTableLogs = ({ tableHeading, datas, options, showFilter }) => {
 
 
           <tbody>
-            {datas?.description?.Errors?.length > 0 ? (<>
+            {datas?.description ? (<>
             <tr className="hover:bg-gray-100 transition border-b border-[#BCBCBC]"
             >
               <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC] whitespace-nowrap">
@@ -91,7 +92,7 @@ const CommonTableLogs = ({ tableHeading, datas, options, showFilter }) => {
 
                 className="hover:bg-gray-100 transition border-b border-[#BCBCBC]"
               >
-                <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC] whitespace-nowrap">
+                <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC] align-top">
                   Errors
                 </td>
                 <td className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px]  border border-[#BCBCBC]">

@@ -1,126 +1,219 @@
-import React from "react";
-import { FaEdit, FaFilter, FaSearch, FaTrash } from "react-icons/fa";
+import React, { useState } from "react";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { InputText } from "primereact/inputtext";
 import { urls } from "../../config/baseUrls";
-import PaginationComponent from "./PaginationComponent";
-const CommonTable = ({ tableHeading, datas, options, showFilter, showCheckBox, getDatafn, deleteData, disableDelete, setPage, totalPages, changePage, currentPage }) => {
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import FullScreenLoader from "../../utils/FullScreenLoader";
 
-  return (
-    <div className="p-0 bg-white border-t border-l border-r border-[#BCBCBC] rounded-md mt-[20px]">
-      {/* Tabs */}
-      <div className="flex px-4 py-2 items-center justify-between bg-white rounded-md">
-        <div>
-{/* 
-          {!!options &&
-            options?.map((option, index) => (
-              <button type="button"
-                key={index}
-                className="px-6 py-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] hover:bg-gray-200 transition-all"
-              >
-                {option}
-              </button>
-            ))} */}
-        </div>
-        {showFilter && (
-          <div className="flex  justify-between ">
-            <div className="p-1 mt-0 ml-2 mr-2 w-[100px] bg-[#FAFBFD] border-[#BCBCBC] flex items-center justify-center space-x-3 border rounded-md">
-              <button className="text-blue-500 hover:text-blue-700">
-                <img src={`${urls.hostUrl}/icons/search.png`} alt="search" />
-              </button>
-
-              {/* Divider */}
-              <div className="w-px h-6 bg-[#979797]"></div>
-
-              <button className="text-red-500 hover:text-red-700">
-                <img src={`${urls.hostUrl}/icons/filter.png`} alt="filter" />
-              </button>
+// Utility function to handle nested object keys like "category.slug"
+const getNestedValue = (obj, keyPath) => {
+  return keyPath.split('.').reduce((acc, part) => acc?.[part], obj);
+};
 
 
-            </div>
-            <button className="text-red-500 p-2 bg-[#FAFBFD] hover:text-red-700 ml-1 border rounded-md">
-              <img src={`${urls.hostUrl}/icons/sorting.png`} alt="sorting" />
-            </button>
-          </div>
-        )}
-      </div>
+const CommonTable = ({
+  title,
+  tableHeading,
+  datas,
+  showCheckBox,
+  getDatafn,
+  deleteData,
+  disableDelete,
 
-      {/* Table */}
-      <div className="overflow-auto bg-white">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-200 text-gray-700 text-sm">
-            <tr className="border border-[#BCBCBC]">
-              {showCheckBox ? <th className="p-3 w-10 border border-[#BCBCBC]">
-                <input type="checkbox" />
-              </th> : ''}
+}) => {
 
-              {tableHeading.map((item, index) => (
-                <th
-                  key={index}
-                  className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC]"
-                >
-                  {item.title}
-                </th>
-              ))}
-              <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC]">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {datas?.length > 0 ? (
-              datas.map((row, rowIndex) => (
-                <tr
-                  key={rowIndex}
-                  className="hover:bg-gray-100 transition border-b border-[#BCBCBC]"
-                >
-                  {showCheckBox ?
-                    <td className="p-3 border-b border-[#BCBCBC]">
-                      <input type="checkbox" />
-                    </td> : ''
-                  }
-                  {tableHeading.map((column, colIndex) => (
-                    <td
-                      key={colIndex}
-                      className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC]"
-                    >
-                      {row[column.key]}
-                    </td>
-                  ))}
-                  <td className="p-3 items-center">
-                    <div className="flex  justify-center space-x-3 w-[100px] p-1 border rounded-md border-[#BCBCBC]">
-                      <span className="text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => getDatafn(row.id)}>
-                        <img src={`${urls.hostUrl}/icons/pencil-write.png`} alt="edit" />
-                      </span>
+  const [globalFilter, setGlobalFilter] = useState("");
 
-                      {!disableDelete ? <> {/* Divider */}
-                        <div className="w-px h-5 bg-gray-300"></div>
+  const exportCSV = () => {
+    const csvContent = [
+      tableHeading?.map((col) => col.title), // Headers
+      ...datas?.map((row) =>
+        tableHeading?.map((col) => {
+          const value = getNestedValue(row, col.key);
+          return Array.isArray(value)
+            ? value.map((v) => v.name || v).join(", ")
+            : value ?? "";
+        })
+      ),
+    ];
 
-                        <span className="text-red-500 hover:text-red-700 cursor-pointer" onClick={() => deleteData(row.id)}>
-                          <img src={`${urls.hostUrl}/icons/bin.png`} alt="trash" />
-                        </span></> : ''}
+    const worksheet = XLSX.utils.aoa_to_sheet(csvContent);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const buffer = XLSX.write(workbook, { bookType: "csv", type: "array" });
+    const blob = new Blob([buffer], { type: "text/csv" });
+    saveAs(blob, "data.csv");
+  };
 
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={tableHeading.length + 1}
-                  className="p-4 text-center text-gray-500 border border-[#BCBCBC]"
-                >
-                  No Data Available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <PaginationComponent setPage={setPage}
-             totalPages={totalPages}
-             changePage={changePage}
-             currentPage={currentPage} />
+  const exportExcel = () => {
+    const excelData = datas?.map((row) => {
+      const rowObj = {};
+      tableHeading.forEach((col) => {
+        const value = getNestedValue(row, col.key);
+        rowObj[col.title] = Array.isArray(value)
+          ? value.map((v) => v.name || v).join(", ")
+          : value ?? "";
+      });
+      return rowObj;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    saveAs(blob, "data.xlsx");
+  };
+
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Exported Data", 14, 10);
+
+    const headers = tableHeading.map((col) => col.title);
+    const rows = datas.map((row) =>
+      tableHeading.map((col) => {
+        const value = getNestedValue(row, col.key);
+        return Array.isArray(value)
+          ? value.map((v) => v.name || v).join(", ")
+          : value ?? "";
+      })
+    );
+
+    autoTable(doc, {
+      head: [headers],
+      body: rows,
+      startY: 20,
+    });
+
+    doc.save("data.pdf");
+  };
+  const cellClass = "px-3 py-2  text-sm text-gray-500 border";
+  const headerClass =
+    "px-3 py-2 text-left text-sm font-medium text-gray-700 border whitespace-nowrap";
+
+  const actionBodyTemplate = (rowData) => (
+    <div className="p-1 mt-0 ml-2 mr-2 w-[100px] bg-[#FAFBFD] border-[#BCBCBC] flex items-center justify-center space-x-3 border rounded-md">
+      <img
+        src={`${urls.hostUrl}/icons/pencil-write.png`}
+        alt="edit"
+        className="cursor-pointer"
+        onClick={() => getDatafn(rowData.id)}
+      />
+      {!disableDelete && (
+        <>
+          <div className="w-px h-5 bg-gray-300"></div>
+          <img
+            src={`${urls.hostUrl}/icons/bin.png`}
+            alt="delete"
+            className="cursor-pointer"
+            onClick={() => deleteData(rowData.id)}
+          />
+        </>
+      )}
     </div>
+  );
+ 
+  return (
+    <>
+       
+        <div className="p-0 bg-white border-t border-l border-r border-[#BCBCBC] rounded-md mt-[20px] capitalize">
+          {/* Top Controls */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 gap-4">
+            <InputText
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder="Search..."
+              className="border border-gray-300 rounded-md px-3 py-2 w-full md:w-1/2 focus:outline-none"
+            />
+            {/* <div className="flex gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={exportCSV}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm"
+              >
+                Export CSV
+              </button>
+              <button
+                type="button"
+                onClick={exportExcel}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
+              >
+                Export Excel
+              </button>
+              <button
+                type="button"
+                onClick={exportPDF}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm"
+              >
+                Export PDF
+              </button>
+            </div> */}
+          </div>
+
+          <DataTable
+            value={datas}
+            paginator
+            rows={20}
+            dataKey="id"
+            currentPageReportTemplate={`Showing {first} to {last} of {totalRecords}`}
+            globalFilter={globalFilter}
+            header={title}
+            className="p-datatable-gridlines"
+            responsiveLayout="scroll"
+            stripedRows
+          >
+            {showCheckBox && (
+              <Column
+                selectionMode="multiple"
+                headerStyle={{ width: "3rem" }}
+                  bodyClassName={cellClass}
+              headerClassName={headerClass}
+              />
+            )}
+
+            {tableHeading.map((item, idx) => (
+              <Column
+                key={idx}
+                field={item.key}
+                header={item.title}
+                sortable
+                filter
+                body={(rowData) => {
+                  const value = getNestedValue(rowData, item.key);
+                  if (item.type === "image") {
+                    return (
+                      <img
+                        src={value}
+                        alt={item.title}
+                        className="w-12 h-12 object-contain rounded"
+                      />
+                    );
+                  }
+                  return Array.isArray(value)
+                    ? value.map((v) => v?.name || v).join(", ")
+                    : value ?? "";
+                }}
+                bodyClassName={cellClass}
+                headerClassName={headerClass}
+              />
+            ))}
+
+            <Column
+              header="Action"
+              body={actionBodyTemplate}
+              bodyClassName={cellClass}
+              headerClassName={headerClass}
+            />
+          </DataTable>
+        </div>
+      
+    </>
   );
 };
 
-export default React.memo(CommonTable);
+export default CommonTable;

@@ -31,8 +31,8 @@ const attributeTypes = [
   { id: "table", name: "Table", icon: table },
 ];
 
-const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, updateDatas,setType }) => {
-
+const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, updateDatas, setType }) => {
+ 
   const {
     register,
     handleSubmit,
@@ -46,11 +46,23 @@ const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, upd
 
   const attributeName = watch("name", "");
   const selectedType = watch("type", "");
- 
+
   useEffect(() => {
     setType(selectedType);
   }, [selectedType]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden"; // Lock scroll
+    } else {
+      document.body.style.overflow = "auto"; // Restore scroll
+    }
+  
+    return () => {
+      document.body.style.overflow = "auto"; // Cleanup on unmount
+    };
+  }, [isOpen]);
+  
   useEffect(() => {
     if (attributeName) {
       const formattedCode = utilsFn.formatAttributeName(attributeName);
@@ -59,10 +71,13 @@ const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, upd
   }, [attributeName, setValue]);
   useEffect(() => {
     if (updateDatas) {
+    
       reset({
         type: updateDatas.type || "",
         name: updateDatas.name || "",
         code: updateDatas.code || "",
+        attribute_group_id:updateDatas.attribute_groups?.[0]?.id || "",
+
       });
     } else {
       reset({ type: "", name: "", code: "" });
@@ -72,6 +87,7 @@ const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, upd
   if (!isOpen) return null; // ✅ Moved AFTER useEffect
 
   const onSubmit = (data) => {
+
     if (updateDatas) {
       data.id = updateDatas.id;
       data.is_required = updateDatas.is_required;
@@ -83,15 +99,13 @@ const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, upd
       // reset();
 
     }
-
-  
     //  onClose();
   };
 
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg max-w-full  mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-10">
+      <div className="bg-white rounded-lg max-w-full  mx-4 overflow-auto max-h-[90vh]">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-lg font-medium">Create Attribute</h2>
           <button
@@ -103,33 +117,44 @@ const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, upd
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="p-4 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="space-y-2">
+              <label className="block text-md font-medium text-gray-700 mb-1">
                 Attribute Name (Required)
               </label>
-              <InputComponent width="full" bgTransparent={true} name="name" {...register("name", { required: "Name is required" })} type="text" placeholder="Enter attribute name"/>
-             
-              {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+              <InputComponent width="full" bgTransparent={true} name="name" {...register("name", { required: "Name is required" })} type="text" placeholder="Enter attribute name" />
+
+              {errors.name && <p className="text-red-500">{errors.name.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-md font-medium text-gray-700 mb-1">
                 Code (Required)
               </label>
-              <InputComponent  width="full"   name="code" {...register("code")} type="text"  readOnly/>
-              {errors.code && <p className="text-red-500 text-xs">{errors.code.message}</p>}
+              <InputComponent width="full" name="code" {...register("code")} type="text" readOnly />
+              {errors.code && <p className="text-red-500 ">{errors.code.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Choose the attribute type (Required) {!selectedType? <p className="text-red-500 text-xs">Choose the attribute type required</p>:''}
+              <label className="block text-md font-medium text-gray-700 mb-2">
+                Choose the attribute type (Required)
+
+                <input
+                  type="hidden"
+                  {...register("type", { required: "Choose  attribute type required" })}
+                />
+
+                {errors.type && (
+                  <p className="text-red-500  mb-2">
+                    {errors.type.message}
+                  </p>
+                )}
 
               </label>
 
               <div className="sm:h-[200px] sm:overflow-y-auto 2xl:h-full ">
 
                 <div className="grid grid-cols-4 gap-2">
-                  {attributeTypes.slice(0, 4).map((type,index) => (
+                  {attributeTypes.slice(0, 4).map((type, index) => (
                     <div
                       key={index}
                       className={`flex items-center justify-center border rounded-md  w-[120px] h-[120px] p-2 cursor-pointer ${selectedType === type.id
@@ -138,7 +163,7 @@ const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, upd
                         }`}
                       onClick={() => setValue("type", type.id)}
                     >
-                 
+
                       <div className="flex items-center justify-center relative">
                         <div className="absolute top-1 left-1">
                           <div
@@ -250,7 +275,7 @@ const CreateAttributes = ({ isOpen, onClose, loader, setLoader, setResponse, upd
               //   })
               // }
               className="flex-1 py-3 text-white font-medium rounded cursor-pointer text-white bg-[#26683A] text-[18px] hover:bg-green-700 "
-              disabled={!selectedType}
+            // disabled={!selectedType}
             >
               {loader ? <Loader /> : `${updateDatas ? 'Update' : 'Create'}`}
             </button>

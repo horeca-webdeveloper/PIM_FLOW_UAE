@@ -147,7 +147,7 @@ const handleUpdateCategoryAttr = async (datas, setLoader, setResponse) => {
   
     try {
         setLoader(true);
-        const response = await apiClient.post(`/category-attributes/${data.id}/add-attribute`,
+        const response = await apiClient.put(`/category-attributes/${data.id}`,
             data
         );
         setResponse(response.data);
@@ -172,6 +172,19 @@ const fetchAttributeGroups = async (setLoader, setResponse) => {
         setLoader(false);
     }
 }
+ 
+const deleteAttributeGrps = async (id,cid, setLoader, setResponse) => {
+    try {
+        setLoader(true);
+        const response = await apiClient.delete(`/category-attributes/${id}/remove-attribute-group/${cid}`);
+        setResponse(response.data);
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || "Something went wrong!";
+        notify(errorMessage)
+    } finally {
+        setLoader(false);
+    }
+}
 export const Apis = {
     handleCreate,
     fetchFamilies,
@@ -183,6 +196,7 @@ export const Apis = {
     fetchCategoryAttributes,
     handleFetchCategoryAttrById,
     handleUpdateCategoryAttr,
-    fetchAttributeGroups
+    fetchAttributeGroups,
+    deleteAttributeGrps
      
 }

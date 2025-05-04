@@ -51,6 +51,7 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
         toast.success("User Updated Successfully");
         window.location.reload();
         setShowEdit(false);
+        document.body.style.overflow = "auto";
       },
       onError: (err) => {
         setLoader(false);
@@ -73,7 +74,7 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
             {...register("email", { required: "Email is required" })}
           />
           {errors.email && (
-            <p className="text-red-500">{errors.email.message}</p>
+            <p className="text-red-500 text-[14px]">{errors.email.message}</p>
           )}
 
           <div className="mb-2">
@@ -84,7 +85,9 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
               <input
                 type={showOldPassword ? "password" : "text"}
                 className="border border-[#A8A4A4] w-full rounded-[4px] px-3 py-2 h-[42px] text-[#616161]"
-                {...register("old_password")}
+                {...register("old_password", {
+                  required: "Old password is required",
+                })}
               />
               <button
                 type="button"
@@ -98,6 +101,11 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
                 )}
               </button>
             </div>
+            {errors.old_password && (
+              <p className="text-red-500 text-[14px]">
+                {errors.old_password.message}
+              </p>
+            )}
           </div>
 
           <div className="mb-2">
@@ -125,7 +133,9 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
               </button>
             </div>
             {errors.new_password && (
-              <p className="text-red-500">{errors.new_password.message}</p>
+              <p className="text-red-500 text-[14px]">
+                {errors.new_password.message}
+              </p>
             )}
           </div>
 
@@ -156,7 +166,9 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
               </button>
             </div>
             {errors.confirm_password && (
-              <p className="text-red-500">{errors.confirm_password.message}</p>
+              <p className="text-red-500 text-[14px]">
+                {errors.confirm_password.message}
+              </p>
             )}
           </div>
 
@@ -166,7 +178,9 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
             {...register("first_name", { required: "First name is required" })}
           />
           {errors.first_name && (
-            <p className="text-red-500">{errors.first_name.message}</p>
+            <p className="text-red-500 text-[14px]">
+              {errors.first_name.message}
+            </p>
           )}
 
           <CommonInput
@@ -175,7 +189,9 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
             {...register("last_name", { required: "Last name is required" })}
           />
           {errors.last_name && (
-            <p className="text-red-500">{errors.last_name.message}</p>
+            <p className="text-red-500 text-[14px]">
+              {errors.last_name.message}
+            </p>
           )}
 
           <div>
@@ -194,14 +210,19 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
               ))}
             </select>
             {errors.role_id && (
-              <p className="text-red-500">{errors.role_id.message}</p>
+              <p className="text-red-500 text-[14px]">
+                {errors.role_id.message}
+              </p>
             )}
           </div>
 
           <div className="flex mt-[20px] justify-end space-x-2">
             <button
               type="button"
-              onClick={() => setShowEdit(false)}
+              onClick={() => {
+                setShowEdit(false);
+                document.body.style.overflow = "auto";
+              }}
               className="flex-1 bg-[#F1EFEF] border border-[#A8A4A4] text-[#303030] py-2 px-4 mr-2 rounded"
             >
               Cancel

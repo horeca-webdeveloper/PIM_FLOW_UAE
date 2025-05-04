@@ -63,6 +63,7 @@ const CreateProduct = ({ setShowPopup }) => {
         setLoading(false);
         if (data?.success == true) {
           navigate(`/AddProducts/${data?.product?.id}`);
+          document.body.style.overflow = "auto";
         } else {
           toast.error(data?.message);
         }
@@ -96,7 +97,10 @@ const CreateProduct = ({ setShowPopup }) => {
               : "Create Product Model"}
           </h2>
           <button
-            onClick={() => setShowPopup(false)}
+            onClick={() => {
+              setShowPopup(false);
+              document.body.style.overflow = "auto";
+            }}
             className="text-gray-500 hover:text-gray-700 text-[20px]"
           >
             ×
@@ -188,7 +192,10 @@ const CreateProduct = ({ setShowPopup }) => {
 
         <div className="flex p-4">
           <button
-            onClick={() => setShowPopup(false)}
+            onClick={() => {
+              setShowPopup(false);
+              document.body.style.overflow = "auto";
+            }}
             className="flex-1 bg-[#F1EFEF] border border-[#A8A4A4] text-[#303030] py-2 px-4 mr-2 rounded"
           >
             Cancel

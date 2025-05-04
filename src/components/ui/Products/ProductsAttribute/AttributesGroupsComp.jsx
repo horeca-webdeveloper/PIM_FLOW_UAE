@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import CommonInput from "../../../common/MultiAttributes/CommonInput";
-import MultiSelectComponent from "../../../common/MultiSelectComponent";
 import SelectComponent from "../../../common/SelectComponent";
 import TextAreasComponent from "../../../common/TextAreasComponent";
 import MultiSelectForProduct from "../../../common/MultiSelectForProduct";
-import { IoToggle } from "react-icons/io5";
 import CommonMediaInput from "../../../common/CommonMediaInput";
+
 const AttributesGroupsComp = ({ title, datas, setAttributeData, attributeData }) => {
 
   const [show, setShow] = useState(true);
@@ -26,7 +25,7 @@ const AttributesGroupsComp = ({ title, datas, setAttributeData, attributeData })
 
   // Handle input changes
   const handleChange = (e, id, type) => {
-    console.log("id", id);
+ 
     let value;
     if (e.target) {
       value = e.target.value;
@@ -72,8 +71,7 @@ const AttributesGroupsComp = ({ title, datas, setAttributeData, attributeData })
           {datas?.map((item) => (
             <div key={item.id} className="flex items-center px-4 mt-[10px] mb-[20px] gap-4">
               <div className="w-full">
-{console.log("item",item.name)}
-{console.log("item",item)}
+ 
                 {item.type === "multiselect" ? (
                   <MultiSelectForProduct
                     label={item.name}
@@ -107,7 +105,7 @@ const AttributesGroupsComp = ({ title, datas, setAttributeData, attributeData })
                     }
                     onChange={(e) => handleChange(e, item.id, "select")}
                   />
-                ) : item.type == "yesno" || item.type === "toggle" ?
+                ) : item.type === "yesno" || item.type === "toggle" ?
                   (
                     <>
                       <label className="relative inline-flex items-center cursor-pointer mb-3 capitalize">{item.name}</label>
@@ -146,7 +144,7 @@ const AttributesGroupsComp = ({ title, datas, setAttributeData, attributeData })
                         label={item.name}
                         type="text"
                         width={100}
-                        ckeditor={true}
+                        // ckeditor={true}
                         name={item.name}
                         placeholder={item.name}
                         required={item?.validations?.required === 1}
@@ -168,7 +166,7 @@ const AttributesGroupsComp = ({ title, datas, setAttributeData, attributeData })
                           value={attributeData?.attributes?.[item.id] || ""}
                           step="any"
                           pattern={
-                            item?.validations?.negative === 0 ? "^[0-9]*\.?[0-9]+$" : "^-?[0-9]*\.?[0-9]+$"
+                            item?.validations?.negative === 0 ? "^[0-9]*\\.?[0-9]+$"  : "^-?[0-9]*\\.?[0-9]+$"
                           }
                           onChange={(e) => handleChange(e, item.id, item.type)}
                           type={(item.type === "measurement" || item.type === "price") ? "number" : (item.type === 'image' || item.type === 'videos') ? "file" : item.type}

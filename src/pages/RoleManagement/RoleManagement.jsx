@@ -15,7 +15,12 @@ const RoleManagement = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [id, setId] = useState("");
-  const { data, isLoading, error } = useFetchAllRoles();
+  const { data, isLoading, error } = useFetchAllRoles({
+    page: 1,
+    length: 20,
+  });
+
+  console.log("Role Data", data?.data);
   const {
     mutate,
     isLoading: createUserLoading,
@@ -39,12 +44,14 @@ const RoleManagement = () => {
   return (
     <>
       <UserManagementHeader setShowPopup={setShowPopup} heading={"Roles"} />
-      <Table
-        data={data}
-        isLoading={isLoading}
-        setId={setId}
-        setShowDelete={setShowDelete}
-      />
+      <div className="h-[80vh]">
+        <Table
+          data={data?.data}
+          isLoading={isLoading}
+          setId={setId}
+          setShowDelete={setShowDelete}
+        />
+      </div>
       {showPopup && <CreateRolePopup setShowPopup={setShowPopup} />}
       {showDelete && (
         <DeleteUserPopup

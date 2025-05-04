@@ -25,7 +25,7 @@ const CategoryHeader = ({ handleCreateProduct, updateProductLoading, categoryNam
 
         {/* Product Details */}
         <div className="flex flex-col items-between  h-[100px] ">
-          <h3 className="text-[18px] font-medium text-[#303030]">
+          <h3 className="text-[18px] font-medium text-[#303030]" key={categoryName}>
             {categoryName}
           </h3>
           <p className="text-[16px] text-[#616161]">
@@ -41,18 +41,19 @@ const CategoryHeader = ({ handleCreateProduct, updateProductLoading, categoryNam
       <div className="flex items-center gap-2"> {/* Ensures buttons stay in a line */}
         {buttons.map((item, index) => (
           <>
-            {item.type === 'submit' ? <button type="submit"
+            {item.type === 'submit' ? <button type="submit" key={index}
               className={`text-[${item.textSize}] leading-[17.64px]  text-[${item.textColor}] bg-[${item.bgColor}] px-[20px] font-${item.fontWeight} rounded-[5px] py-[8px] flex items-center gap-2 cursor-pointer`}
 
             >
               {item.icon && (
                 <img
+                key={index}
                   src={`${urls.hostUrl}/${item.icon}`}
                   alt="icon"
                   className="w-5 h-5"
                 />
               )} {item.label ? item.label : 'Save'}</button> : <>
-              {item.download ? <a
+              {item.download ? <a  
                 href={item.link} download={item.link} className={`text-[${item.textSize}] leading-[17.64px]  text-[${item.textColor}] bg-[${item.bgColor}] px-[20px] font-${item.fontWeight} rounded-[5px] py-[8px] flex items-center gap-2 cursor-pointer`}> {item.label}</a> : <span
                   onClick={
                     item.popup
@@ -68,6 +69,7 @@ const CategoryHeader = ({ handleCreateProduct, updateProductLoading, categoryNam
 
                 {item.icon && (
                   <img
+                  key={index}
                     src={`${urls.hostUrl}/${item.icon}`}
                     alt="icon"
                     className="w-5 h-5"

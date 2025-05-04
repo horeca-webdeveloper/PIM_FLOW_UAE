@@ -5,6 +5,18 @@ import { Controller } from "react-hook-form";
 const CreateFamilies = ({ isOpen, onClose, getCategories, register, errors, loader, setValue, control, getFamilyDataById }) => {
 
     useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden"; // Lock scroll
+        } else {
+            document.body.style.overflow = "auto"; // Restore scroll
+        }
+
+        return () => {
+            document.body.style.overflow = "auto"; // Cleanup on unmount
+        };
+    }, [isOpen]);
+
+    useEffect(() => {
         if (getFamilyDataById.success) {
             setValue('name', getFamilyDataById?.data?.name);
             setValue('category', getFamilyDataById?.data?.category)
@@ -32,11 +44,11 @@ const CreateFamilies = ({ isOpen, onClose, getCategories, register, errors, load
                 <div className="p-4 space-y-4">
                     <div>
                         <InputComponent
-
-                            {...register("name", { required: "Name is required" })}
-                            label="Attribute Group Name" width="full" type="text"
+                            bgTransparent={true}
+                            {...register("name", { required: "Group name is required" })}
+                            label="Attribute Group Name (Required)" width="full" type="text"
                             name="name"
-                            placeholder="Enter product name" />
+                            placeholder="Enter attribute group name" />
                     </div>
                     {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                     <div>

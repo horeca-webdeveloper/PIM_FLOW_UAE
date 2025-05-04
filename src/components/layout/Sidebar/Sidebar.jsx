@@ -15,15 +15,21 @@ import { useNavigate } from "react-router-dom";
 import sidebarAttributeIcon from "../../../assets/sidebar/sidebarAttributeIcon.png";
 import { FaUsersCog } from "react-icons/fa";
 
-const Sidebar = () => {
-  const [openSubmenus, setOpenSubmenus] = useState({});
+const Sidebar = ({
+  sidebarWidth,
+  activeLink,
+  setActiveLink,
+  openSubmenus,
+  setOpenSubmenus,
+}) => {
   const navigate = useNavigate();
 
   const toggleSubmenu = (label) => {
-    setOpenSubmenus((prev) => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
+    setOpenSubmenus((prev) => {
+      const isCurrentlyOpen = !!prev[label];
+      // Close all menus and open only the clicked one (if it wasn't already open)
+      return isCurrentlyOpen ? {} : { [label]: true };
+    });
   };
 
   const menuItems = [
@@ -31,30 +37,55 @@ const Sidebar = () => {
     {
       icon: <BiPackage size={20} />,
       label: "Products",
-      link: "/Products/1",
+      link: "/",
       submenu: [
-        { label: "Inventory", link: "/", icon: sidebarAttributeIcon },
         {
-          label: "Categories",
+          label: "Manage Products",
+          link: "/Products/1",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Parent Category",
           link: "/categories",
           icon: sidebarAttributeIcon,
         },
         {
-          label: "Sub Categories",
+          label: "Product Families",
           link: "/sub-categories",
           icon: sidebarAttributeIcon,
         },
-        { label: "Schemas", link: "/", icon: sidebarAttributeIcon },
-        { label: "Lifecycles", link: "/", icon: sidebarAttributeIcon },
+        // { label: "Schemas", link: "/", icon: sidebarAttributeIcon },
+        // { label: "Lifecycles", link: "/", icon: sidebarAttributeIcon },
         {
           label: "Import",
           link: "/product/import",
           icon: sidebarAttributeIcon,
         },
-        
+
         {
           label: "Export",
           link: "/product/export",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Import Features",
+          link: "/import-features-and-benefits",
+          icon: sidebarAttributeIcon,
+        },
+
+        {
+          label: "Export Features",
+          link: "/export-features-and-benefits",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Import Image",
+          link: "/product/import-images",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Import Documents",
+          link: "/product/import-documents",
           icon: sidebarAttributeIcon,
         },
       ],
@@ -65,7 +96,7 @@ const Sidebar = () => {
       link: "#",
       submenu: [
         {
-          label: "Attributes",
+          label: "Manage Attributes",
           link: "/Attributes",
           icon: sidebarAttributeIcon,
         },
@@ -86,27 +117,83 @@ const Sidebar = () => {
     ,
     {
       icon: <BiPackage size={20} />,
-      label: "Brand",
+      label: "Brands",
       link: "#",
       submenu: [
         {
-          label: "First",
+          label: "Manage Brands",
+          link: "/BrandManagement",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "TempOne",
           link: "/brand/first",
           icon: sidebarAttributeIcon,
         },
         {
-          label: "Second",
+          label: "TempTwo",
           link: "/brand/second",
           icon: sidebarAttributeIcon,
         },
         {
-          label: "Third",
+          label: "TempThree",
           link: "/brand/third",
           icon: sidebarAttributeIcon,
         },
       ],
     },
+    {
+      icon: <BiPackage size={20} />,
+      label: "Vendors",
+      link: "#",
+      submenu: [
+        {
+          label: "Manage Vendor",
+          link: "/VendorManagement",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Pre Evaluate Vendor",
+          link: "/PreVendorManagement",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Export",
+          link: "/VendorExport",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Import",
+          link: "/vendor-import",
+          icon: sidebarAttributeIcon,
+        },
+      ],
+    },
     { icon: <MdDescription size={20} />, label: "Pricing" },
+    { icon: <BiPackage size={20} />, label: "FAQ", link: "/Faq" },
+    {
+      icon: <BiPackage size={20} />,
+      label: "SEO",
+      link: "/seoexport",
+      submenu: [
+        {
+          label: "Export",
+          link: "/seoexport",
+          icon: sidebarAttributeIcon,
+        },
+        {
+          label: "Import",
+          link: "/seoimport",
+          icon: sidebarAttributeIcon,
+        },
+      ],
+    },
+
+    {
+      icon: <BiPackage size={20} />,
+      link: "/media-management",
+      label: "Media Management",
+    },
     { icon: <MdShoppingCart size={20} />, label: "Orders" },
     { icon: <BiLineChart size={20} />, label: "Performance" },
     { icon: <BiBarChartAlt2 size={20} />, label: "Analytics" },
@@ -125,8 +212,16 @@ const Sidebar = () => {
     { icon: <MdLogout size={20} />, label: "Logout" },
   ];
 
+  const handleNavigation = (link) => {
+    setActiveLink(link);
+    navigate(link);
+  };
+
   return (
-    <div className="fixed left-0 top-[30px] w-[220px]  bg-[#EBEBEB] overflow-y-scroll max-h-[85vh] border-r-2 border-[#DFDFDF] flex flex-col">
+    <div
+      style={{ width: sidebarWidth }}
+      className="fixed left-0 top-[30px] w-[220px]  bg-[#EBEBEB] overflow-y-scroll max-h-[85vh] border-r-2 border-[#DFDFDF] flex flex-col"
+    >
       {/* Menu Items */}
       <div className="flex-1 py-4">
         <nav className="space-y-1 mt-[15px]">
@@ -134,7 +229,7 @@ const Sidebar = () => {
             <div key={index}>
               <button
                 className={`w-full flex items-center px-4 py-2 text-sm text-gray-700 transition-all duration-200
-                  hover:my-[10px] hover:text-white hover:w-[90%] hover:ml-[10px] hover:rounded-md group hover:bg-[#26683A]
+                  hover:text-white   group hover:bg-[#26683A]
                   ${openSubmenus[item.label] ? "bg-[#26683A] text-white" : ""}`}
                 onClick={() => {
                   if (item?.label == "Logout") {
@@ -167,11 +262,14 @@ const Sidebar = () => {
                   {item.submenu.map((subItem, subIndex) => (
                     <button
                       key={subIndex}
-                      onClick={() => navigate(subItem.link)}
-                      className="w-full mt-[10px] ml-[-20px] flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-[#26683A] hover:my-[10px] hover:text-white hover:w-[90%] hover:rounded-md"
+                      onClick={() => handleNavigation(subItem.link)}
+                      className={`min-w-[200px] mt-[10px] ml-[-20px] whitespace-nowrap flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-[#26683A] hover:my-[10px] hover:text-white hover:w-[90%] hover:rounded-md ${activeLink === subItem.link
+                          ? "bg-[#26683A] text-white rounded-md"
+                          : ""
+                        }`}
                     >
                       <img
-                        className="mr-[10px] mt-[-10px]"
+                        className="mr-[10px]  mt-[-10px]"
                         src={subItem.icon}
                         alt="icon"
                       />

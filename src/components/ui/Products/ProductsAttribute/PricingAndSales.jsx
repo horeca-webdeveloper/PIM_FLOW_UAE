@@ -4,17 +4,13 @@ import CommonOption from "../../../common/MultiAttributes/CommonOption";
 
 const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
   const [show, setShow] = useState(true);
-  // Handle input changes
+
   const handleChange = (e) => {
     const { name, value, type } = e.target;
 
-    // Remove `e`, `E`, `+`, and `-` from the input value
-    // Handle different input types
     let sanitizedValue;
-    if (type == "number") {
-      // Remove non-numeric characters except decimal point
+    if (type === "number") {
       sanitizedValue = value.replace(/[eE+-]/g, "");
-      // Convert to number or 0 if empty
       sanitizedValue = sanitizedValue === "" ? "" : Number(sanitizedValue);
     } else if (type === "checkbox") {
       sanitizedValue = e.target.checked;
@@ -22,28 +18,36 @@ const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
       sanitizedValue = value;
     }
 
-    setPricingSales((prev) => ({
-      ...prev,
-      [name]: sanitizedValue,
-    }));
-  };
+    setPricingSales((prev) => {
+      const updated = {
+        ...prev,
+        [name]: sanitizedValue,
+      };
 
-  const [costType, setCostType] = useState("");
-  const [additionCostValue, setAdditionalCostValue] = useState("");
-  const [costValuePercentage, setCostValuePercentage] = useState("");
+      const costType = updated.cost_type;
+      const costPerItem = Number(updated.cost_per_item || 0);
+      const additionalValue = Number(updated.additional_cost_value || 0);
+      const additionalPercent = Number(updated.additional_cost_percentage || 0);
+
+      let totalCost = 0;
+      if (costType === "value") {
+        totalCost = costPerItem + additionalValue;
+      } else if (costType === "percentage") {
+        totalCost = costPerItem + (costPerItem * additionalPercent) / 100;
+      }
+
+      return {
+        ...updated,
+        total_cost_per_item: totalCost,
+      };
+    });
+  };
 
   const missingCount =
     (!pricingSalesData?.price ? 1 : 0) +
     (!pricingSalesData?.sale_price ? 1 : 0) +
     (!pricingSalesData?.cost_per_item ? 1 : 0) +
-    (!pricingSalesData?.currency.length > 0 ? 1 : 0) +
-    (!pricingSalesData?.price ? 1 : 0) +
-    (!pricingSalesData?.price ? 1 : 0) +
-    (!pricingSalesData?.price ? 1 : 0) +
-    (!pricingSalesData?.price ? 1 : 0) +
-    (!pricingSalesData?.price ? 1 : 0) +
-    (!pricingSalesData?.price ? 1 : 0) +
-    (!pricingSalesData?.price ? 1 : 0);
+    (!pricingSalesData?.currency?.length > 0 ? 1 : 0);
 
   return (
     <div className="mt-[20px] bg-white border border-[#979797] rounded-lg">
@@ -70,7 +74,7 @@ const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
 
       {show && (
         <form className="space-y-4 px-4">
-          <div className="flex  gap-4 w-[full] pb-[15px]">
+          <div className="flex gap-4 w-full pb-[15px]">
             <div className="flex flex-col w-[50%] pr-[18px] border-r border-[#A8A4A4]">
               <h1 className="text-[20px] text-[#4A4A4A] mb-[20px] leading-[27.28px] font-normal">
                 Sale Price
@@ -78,7 +82,7 @@ const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
               <CommonOption
                 label="Currency"
                 name="currencyValue"
-                value={pricingSalesData?.currencyValue || ""} // Ensure correct value selection
+                value={pricingSalesData?.currencyValue || ""}
                 options={pricingSalesData?.currency}
                 onChange={handleChange}
               />
@@ -124,8 +128,8 @@ const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
               />
               <CommonOption
                 label="Cost Per Item Currency"
-                name="costCurrencyValue"
-                value={pricingSalesData?.costCurrencyValue || ""} // Ensure correct value selection
+                name="cost_per_item_currency"
+                value={pricingSalesData?.cost_per_item_currency || ""}
                 options={pricingSalesData?.currency}
                 onChange={handleChange}
               />
@@ -134,34 +138,43 @@ const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
                   Cost Type
                 </label>
                 <select
-                  className={
-                    "border border-[#A8A4A4] rounded-[4px] px-3 py-2 h-[42px] text-[#616161]"
-                  }
-                  onChange={(e) => setCostType(e.target.value)}
+                  className="border border-[#A8A4A4] rounded-[4px] px-3 py-2 h-[42px] text-[#616161]"
+                  name="cost_type"
+                  value={pricingSalesData?.cost_type}
+                  onChange={handleChange}
                 >
                   <option value={""}>Select Type</option>
-                  <option value={"Percentage"}>Percentage</option>
-                  <option value={"Value"}>Value</option>
+                  <option value={"percentage"}>Percentage</option>
+                  <option value={"value"}>Value</option>
                 </select>
               </div>
-              {costType == "Value" ? (
+
+              {pricingSalesData?.cost_type === "value" && (
                 <div className="w-[100%] mt-[10px]">
                   <CommonInput
                     label={"Additional Cost Value"}
-                    name={"cost_per_item"}
+                    name={"additional_cost_value"}
                     type={"Number"}
-                    value={additionCostValue}
-                    onChange={(e) => setAdditionalCostValue(e.target.value)}
+                    value={pricingSalesData?.additional_cost_value}
+                    onChange={handleChange}
                   />
                 </div>
-              ) : costType == "Percentage" ? (
+              )}
+
+              {pricingSalesData?.cost_type === "percentage" && (
                 <div className="flex flex-col w-[100%] mt-[4px]">
                   <label className="text-[16px] text-[#616161] font-semibold">
                     Additional Cost Percentage
                   </label>
                   <select
                     className="border border-[#A8A4A4] rounded-[4px] px-3 py-2 h-[42px] text-[#616161]"
-                    onChange={(e) => setCostValuePercentage(e.target.value)}
+                    name="additional_cost_percentage"
+                    onChange={handleChange}
+                    value={
+                      pricingSalesData?.additional_cost_percentage?.split(
+                        "."
+                      )[0]
+                    }
                   >
                     <option value={""}>Select Type</option>
                     {Array.from({ length: 100 }, (_, i) => (
@@ -171,23 +184,16 @@ const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
                     ))}
                   </select>
                 </div>
-              ) : null}
+              )}
 
               <div className="flex gap-4 mt-[10px] w-[100%]">
                 <CommonInput
                   label={"Total Cost Per Item"}
-                  name={"cost_per_item"}
+                  name={"total_cost_per_item"}
                   type={"Number"}
-                  value={
-                    costType == "Value"
-                      ? Number(pricingSalesData?.cost_per_item) +
-                        Number(additionCostValue)
-                      : Number(pricingSalesData?.cost_per_item) +
-                        (Number(pricingSalesData?.cost_per_item) *
-                          Number(costValuePercentage)) /
-                          100
-                  }
+                  value={pricingSalesData?.total_cost_per_item || 0}
                   onChange={handleChange}
+                  disabled // optional: disable manual edit
                 />
               </div>
             </div>

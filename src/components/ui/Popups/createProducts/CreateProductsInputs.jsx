@@ -57,7 +57,7 @@ const CreateProductsInputs = ({
             </label>
             <input
               type="text"
-              placeholder="123456"
+              placeholder="Ex :- DB876H-TU"
               className="w-full border border-gray-300 rounded p-2 text-sm"
               value={formData.sku}
               onChange={(e) => handleInputChange("sku", e.target.value)}
@@ -88,8 +88,8 @@ const CreateProductsInputs = ({
             </select>
 
             {/* Second Level Dropdown */}
-            {selectedCategory?.children &&
-              selectedCategory.children.length > 0 && (
+            {selectedCategory?.children_recursive &&
+              selectedCategory.children_recursive.length > 0 && (
                 <>
                   <label className="block sm:font-semibold sm:text-[14px] text-[#616161] mb-1">
                     Secondary Category
@@ -97,15 +97,16 @@ const CreateProductsInputs = ({
                   <select
                     className="border  border-[#d1d5da] p-2 text-[14px] mb-[12px] rounded w-full"
                     onChange={(e) => {
-                      const subCategory = selectedCategory.children.find(
-                        (sub) => sub.id === Number(e.target.value)
-                      );
+                      const subCategory =
+                        selectedCategory.children_recursive.find(
+                          (sub) => sub.id === Number(e.target.value)
+                        );
                       setSelectedSubCategory(subCategory);
                       setSelectedItem(null);
                     }}
                   >
                     <option value="">Select Sub-Category</option>
-                    {selectedCategory.children.map((sub) => (
+                    {selectedCategory.children_recursive.map((sub) => (
                       <option key={sub.id} value={sub.id}>
                         {sub.name}
                       </option>
@@ -115,8 +116,8 @@ const CreateProductsInputs = ({
               )}
 
             {/* Third Level Dropdown */}
-            {selectedSubCategory?.children &&
-              selectedSubCategory.children.length > 0 && (
+            {selectedSubCategory?.children_recursive &&
+              selectedSubCategory.children_recursive.length > 0 && (
                 <>
                   <label className="block sm:font-semibold sm:text-[14px] text-[#616161] mb-1">
                     Product Family
@@ -125,7 +126,7 @@ const CreateProductsInputs = ({
                   <select
                     className="border p-2  border-[#d1d5da] text-[14px] mb-[12px] rounded w-full"
                     onChange={(e) => {
-                      const item = selectedSubCategory.children.find(
+                      const item = selectedSubCategory.children_recursive.find(
                         (child) => child.id === Number(e.target.value)
                       );
                       setSelectedItem(item);
@@ -138,7 +139,7 @@ const CreateProductsInputs = ({
                     }}
                   >
                     <option value="">Select Item</option>
-                    {selectedSubCategory.children.map((child) => (
+                    {selectedSubCategory.children_recursive.map((child) => (
                       <option key={child.id} value={child.id}>
                         {child.name}
                       </option>

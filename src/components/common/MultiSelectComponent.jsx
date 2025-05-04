@@ -64,12 +64,13 @@ export default function MultiSelectComponent({
     return (
         <div className="space-y-1 mb-2">
             <div className="flex items-center">
-                <label className="block text-[16px] font-medium leading-[21.82px] text-[#616161] capitalize">
+                <label className="block text-[16px] font-medium leading-[21.82px] text-[#616161] capitalize ">
                     {label}
                 </label>
             </div>
 
             <Select
+            
                 closeMenuOnSelect={!isMulti}
                 components={animatedComponents}
                 value={selectedValue}
@@ -81,8 +82,11 @@ export default function MultiSelectComponent({
                     onChange?.(selected);
                 }}
                 isDisabled={disabled}
+            
                 {...props}
-                className={`${width ? `w-${width}` : "w-[50%]"} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`${width ? `w-${width}` : "w-[50%]"} focus:outline-none focus:ring-2 focus:ring-blue-500 `}
+
+                
             />
         </div>
     );

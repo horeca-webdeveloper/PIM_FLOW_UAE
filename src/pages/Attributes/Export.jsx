@@ -7,6 +7,7 @@ import SelectComponent from "../../components/common/SelectComponent";
 import CollapseComponent from "../../components/common/CollapseComponent";
 import { Apis } from "../../services/apis/ImportExport/Api";
 import FullScreenLoader from "../../utils/FullScreenLoader";
+import { notify } from "../../utils/notify";
 const Export = () => {
     const [loader, setLoader] = useState(false);
     const [response, setResponse] = useState([]);
@@ -15,8 +16,8 @@ const Export = () => {
     const [secondryCategory, setSecondCategories] = useState([]);
     const [thirdCategory, setThirdCategories] = useState([]);
     const [fourthCategory, setFourthCategories] = useState([]);
-      const [fileName, setFileName] = useState(null);
-    const url='/attributes/export';
+    const [fileName, setFileName] = useState(null);
+    const url = '/attributes/export';
     const {
         register,
         handleSubmit,
@@ -57,8 +58,9 @@ const Export = () => {
             "range_from": parseInt(data.from),
             "range_to": parseInt(data.to)
         }
-        const name= findName(categoryId);
-        Apis.exportData(datas, setLoader, setResponse,url,`${name}_${data.from}_${data.to}`);
+        const name = findName(categoryId);
+        Apis.exportData(datas, setLoader, setResponse,response, url, `${name}_products_${data.from}-${data.to}`);
+            //  notify("Start product importing...")
         reset();
     };
     useEffect(() => {
@@ -102,37 +104,40 @@ const Export = () => {
         Apis.fetchCategories(setLoader, setCategories);
     }, []);
 
-
+    useEffect(() => {
+        setThirdCategories([]);
+        setFourthCategories([]);
+    }, [parentId]);
     return (
         <>
             {loader ? <FullScreenLoader bgTransparent={true} /> : ''}
             <form onSubmit={handleSubmit(onSubmit)}>
                 <HeaderComponent label="Export" span="" buttons={buttons} />
-              
+
                 {/* Collapsible Section */}
-                <CollapseComponent title="Export"   errors={errors}
-                
+                <CollapseComponent title="Export" errors={errors}
+
                 >
-                    <div className="space-y-4">
+                    <div className="space-y-2">
                         {/* <SelectComponent label="Select Export Type" name="export_type" /> */}
                         <SelectComponent label="Primary Category (Required)" name="primary_category" option={!!parentCategory && parentCategory} {...register("primary_category", { required: "Primary category is required" })} />
                         {errors.primary_category && <p className="text-red-500">{errors.primary_category.message}</p>}
 
                         {secondryCategory && secondryCategory.length > 0 ? <>
-                            <SelectComponent label="Second Category (Required)" option={secondryCategory && secondryCategory} name="second_category" {...register("second_category", { required: "Secondry category is required" })} />
+                            <SelectComponent label="Second Category " option={secondryCategory && secondryCategory} name="second_category" {...register("second_category" )} />
                             {errors.second_category && <p className="text-red-500">{errors.second_category.message}</p>}</> : ''}
                         {thirdCategory && thirdCategory.length > 0 ? <>
 
-                            <SelectComponent label="Third Category" option={thirdCategory && thirdCategory} name="third_category" {...register("third_category")} />
+                            <SelectComponent label={`${fourthCategory.length>0?'Third Category':'Product Family'}`} option={thirdCategory && thirdCategory} name="third_category" {...register("third_category")} />
                         </> : ''}
 
                         {fourthCategory && fourthCategory.length > 0 ? <>
-                            <SelectComponent label="Fourth Category" option={fourthCategory && fourthCategory} name="fourth_category" {...register("fourth_category")} />
+                            <SelectComponent label="Product Family" option={fourthCategory && fourthCategory} name="fourth_category" {...register("fourth_category")} />
                         </> : ''}
 
                         <InputComponent label="From Range (Required)" type="number" min="1" placeholder="Enter from range" name="from"  {...register("from", { required: "From range is required" })} />
                         {errors.from && <p className="text-red-500">{errors.from.message}</p>}
-                        <InputComponent label="To Range (Required)" min="1" type="number" max="2000" placeholder="Enter To range" name="to"   {...register("to", { required: "To range is required" })} />
+                        <InputComponent label="To Range (Required)" min="1" type="number"  placeholder="Enter To range" name="to"   {...register("to", { required: "To range is required" })} />
                         {errors.to && <p className="text-red-500">{errors.to.message}</p>}
                     </div>
                 </CollapseComponent>

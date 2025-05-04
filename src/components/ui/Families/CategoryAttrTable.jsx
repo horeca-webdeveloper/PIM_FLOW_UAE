@@ -8,7 +8,7 @@ const CategoryAttrTable = ({
     showFilter,
     showCheckBox,
     getDatafn,
-    deleteData
+    deleteAttributesGroups
 }) => {
     const [expandedRows, setExpandedRows] = useState({});
 
@@ -102,7 +102,12 @@ const CategoryAttrTable = ({
                                             <td className="p-3 items-center">
                                                 <div className="flex justify-center space-x-3 w-[100px] p-1 border rounded-md border-[#BCBCBC]">
                                                     <span className="text-red-500 hover:text-red-700 cursor-pointer">
-                                                        <img src={`${urls.hostUrl}/icons/bin.png`} alt="delete" />
+                                                         <img
+                                                                src={`${urls.hostUrl}/icons/bin.png`}
+                                                                alt="delete"
+                                                                className="cursor-pointer"
+                                                                onClick={() => deleteAttributesGroups(item.id)}
+                                                              />
                                                     </span>
                                                 </div>
                                             </td>
@@ -144,7 +149,13 @@ const CategoryAttrTable = ({
                                             <td className="p-3 items-center">
                                                 <div className="flex justify-center space-x-3 w-[100px] p-1 border rounded-md border-[#BCBCBC]">
                                                     <span className="text-red-500 hover:text-red-700 cursor-pointer">
-                                                        <img src={`${urls.hostUrl}/icons/bin.png`} alt="delete" />
+                                                        
+                                                          <img
+                                                                src={`${urls.hostUrl}/icons/bin.png`}
+                                                                alt="delete"
+                                                                className="cursor-pointer"
+                                                                onClick={() => deleteAttributesGroups(item.id)}
+                                                              />
                                                     </span>
                                                 </div>
                                             </td>

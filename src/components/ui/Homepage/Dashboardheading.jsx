@@ -1,6 +1,6 @@
 import React from "react";
 
-const Dashboardheading = () => {
+const Dashboardheading = ({ statFilter, setStatFilter }) => {
   return (
     <div className="flex items-center pb-[20px] justify-between">
       <div className="flex items-center ">
@@ -10,14 +10,17 @@ const Dashboardheading = () => {
       </div>
       <div>
         <select
+          onChange={(e) => setStatFilter(e.target.value)}
           className="px-[15px] py-[8px] rounded-md bg-[#E3E3E3] text-[14px] leading-[17.64px] font-light "
           name=""
-          id=""
+          value={statFilter}
         >
-          <option value="">Last 30 days</option>
-          <option value="">Last 60 days</option>
-          <option value="">Last 90 days</option>
-          <option value="">Last 120 days</option>
+          <option value="15_days">Last 15 days</option>
+          <option value="30_days">Last 30 days</option>
+          <option value="2_months">Last 2 months</option>
+          <option value="3_months">Last 3 months</option>
+          <option value="6_months">Last 6 months</option>
+          <option value="lifetime">Life Time</option>
         </select>
       </div>
     </div>

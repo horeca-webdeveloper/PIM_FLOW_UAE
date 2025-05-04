@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import InputComponent from "../../common/InputComponent";
 import MultiSelectComponent from "../../common/MultiSelectComponent";
 import { Controller } from "react-hook-form";
-const CreateSubCategoriesPopUp = ({ isOpen, onClose, getCategories, register, errors, loader, setValue, control, getFamilyDataById }) => {
+const CreateSubCategoriesPopUp = ({ isOpen, onClose, getCategories, register, errors, loader, setValue, control, getFamilyDataById,title }) => {
 
     useEffect(() => {
         if (getFamilyDataById.success) {
@@ -19,7 +19,7 @@ const CreateSubCategoriesPopUp = ({ isOpen, onClose, getCategories, register, er
         <div className="fixed  inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg w-[40%] max-w-full  mx-4">
                 <div className="flex justify-between items-center p-4 border-b">
-                    <h2 className="text-lg font-medium">Create Sub Category</h2>
+                    <h2 className="text-lg font-medium">{title}</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-500 hover:text-gray-700"

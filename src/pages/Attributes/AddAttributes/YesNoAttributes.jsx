@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import MultiAttributesHeader from "../../../components/ui/Attributes/MultiAttributesHeader";
 import CommonInput from "../../../components/common/MultiAttributes/CommonInput";
 import SelectField from "../../../components/common/MultiAttributes/CommonOption";
-import SelectComponent from "../../../components/common/SelectComponent";
+import MultiSelectComponent from "../../../components/common/MultiSelectComponent";
+import { Controller } from "react-hook-form";
 import CollapseComponent from "../../../components/common/CollapseComponent";
-const YesNoAttributes = ({ stateData, register, errors, setValue, attributeGroups }) => {
 
+const YesNoAttributes = ({ stateData, register, errors, control, setValue, attributeGroups }) => {
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
   let validation;
   if (typeof stateData.validations === "string") {
     try {
@@ -18,9 +20,14 @@ const YesNoAttributes = ({ stateData, register, errors, setValue, attributeGroup
   }
 
   useEffect(() => {
-    if (stateData.validations) {
-      setValue("attribute_group_id", stateData.attribute_groups[0].id);
-      setValue("default_value", validation.default_value ? "Yes" : "No");
+    if (stateData) {
+      const selectedAttributes = stateData?.attribute_groups?.map((items) => ({
+        value: items.id,
+        label: items.name
+      }));
+      setSelectedAttributes(selectedAttributes);
+      setValue("attribute_group_id", selectedAttributes);
+      setValue("default_value", validation?.default_value ? "Yes" : "No");
 
     }
   }, [stateData, setValue]);
@@ -42,16 +49,27 @@ const YesNoAttributes = ({ stateData, register, errors, setValue, attributeGroup
         {errors.code && <p className="text-red-500">{errors.code.message}</p>}
 
 
-        <SelectComponent
-          width="full"
-          label="Attribute Group (required)" name="attribute_group_id" option={attributeGroups}
-          {...register("attribute_group_id", { required: "Attribute Group  required" })} />
+        <Controller
+          name='attribute_group_id'
+          control={control}
+          rules={{ required: `Attribute group are required` }}
+          render={({ field }) => (
+            <MultiSelectComponent
+              defaultValues={!!selectedAttributes && selectedAttributes}
+              label={`Attribute Group  required`}
+              width="100%"
+              option={attributeGroups || []}
+              isMulti={false}
+              {...field}
+            />
+          )}
+        />
 
         {errors.attribute_group_id && <p className="text-red-500">{errors.attribute_group_id.message}</p>}
-     </CollapseComponent>
+      </CollapseComponent>
 
       {/* Validation Parameters */}
-     <CollapseComponent title="Validation Parameters" errors={errors}>
+      <CollapseComponent title="Validation Parameters" errors={errors}>
         <SelectField
           label="Default value"
           name="default_value"
@@ -63,7 +81,7 @@ const YesNoAttributes = ({ stateData, register, errors, setValue, attributeGroup
           ]}
 
         />
-     </CollapseComponent>
+      </CollapseComponent>
     </div>
   );
 };

@@ -1,15 +1,17 @@
 import React, { useState,useEffect } from "react";
 import MultiAttributesHeader from "../../../components/ui/Attributes/MultiAttributesHeader";
 import CommonInput from "../../../components/common/MultiAttributes/CommonInput";
-import SelectComponent from "../../../components/common/SelectComponent";
 import CollapseComponent from "../../../components/common/CollapseComponent";
-const DateAttributes = ({ stateData, register, errors,setValue,attributeGroups }) => {
- 
+import MultiSelectComponent from "../../../components/common/MultiSelectComponent";
+import { Controller } from "react-hook-form";
+const DateAttributes = ({ stateData, register,control, errors,setValue,attributeGroups }) => {
+  const [selectedAttributes,setSelectedAttributes]=useState([]);
+  
   let validation;
 
   if (typeof stateData.validations === "string") {
     try {
-      let validation = stateData.validations;
+        validation = stateData.validations;
     } catch (error) {
       console.error("Error parsing JSON:", error);
     }
@@ -17,9 +19,14 @@ const DateAttributes = ({ stateData, register, errors,setValue,attributeGroups }
     validation = stateData.validations;
   }
   useEffect(() => {
-      if (stateData.validations) {
+      if (stateData) {
 
-        setValue("attribute_group_id", stateData.attribute_groups[0].id);
+        const selectedAttributes = stateData?.attribute_groups?.map((items) => ({
+          value: items.id,
+          label: items.name
+        }));
+        setSelectedAttributes(selectedAttributes);
+        setValue("attribute_group_id", selectedAttributes);
       }
     }, [stateData, setValue]);
 
@@ -41,10 +48,21 @@ const DateAttributes = ({ stateData, register, errors,setValue,attributeGroups }
         {errors.code && <p className="text-red-500">{errors.code.message}</p>}
 
  
-        <SelectComponent
-          width="full"
-          label="Attribute Group (required)" name="attribute_group_id" option={attributeGroups} 
-          {...register("attribute_group_id", { required: "Attribute Group  required" })} />
+        <Controller
+          name='attribute_group_id'
+          control={control}
+          rules={{ required: `Attribute group are required` }}
+          render={({ field }) => (
+            <MultiSelectComponent
+              defaultValues={!!selectedAttributes && selectedAttributes}
+              label={`Attribute Group  required`}
+              width="100%"
+              option={attributeGroups || []}
+              isMulti={false}
+              {...field}
+            />
+          )}
+        />
 
         {errors.attribute_group_id && <p className="text-red-500">{errors.attribute_group_id.message}</p>}
       </CollapseComponent>

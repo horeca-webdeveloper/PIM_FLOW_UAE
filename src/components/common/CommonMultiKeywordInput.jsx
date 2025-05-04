@@ -2,14 +2,12 @@ import React from "react";
 
 const CommonMultiKeywordInput = ({
   title,
-  secondaryKeywords,
+  secondaryKeywords = [],
   setSecondaryKeywords,
   fieldName,
   label = "",
   ...props
 }) => {
-
-
   const addKeyword = () => {
     setSecondaryKeywords((prev) => ({
       ...prev,
@@ -20,7 +18,7 @@ const CommonMultiKeywordInput = ({
   const removeKeyword = (index) => {
     setSecondaryKeywords((prev) => ({
       ...prev,
-      [fieldName]: prev[fieldName].filter((_, i) => i !== index),
+      [fieldName]: (prev[fieldName] || []).filter((_, i) => i !== index),
     }));
   };
 
@@ -33,13 +31,16 @@ const CommonMultiKeywordInput = ({
     }));
   };
 
+  const keywords = secondaryKeywords?.[fieldName] || [];
+
   return (
-    <div className=" w-[100%]">
+    <div className="w-full">
       <label className="block text-[16px] font-medium leading-[21.82px] text-[#616161] mb-[10px]">
         {title || label}
       </label>
-      <div className="flex flex-wrap items-center gap-2 border  p-2 rounded">
-        {!!secondaryKeywords && secondaryKeywords.length > 0 && secondaryKeywords?.map((keyword, index) => (
+
+      <div className="flex flex-wrap items-center gap-2 border border-[#A8A4A4] p-2 rounded">
+        {keywords.map((keyword, index) => (
           <div
             key={index}
             className="flex items-center gap-1 bg-[#DEF9EC] text-[#26683A] px-2 py-[2px] rounded"
@@ -47,9 +48,7 @@ const CommonMultiKeywordInput = ({
             <input
               type="text"
               value={keyword.value}
-              onChange={(e) => {
-                updateKeyword(index, e.target.value);
-              }}
+              onChange={(e) => updateKeyword(index, e.target.value)}
               className="border-none bg-transparent outline-none w-24"
               {...props}
             />
@@ -61,7 +60,11 @@ const CommonMultiKeywordInput = ({
             </button>
           </div>
         ))}
-        <button onClick={() => addKeyword()} className="text-green-600 font-semibold">
+        <button
+          onClick={addKeyword}
+          className="text-green-600 font-semibold"
+          type="button"
+        >
           +
         </button>
       </div>

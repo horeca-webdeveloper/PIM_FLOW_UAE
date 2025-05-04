@@ -3,6 +3,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 
 export const Pagination = ({ paginationData, setPage, page }) => {
+  console.log(paginationData);
   if (!paginationData) return null;
 
   const { current_page, last_page, next_page_url, prev_page_url } =

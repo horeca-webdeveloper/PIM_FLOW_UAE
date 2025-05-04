@@ -1,767 +1,761 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import SEO from "../../components/ui/Products/ProductsAttribute/SEO";
 import CollapseComponent from "../../components/common/CollapseComponent";
+import { useForm, Controller } from "react-hook-form";
 import { COLORS } from "../../utils/colors";
-import AddProductsHeader from "../../components/ui/Products/AddProductsHeader";
-import {
-  useFetchBrands,
-  useFetchCategoriesAttributes,
-  useFetchStore,
-  useUpdateProduct,
-} from "../../services/apis/Products/Hooks";
-import Loader from "../../utils/Loader";
-import toast from "react-hot-toast";
-import CategoryHeader from "../../components/ui/Categories/CategoryHeader";
+import FullScreenLoader from "../../utils/FullScreenLoader";
+import { Apis } from "../../services/apis/Brands/Api";
 import CategoryMedia from "../../components/ui/Categories/CategoryMedia";
-import InputComponent from "../../components/common/InputComponent";
-import TextAreasComponent from "../../components/common/TextAreasComponent";
-import SelectComponent from "../../components/common/SelectComponent";
 import CommonMediaInput from "../../components/common/CommonMediaInput";
-import SeoComponent from "../../components/common/SeoComponent";
-import CommonMultiKeywordInput from "../../components/common/CommonMultiKeywordInput";
-import CategoriesSectionComponent from "../../components/common/CategoriesSectionComponent";
-import BrandHeader from "../../components/ui/Brand/BrandHeader";
-const BrandCustomizationSecond = () => {
-  const [selectedType, setSelectedType] = useState('Option1');
-  const options = [
-    {
-      'label': 'Option1',
-      'link': '',
-      'icon': '',
-      'type': 'button',
-      'icon': 'icons/import.png',
-      'textColor': 'white',
-      'fontSize': '14px',
-      'fontWeight': 'normal'
-    },
-    {
-      'label': 'Option2',
-      'popup': true,
-      'icon': 'icons/download.png',
-      'type': 'button',
-      'textColor': 'white',
-      'textSize': '14px',
-      'fontWeight': 'normal'
-    },
-    {
-      'label': 'Option3',
-      'popup': true,
-      'icon': 'icons/download.png',
-      'type': 'button',
-      'textColor': 'white',
-      'textSize': '14px',
-      'fontWeight': 'normal'
-    }, {
-      'label': 'Option4',
-      'popup': true,
-      'icon': 'icons/download.png',
-      'type': 'button',
-      'textColor': 'white',
-      'textSize': '14px',
-      'fontWeight': 'normal'
-    }, {
-      'label': 'Option5',
-      'popup': true,
-      'icon': 'icons/download.png',
-      'type': 'button',
-      'textColor': 'white',
-      'textSize': '14px',
-      'fontWeight': 'normal'
-    }
+import CategoryHeader from "../../components/ui/Categories/CategoryHeader";
 
+import { notify } from "../../utils/notify";
+import Loader from "../../utils/Loader";
+import axios from "axios";
+import { baseUrls } from "../../utils/apiWrapper";
+import SeoManagement from "../../components/ui/Products/ProductsAttribute/SeoManagement";
+import MultiSelectComponentForProducts from "../../components/common/MultiSelectComponentForProducts";
+const BrandCustomizationSecond = () => {
+  const navigate = useNavigate();
+  const [selectedType, setSelectedType] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loader, setLoader] = useState(false);
+    const [categoryLoader, setCategoryLoader] = useState(false);
+  const [productLoader, setProductLoader] = useState(false);
+  const [show, setShow] = useState(false);
+  const [response, setResponse] = useState(null);
+  const [matchedProducts, setMatchedProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [categoriesError, setCategoriesError] = useState(false);
+  const [filterCategory, setFilterCategory] = useState([]);
+  const [brandPageDetails, setBrandPageDetails] = useState([]);
+  const [defaultSelectedType, setDefaultSelectedType] = useState();
+
+
+  const buttons = [
+    {
+      label: "Create Now",
+      link: "",
+      icon: "icons/download.png",
+      type: "submit",
+      bgColor: COLORS.bgPrimary,
+      textColor: "white",
+      textSize: "14px",
+      fontWeight: "normal",
+    },
   ];
 
-
-  const [secondaryKeywords, setSecondaryKeywords] = useState([
-    "Keyword One",
-    "Keyword Two",
-  ]);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm();
+  const category_id = watch("category_ids", "");
+  const products_ids = watch("products_ids", "");
   const location = useLocation();
-  const id = location?.pathname?.split("/")[2];
-
+  const brandName = location.state.datas.brand.label;
+  const id = location.state.datas.brand.value;
+  const uid = location.state.datas.uid;
   const [updateLoading, setUpdateLoading] = useState(false);
 
-  const navigate = useNavigate();
 
-  const {
-    mutate,
-    isLoading: updateProductLoading,
-    error: updateProductError,
-  } = useUpdateProduct();
 
-  const handleCreateProduct = () => {
-    setUpdateLoading(true);
-    const payload = {
-      // Handle General Data
-      id: id,
-      sku: generalData?.sku || "",
-      barcode: generalData?.barcode || "",
-      warranty_information: generalData?.warranty_information || "",
-      refund:
-        generalData?.refundValue == "Non-Refundable"
-          ? 1
-          : generalData?.refundValue == "15 Days Refund"
-            ? 2
-            : generalData?.refundValue == "15 Days Refund"
-              ? 3
-              : "",
+  const onSubmit = (data) => {
 
-      // Marketing
-      name: marketingData?.name || "",
-      content: marketingData?.content || "",
-      description: marketingData?.description || "",
+    if (category_id.length !== selectedType.length) {
+      setCategoriesError(true);
+      return false;
+    } else {
+      setCategoriesError(false);
+    }
 
-      //
-      order: generalData?.order || 1,
-      box_quantity: generalData?.boxQuantity || 0,
-      delivery_days: generalData?.deliveryDays || 0,
+    let productIds;
+    if (data.products_ids) {
+      productIds = data.products_ids?.map((prod) => prod.value.split(","));
+    }
 
-      // Handle inventory Management
-      quantity: inventoryStockManagement?.quantity || 0,
-      allow_checkout_when_out_of_stock:
-        inventoryStockManagement?.allow_checkout_when_out_of_stock_value == true
-          ? 1
-          : 0 || 0,
-      with_storehouse_management:
-        inventoryStockManagement?.with_storehouse_management_value == true
-          ? 1
-          : 0 || 0,
-      stock_status:
-        inventoryStockManagement?.stock_status_value === 1
-          ? "In Stock"
-          : inventoryStockManagement?.stock_status_value === 2
-            ? "Out of Stock"
-            : inventoryStockManagement?.stock_status_value === 3
-              ? "Pre Order"
-              : 1, // Fallback if no match
 
-      variant_inventory_tracker:
-        inventoryStockManagement?.variant_inventory_tracker || "shopify",
-      variant_inventory_quantity:
-        inventoryStockManagement?.variant_inventory_quantity || 0,
-      variant_inventory_policy:
-        inventoryStockManagement?.variant_inventory_policy || "deny",
-      variant_fulfillment_service:
-        inventoryStockManagement?.variant_fulfillment_service || "manual",
+    const grouped = {};
+    productIds.forEach(([productId, categoryId]) => {
+      if (!grouped[categoryId]) {
+        grouped[categoryId] = [];
+      }
+      grouped[categoryId].push(Number(productId));
+    });
 
-      // Handle Pricing and Sales
-      price: pricingSales?.price || 0,
-      sale_price: pricingSales?.sale_price || 0,
-      sale_type: pricingSales?.sale_type || 0,
-      cost_per_item: pricingSales?.cost_per_item || 0,
-      tax_id:
-        pricingSales?.taxValue == "VAT"
-          ? 1
-          : pricingSales?.taxValue == "None"
-            ? 2
-            : pricingSales?.taxValue == "Import Tax" || null,
-      currency_id:
-        pricingSales?.currencyValue === "USD"
-          ? 1
-          : pricingSales?.currencyValue === "EUR"
-            ? 2
-            : pricingSales?.currencyValue === "VND"
-              ? 3
-              : pricingSales?.currencyValue === "NGN"
-                ? 4
-                : pricingSales?.currencyValue === "AED"
-                  ? 5
-                  : pricingSales?.currencyValue === "SAR"
-                    ? 6
-                    : null,
-      minimum_order_quantity: pricingSales?.minimum_order_quantity || 1,
-      maximum_order_quantity: pricingSales?.maximum_order_quantity || 10,
+    const categoryIds = data.category_ids.map(({ value }) => ({
+      category_id: value,
+      product_ids: grouped[value] || [],
+    }));
 
-      // This one is for mediaData
-      images: mediaData?.images || [],
-      image: mediaData?.mainImage || "",
-      video_url: mediaData?.video_url || "",
-      video_path: mediaData?.video_path || "",
-      documents: mediaData?.documents || [],
 
-      // Shipping Data
-      length: shippingDimension?.length || 0,
-      length_unit_id: 1,
-      width: shippingDimension?.width || 0,
-      height: shippingDimension?.height || 0,
-      depth: shippingDimension?.depth || 0,
-      weight: shippingDimension?.weight || 0,
-      weight_unit_id: shippingDimension?.weight_unit_id || null,
-      shipping_weight_option: "lbs",
-      // shippingDimension?.shipping_weight_option_value == true ? 1 : 0 || 0,
-      shipping_weight: shippingDimension?.shipping_weight || 0,
-      shipping_dimension_option: "inch",
-      shipping_width: shippingDimension?.shipping_width || 0,
-      shipping_depth: shippingDimension?.shipping_depth || 0,
-      shipping_height: shippingDimension?.shipping_height || 0,
-      shipping_length: 0,
-      shipping_length_id: "",
 
-      // Product Variation Data
-      is_variation: productVariation?.is_Variation_Value == true ? 1 : 0 || 0,
-      variant_grams: productVariation?.variant_grams || 0,
-      variant_requires_shipping:
-        productVariation?.variant_requires_shipping_Value == true ? 1 : 0 || 1,
-      variant_barcode: productVariation?.variant_barcode || "",
-      variant_color_title: productVariation?.variant_color_title || "",
-      variant_color_value: productVariation?.variant_color_value || "",
+    const formData = new FormData();
+    formData.append("brand_id", parseInt(id));
 
-      // Store Vendor
-      store_id: storeMapping[storeVendor?.storeValue] || null,
-      brand_id: brandMapping[storeVendor?.brandValue] || null,
+    formData.append("category_id", JSON.stringify(categoryIds));
 
-      // Performance Analytics
-      views: performanceAnalytics?.views || 0,
-      units_sold: performanceAnalytics?.units_sold || 0,
-      frequently_bought_together:
-        comparisonBundling?.frequently_bought_together || [],
+    // category banners
+    data.category_banners?.forEach((banner, index) => {
 
-      // Comparison Bundling
-      compare_type: ["similar", "better"],
-      compare_products: comparisonBundling?.compare_products || [],
+      if (banner.alt_text) {
+        formData.append(`category_banners_alt_text[${index}]`, banner.alt_text);
+      }
+      if (banner.file_name) {
+        formData.append(`category_banners_file_name[${index}]`, banner.file_name);
+      }
+      if (banner.file?.[0] instanceof File) {
+        formData.append(`category_banners[${index}]`, banner.file[0]);
+      } else if (brandPageDetails?.category_banners?.[index]) {
+        // Preserve the existing image
+        formData.append(`category_banners[${index}]`, brandPageDetails.category_banners[index]);
+      }
+    });
+    // top desktop banners
+    data.page_top_banners_desktop?.forEach((banner, index) => {
 
-      //  seo
-      google_shopping_category: seoData?.google_shopping_category || "",
-      google_shopping_mpn: seoData?.google_shopping_mpn || "",
-    };
-    mutate(payload, {
-      onSuccess: (data) => {
-        setUpdateLoading(false);
-        toast.success("Product Updated Successfully");
-        navigate(`/Products`);
-      },
-      onError: (err) => {
-        console.log(err);
-        alert("Failed to create product: " + err.message);
-      },
+
+      if (banner.file_name) {
+        formData.append(
+          `page_top_banners_desktop_file_name[${index}]`,
+          banner.file_name
+        );
+      }
+
+      if (banner.alt_text) {
+        formData.append(
+          `page_top_banners_desktop_alt_text[${index}]`,
+          banner.alt_text
+        );
+      }
+      if (banner.file?.[0] instanceof File) {
+        formData.append(`page_top_banners_desktop[${index}]`, banner.file[0]);
+      } else if (brandPageDetails?.page_top_banners_desktop?.[index]) {
+        // Preserve the existing image
+        formData.append(`page_top_banners_desktop[${index}]`, brandPageDetails.page_top_banners_desktop[index]);
+      }
+
+
+    });
+
+    // top banner mobile
+    data.page_top_banners_mobile?.forEach((banner, index) => {
+      if (banner.alt_text) {
+        formData.append(
+          `page_top_banners_mobile_alt_text[${index}]`,
+          banner.alt_text
+        );
+      }
+      if (banner.file_name) {
+        formData.append(
+          `page_top_banners_mobile_file_name[${index}]`,
+          banner.file_name
+        );
+      }
+      if (banner.file?.[0] instanceof File) {
+        formData.append(`page_top_banners_mobile[${index}]`, banner.file[0]);
+      } else if (brandPageDetails?.page_top_banners_mobile?.[index]) {
+        // Preserve the existing image
+        formData.append(`page_top_banners_mobile[${index}]`, brandPageDetails.page_top_banners_mobile[index]);
+      }
+    });
+
+    // middle  banners desktop
+    data.page_middle_banners_desktop?.forEach((banner, index) => {
+      if (banner.alt_text) {
+        formData.append(
+          `page_middle_banners_desktop_alt_text[${index}]`,
+          banner.alt_text
+        );
+      }
+      if (banner.file_name) {
+        formData.append(
+          `page_top_banners_mobile_file_name[${index}]`,
+          banner.file_name
+        );
+      }
+      if (banner.file?.[0] instanceof File) {
+        formData.append(
+          `page_middle_banners_desktop[${index}]`,
+          banner.file[0]
+        );
+      } else if (brandPageDetails?.page_middle_banners_desktop?.[index]) {
+        // Preserve the existing image
+        formData.append(`page_middle_banners_desktop[${index}]`, brandPageDetails.page_middle_banners_desktop[index]);
+      }
+    });
+    // middle banner mobile
+    data.page_middle_banners_mobile?.forEach((banner, index) => {
+      if (banner.alt_text) {
+        formData.append(
+          `page_middle_banners_mobile_alt_text[${index}]`,
+          banner.alt_text
+        );
+      }
+      if (banner.file_name) {
+        formData.append(
+          `page_middle_banners_mobile_file_name[${index}]`,
+          banner.file_name
+        );
+      }
+      if (banner.file?.[0] instanceof File) {
+        formData.append(`page_middle_banners_mobile[${index}]`, banner.file[0]);
+      } else if (brandPageDetails?.page_middle_banners_mobile?.[index]) {
+        // Preserve the existing image
+        formData.append(`page_middle_banners_mobile[${index}]`, brandPageDetails.page_middle_banners_mobile[index]);
+      }
+    });
+
+    // website   banners videos
+    data.website_banners_videos?.forEach((banner, index) => {
+      if (banner.alt_text) {
+        formData.append(
+          `website_banners_videos_alt_text[${index}]`,
+          banner.alt_text
+        );
+      }
+      if (banner.file_name) {
+        formData.append(
+          `website_banners_videos_file_name[${index}]`,
+          banner.file_name
+        );
+      }
+      if (banner.file?.[0] instanceof File) {
+        formData.append(`website_banners_videos[${index}]`, banner.file[0]);
+      } else if (brandPageDetails?.website_banners_videos?.[index]) {
+        // Preserve the existing image
+        formData.append(`website_banners_videos[${index}]`, brandPageDetails.website_banners_videos[index]);
+      }
+    });
+    // mobile banner videos
+    data.website_banners_videos_mobile?.forEach((banner, index) => {
+      if (banner.alt_text) {
+        formData.append(
+          `website_banners_videos_mobile_alt_text[${index}]`,
+          banner.alt_text
+        );
+      }
+      if (banner.file_name) {
+        formData.append(
+          `website_banners_videos_mobile_file_name[${index}]`,
+          banner.file_name
+        );
+      }
+      if (banner.file?.[0] instanceof File) {
+        formData.append(
+          `website_banners_videos_mobile[${index}]`,
+          banner.file[0]
+        );
+      } else if (brandPageDetails?.website_banners_videos_mobile?.[index]) {
+        // Preserve the existing image
+        formData.append(`website_banners_videos_mobile[${index}]`, brandPageDetails.website_banners_videos_mobile[index]);
+      }
+    });
+
+    if (uid) {
+      formData.append('_method', 'PUT');
+      Apis.updateSecondBrandPage(formData, uid, setLoader, setResponse);
+    } else {
+      Apis.createSecondBrandPage(formData, setLoader, setResponse);
+    }
+  };
+
+  useEffect(() => {
+    Apis.fetchCategoryByBrandId(id, setLoader, setCategories);
+  }, [id]);
+
+
+
+  useEffect(() => {
+    const matchedProducts = allProducts?.filter((product) => {
+      return (products_ids || [])?.map((p) => p.value.split(',')[0])?.includes(product.id?.toString());
+    });
+
+    setMatchedProducts(matchedProducts);
+  }, [products_ids, allProducts]);
+
+
+
+  useEffect(() => {
+    if (uid) {
+      Apis.fetchBrandSecondPageById(uid, setLoader, setBrandPageDetails);
+
+    }
+  }, [uid]);
+
+
+
+
+
+  useEffect(() => {
+    if (uid && brandPageDetails && categories?.categories) {
+      const categoryIdsString = brandPageDetails?.category_id?.map(item => item.category_id).join(',');
+      const getCategories = brandPageDetails?.category_id?.map(
+        (item) => item.category_id
+      );
+      setSelectedType(getCategories);
+      setDefaultSelectedType(getCategories);
+      Apis.filterCategoryByCategoryId(categoryIdsString, setCategoryLoader, setFilterCategory);
+      const categoryList = brandPageDetails?.category_id || [];
+
+      const selectedCategories = categoryList.map(({ category_id }) => {
+
+        const match = categories.categories.find((item) => item.id === category_id);
+        return match ? { value: match.id, label: match.name } : null;
+      }).filter(Boolean); // removes any nulls
+
+      setValue("category_ids", selectedCategories);
+
+
+    }
+  }, [uid, brandPageDetails, categories, setValue]);
+
+  // Update your setTypeFunction to better handle product loading
+  const setTypeFunction = (type) => {
+    Apis.fetchProductByCategory(type, setProductLoader, (result) => {
+      setProducts(result);
+
+      // Clear previous products for this category to avoid duplicates
+      if (result.success) {
+        setAllProducts(prevProducts => {
+          // Filter out products from this category
+          const filteredProducts = prevProducts.filter(p => p.category_id !== type);
+          // Add the new products
+          return [...filteredProducts, ...result.data];
+        });
+      }
+    });
+
+    setSelectedType((prevSelectedType) => {
+      if (prevSelectedType.includes(type)) {
+        return prevSelectedType;
+      }
+      return [...prevSelectedType, type];
     });
   };
 
-  const { data, isLoading, error } = useFetchCategoriesAttributes({
-    id: id,
-    attr_type: "All",
-  });
-
-  const {
-    data: brandsData,
-    isLoading: brandIsLoading,
-    error: brandError,
-  } = useFetchBrands();
-
-  const brandOptions = brandsData?.brands
-    ? Object.entries(brandsData.brands).map(([id, name]) => ({
-      value: name, // ✅ Store ID as value (corrected)
-      label: id, // ✅ Store Name as label
-    }))
-    : [];
-
-  const {
-    data: storeData,
-    isLoading: StoreIsLoading,
-    error: StoreError,
-  } = useFetchStore();
-
-  const storeOptions = storeData?.stores
-    ? Object.entries(storeData.stores).map(([id, name]) => ({
-      value: name, // ✅ Store ID as value (corrected)
-      label: id, // ✅ Store Name as label
-    }))
-    : [];
-
-  // Store Mapping
-  const storeMapping = {
-    "Amir Enteprises (Testing )": 1,
-    "Arctic Air": 7,
-    Atosa: 8,
-    "American Dish Service": 16,
-    Atosa: 17,
-    Cadco: 18,
-    "CMA Dishmachine": 19,
-    Everest: 20,
-    Midea: 21,
-    Migali: 22,
-    "Serv-ware": 23,
-    BakeMax: 26,
-    "Yanco China": 27,
-    Amana: 28,
-    "Beverage-Air": 29,
-    "CAC China": 30,
-    Coolski: 31,
-    "Dexter Russell": 32,
-    "Don Bellini": 33,
-    "Flash Furniture": 34,
+  // Add a function to handle category changes
+  const handleCategoryChange = (newCategories) => {
+    setValue("category_ids", newCategories);
+    
+    try {
+      // Get the new category IDs
+      const newCategoryIds = newCategories.map(cat => cat.value);
+     
+      
+      // Update selectedType directly without filtering
+      setSelectedType(newCategoryIds);
+      
+      // Handle product filtering
+      const currentProducts = watch("products_ids") || [];
+ 
+      
+      if (Array.isArray(currentProducts)) {
+        const filteredProducts = currentProducts.filter(prod => {
+          try {
+            const categoryId = prod.value.split(',')[1];
+            return newCategoryIds.includes(parseInt(categoryId, 10));
+          } catch (e) {
+            console.error("Error filtering product:", e);
+            return false;
+          }
+        });
+        
+        setValue("products_ids", filteredProducts);
+        
+        // Update allProducts
+        setAllProducts(prev => {
+          if (!Array.isArray(prev)) return [];
+          return prev.filter(p => newCategoryIds.includes(p.category_id));
+        });
+      }
+    } catch (error) {
+      console.error("Error in handleCategoryChange:", error);
+      // Fallback to safe values
+      setSelectedType([]);
+      setValue("products_ids", []);
+    }
   };
 
-  const brandMapping = {
-    "Arctic Air": 13,
-    Atosa: 14,
-    Amana: 18,
-    "American Dish Service": 19,
-    BakeMax: 20,
-    "Beverage-Air": 21,
-    "CAC China": 22,
-    "CMA Dishmachine": 23,
-    Coolski: 24,
-    "Don Bellini": 25,
-    Atosa: 26,
-    Cadco: 27,
-    Everest: 28,
-    Midea: 29,
-    Migali: 30,
-    "Serv-ware": 31,
-    "Bar Maid By Winco": 32,
-    "Dexter Russell": 33,
-    Duke: 34,
-    "Flash Furniture": 35,
-  };
-
-  // States for each section
-  const [generalData, setGeneralData] = useState({
-    sku: "",
-    barcode: "",
-    warranty_information: "",
-    refund: [],
-    refundValue: "",
-    categories: [],
-  });
-  const [inventoryStockManagement, setInventoryStockManagement] = useState({
-    quantity: "",
-    allow_checkout_when_out_of_stock: 0,
-    allow_checkout_when_out_of_stock_value: false,
-    with_storehouse_management: 0,
-    with_storehouse_management_value: false,
-    stock_status: "",
-    stock_status_value: "",
-    variant_inventory_tracker: "",
-    variant_inventory_quantity: "",
-    variant_inventory_policy: "",
-    variant_fulfillment_service: "",
-  });
-  const [pricingSales, setPricingSales] = useState({
-    price: "",
-    sale_price: "",
-    sale_type: "",
-    cost_per_item: "",
-    tax: [],
-    taxValue: "",
-    currency_id: "",
-    minimum_order_quantity: "",
-    maximum_order_quantity: "",
-    approved_by: "",
-    currency: [],
-  });
-  const [marketingData, setMarketingData] = useState({
-    name: "",
-    content: "",
-    description: "",
-  });
-  const [mediaData, setMediaData] = useState({
-    images: "",
-    image: "",
-    video_url: "",
-    video_path: "",
-    documents: "",
-  });
-  const [shippingDimension, setShippingDimension] = useState({
-    length: "",
-    length_unit_id: "",
-    width: "",
-    shipping_length_value: "",
-    height: "",
-    depth: "",
-    weight: "",
-    weight_unit_id: "",
-    shipping_weight_option: "",
-    shipping_weight_option_value: "",
-    shipping_dimension_option_value: "",
-    shipping_weight: "",
-    shipping_dimension_option: "",
-    shipping_width: "",
-    shipping_depth: "",
-    shipping_height: "",
-    shipping_length: "",
-    shipping_length_id: "",
-    length_unit: "",
-    length_unit_value: "",
-    weight_unit: "",
-    shipping_length_unit: "",
-  });
-  const [productVariation, setProductVariation] = useState({
-    is_variation: "",
-    is_Variation_Value: true,
-    variant_requires_shipping_Value: true,
-    variant_grams: "",
-    variant_requires_shipping: "",
-    variant_barcode: "",
-    variant_color_title: "",
-    variant_color_value: "",
-  });
-  const [storeVendor, setStoreVendor] = useState({
-    store_id: "",
-    brand_id: "",
-    created_by_id: "",
-    created_by_type: "",
-    store: "",
-    brand: "",
-    creator: "",
-  });
-  const [performanceAnalytics, setPerformanceAnalytics] = useState({
-    views: "",
-    units_sold: "",
-    frequently_bought_together: "",
-  });
-  const [comparisonBundling, setComparisonBundling] = useState({
-    compare_type: "",
-    compare_products: "",
-  });
-  const [seoData, setSeoData] = useState({
-    google_shopping_category: "",
-    google_shopping_mpn: "",
-    seo_meta_data: "",
-  });
-
-  // Effect to update state when API data is available
   useEffect(() => {
-    if (data?.product) {
-      setGeneralData({
-        sku: data.product.sku,
-        barcode: data.product.barcode,
-        warranty_information: data.product.warranty_information,
-        refund: [
-          { value: "Non-Refundable", label: "Non-Refundable" },
-          { value: "15 Days Refund", label: "15 Days Refund" },
-          { value: "90 Days Refund", label: "90 Days Refund" },
-          ...(data.product.refund || []),
-        ],
-        refundValue: data?.product?.refund[0]?.value,
-        categories: data.product.categories,
-      });
+    if (products.success) {
+      setAllProducts((allProducts) => {
+        const existingIds = new Set(allProducts.map(p => p.category_id));
+        const newProducts = products.data.filter(
+          product => !existingIds.has(product.category_id)
+        );
 
-      setInventoryStockManagement({
-        quantity: data.product?.quantity,
-        allow_checkout_when_out_of_stock:
-          data.product?.allow_checkout_when_out_of_stock,
-        with_storehouse_management: data.product?.with_storehouse_management,
-        with_storehouse_management_value:
-          data.product?.with_storehouse_management[0]?.enabled,
-        allow_checkout_when_out_of_stock_value:
-          data.product?.allow_checkout_when_out_of_stock[0]?.enabled,
-        stock_status_value: inventoryStockManagement?.stock_status[0]?.status,
-        stock_status: [
-          { value: "In Stock", label: "2" },
-          { value: "Out of Stock", label: "3" },
-          { value: "Pre Order", label: "3" },
-          ...(data.product.stock_status || []),
-        ],
-        variant_inventory_tracker: data.product?.variant_inventory_tracker,
-        variant_inventory_quantity: data.product?.variant_inventory_quantity,
-        variant_inventory_policy: data.product?.variant_inventory_policy,
-        variant_fulfillment_service: data.product?.variant_fulfillment_service,
-      });
+        const updated = [...allProducts, ...newProducts];
 
-      setPricingSales({
-        price: data.product.price,
-        sale_price: data.product.sale_price,
-        sale_type: data.product.sale_type,
-        cost_per_item: data.product.cost_per_item,
-        tax: [
-          { value: "VAT" },
-          { value: "None" },
-          { value: "Import Tax" },
-          ...(data.product.tax || []),
-        ],
-        taxValue: data.product?.tax[0]?.rate,
-        minimum_order_quantity: data.product.minimum_order_quantity,
-        maximum_order_quantity: data.product.maximum_order_quantity,
-        approved_by: data.product.approved_by,
-        currencyValue: data.product?.currency[0]?.title,
-        currency: [
-          { value: "USD" },
-          { value: "EUR" },
-          { value: "VND" },
-          { value: "NGN" },
-          { value: "AED" },
-          { value: "SAR" },
-          ...(data.product.currency || []),
-        ],
-      });
-
-      setMarketingData({
-        name: data.product.name,
-        content: data.product.content,
-        description: data.product.description,
-      });
-
-      setMediaData({
-        images: data.product.images,
-        image: data.product.image,
-        video_url: data.product.video_url,
-        video_path: data.product.video_path,
-        documents: data.product.documents,
-      });
-
-      setShippingDimension({
-        length: data.product.length || "",
-        length_unit_id: data.product.length_unit_id || "",
-        width: data.product.width || "",
-        height: data.product.height || "",
-        depth: data.product.depth || "",
-        weight: data.product.weight || "",
-        weight_unit_id: data.product.weight_unit_id || "",
-        shipping_weight_option: [
-          { value: "LBS" },
-          { value: "KG" },
-          { value: "Grams" },
-          ...(data.product.shipping_weight_option || []),
-        ],
-
-        shipping_weight: data.product.shipping_weight || "",
-        shipping_dimension_option: [
-          { value: "INCH" },
-          { value: "CM" },
-          { value: "MM" },
-          ...(data.product.shipping_dimension_option || []),
-        ],
-        shipping_width: data.product.shipping_width || "",
-        shipping_depth: data.product.shipping_depth || "",
-        shipping_height: data.product.shipping_height || "",
-        shipping_length: data.product.shipping_length || "",
-        shipping_length_id: data.product.shipping_length_id || "",
-        length_unit_value:
-          data.product?.length_unit[0]?.symbol == "cm"
-            ? 1
-            : data.product?.length_unit[0]?.symbol == "inch"
-              ? 3
-              : data.product?.length_unit[0]?.symbol == "mm"
-                ? 11
-                : 1,
-        length_unit: [
-          { value: "cm" },
-          { value: "inch" },
-          { value: "mm" },
-          ...(data.product.length_unit || []),
-        ],
-        weight_unit_value: data.product?.weight_unit[0]?.symbol,
-        weight_unit: [
-          { value: "lg" },
-          { value: "g" },
-          { value: "lbs" },
-          ...(data.product.weight_unit || []),
-        ],
-        shipping_weight_option_value:
-          data.product?.shipping_weight_option[0]?.enabled,
-        shipping_dimension_option_value:
-          data.product?.shipping_dimension_option[0]?.enabled,
-        shipping_length_value: data.product?.shipping_length[0]?.unit,
-        shipping_length: data.product.shipping_length || "",
-      });
-
-      setProductVariation({
-        is_variation: data.product.is_variation,
-        is_Variation_Value: productVariation?.is_variation[0]?.enabled,
-        variant_requires_shipping_Value:
-          productVariation?.variant_requires_shipping[0]?.enabled,
-        variant_grams: data.product.variant_grams,
-        variant_requires_shipping: data.product.variant_requires_shipping,
-        variant_barcode: data.product.variant_barcode,
-        variant_color_title: data.product.variant_color_title,
-        variant_color_value: data.product.variant_color_value,
-      });
-
-      setStoreVendor({
-        store_id: storeVendor?.storeValue
-          ? Object.keys(storeVendor?.store || {}).find(
-            (key) => storeVendor.store[key] === storeVendor.storeValue
-          ) || null
-          : null,
-
-        brand_id: storeVendor?.brandValue
-          ? Object.keys(storeVendor?.brand || {}).find(
-            (key) => storeVendor.brand[key] === storeVendor.brandValue
-          ) || null
-          : null,
-
-        created_by_id: data.product.created_by_id,
-        created_by_type: data.product.created_by_type,
-        storeValue: storeOptions[0]?.value,
-        brandValue: brandOptions[0]?.value,
-        store: storeOptions,
-        brand: brandOptions,
-        creator: data.product.creator,
-      });
-
-      setPerformanceAnalytics({
-        views: data.product.views,
-        units_sold: data.product.units_sold,
-        frequently_bought_together: data.product.frequently_bought_together,
-      });
-
-      setComparisonBundling({
-        compare_type: data.product.compare_type,
-        compare_products: data.product.compare_products,
-      });
-
-      setSeoData({
-        google_shopping_category: data.product.google_shopping_category,
-        google_shopping_mpn: data.product.google_shopping_mpn,
-        seo_meta_data: data.product.seo_meta_data,
+        return updated;
       });
     }
-  }, [data]);
+  }, [products]);
 
+
+  useEffect(() => {
+    if (!!response && response.success) {
+      notify(response.message);
+      navigate("/brand/second");
+    }
+  }, [response]);
+
+  useEffect(() => {
+    if (filterCategory.success) {
+      // Add filtered products to the full list so they're selectable
+      setAllProducts(prev => {
+        const existingIds = new Set(prev.map(p => p.id));
+        const newItems = filterCategory.data.filter(p => !existingIds.has(p.id));
+        return [...prev, ...newItems];
+      });
+
+      // Set default selected values
+      const formattedProducts = filterCategory.data.map((item) => ({
+        value: `${item.id},${item.category_id}`,
+        label: item.sku,
+      }));
+      setValue("products_ids", formattedProducts);
+    }
+  }, [filterCategory, setValue]);
+
+
+  useEffect(() => {
+    if (!category_id) return;
+    if (uid) {
+      const defaultSeleted = defaultSelectedType;
+
+      const categoryValues = category_id && category_id?.map((item) => item?.value);
+      const filteredValues = categoryValues.filter((id) =>
+        defaultSelectedType.includes(id)
+      );
+
+      if (filteredValues.length > 0) {
+        setSelectedType(filteredValues);
+      } else {
+        // Optional: clear selectedType if none match default
+        setSelectedType([]);
+      }
+    }
+
+
+  }, [category_id, uid]);
+
+
+  // Add this useEffect to reset product selections when categories change
+  useEffect(() => {
+    if (category_id && category_id.length === 0) {
+      setValue("products_ids", []);
+      setAllProducts([]);
+      setMatchedProducts([]);
+    }
+  }, [category_id, setValue]);
+
+  // Improve how you handle product selection changes
+  const handleProductSelectionChange = (selectedOptions) => {
+    setValue("products_ids", selectedOptions);
+
+    // Update matched products immediately
+    const selectedIds = selectedOptions.map(option => option.value.split(',')[0]);
+    const newMatchedProducts = allProducts.filter(product =>
+      selectedIds.includes(product.id?.toString())
+    );
+    setMatchedProducts(newMatchedProducts);
+  };
   return (
     <>
-      {isLoading ? (
-        <div className="flex items-center justify-center h-[100vh] bg-[#F1F1F1]">
-          <Loader />
-        </div>
+      {loader ? (
+        <FullScreenLoader bgTransparent={true} />
       ) : (
-        <div className="min-h-screen">
-
-          <BrandHeader
-
-            general={generalData}
-            setGeneralData={setGeneralData}
-          />
-
-          <CollapseComponent title="Hero Section">
-            <CategoryMedia
-              title="Page Top Banners For Desktop"
-              fileName={true}
-              altText={true}
-              spanTags="Main Hero Banner (Webp format allowed (max 10MB, must be 1920x450px)"
-              mediaData={mediaData}
-              setMediaData={setMediaData}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="min-h-screen">
+            <CategoryHeader
+              buttons={buttons}
+              categoryName={brandName}
+              setShow={setShow}
             />
-            <CategoryMedia
-              title="Page Middle Banners For Mobile"
-              fileName={true}
-              altText={true}
-              spanTags="Main Hero Banner (Webp format allowed (max 10MB, must be 1920x450px)"
-              mediaData={mediaData}
-              setMediaData={setMediaData}
-            />
-          </CollapseComponent>
 
-          <CollapseComponent title="Top Product Section">
-            <div className="bg-white mt-[-20px]">
-              <p className="text-[#616161] font-semibold mb-[20px] mt-[20px]">
-                Section Details
-              </p>
-              <div className="border-2 rounded-lg border-dashed">
-                <>
-                  <div className="mb-3 p-3 ">
+            <CollapseComponent title="Hero Section" errors={errors}>
+              <CategoryMedia
+                title="Page Top Banners For Desktop"
+                fileName={true}
+                altText={true}
+                control={control}
+                register={register}
+                setValue={setValue}
+                namePrefix="page_top_banners_desktop"
+                selectedAltText={brandPageDetails?.page_top_banners_desktop_alt_text}
+                selectedFileName={brandPageDetails?.page_top_banners_desktop_file_name}
+                selectedBanner={
+                  brandPageDetails && brandPageDetails?.page_top_banners_desktop
+                }
+                spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
+              />
+              <CategoryMedia
+                title="Page Middle Banners For Mobile"
+                fileName={true}
+                altText={true}
+                control={control}
+                register={register}
+                namePrefix="page_top_banners_mobile"
+                setValue={setValue}
+                selectedFileName={brandPageDetails?.page_top_banners_mobile_file_name}
+                selectedAltText={brandPageDetails?.page_top_banners_mobile_alt_text}
+                selectedBanner={
+                  brandPageDetails && brandPageDetails?.page_top_banners_mobile
+                }
+                spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
+              />
+            </CollapseComponent>
+            {/* Pending need to implemnt the api */}
+            <CollapseComponent title="Top Product Section">
+              <div className="bg-white mt-[-20px]">
+                <div className="">
+                  <>
 
-
-
-                    <SelectComponent
-                      label="Select Category"
-                      type="text"
-                      name="brand"
-                      placeholder="Text Field"
-                      defaultOption="Multi select"
+                    <CategoryMedia
+                      title="Category Banners"
+                      fileLength={5}
+                      fileName={true}
+                      altText={true}
+                      control={control}
+                      register={register}
+                      setValue={setValue}
+                      namePrefix="category_banners"
+                      selectedFileName={brandPageDetails?.category_banners_file_name}
+                      selectedAltText={brandPageDetails?.category_banners_alt_text}
+                      selectedBanner={
+                        brandPageDetails && brandPageDetails?.category_banners
+                      }
+                      spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
                     />
-                  </div>
-
-                  <div className="mb-[10px] p-4">
-                    <div className="grid grid-cols-5 gap-4">
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
-                    </div>
-                  </div>
-                </>
+                  </>
+                </div>
               </div>
-            </div>
-          </CollapseComponent>
-          <CollapseComponent title="Website Banners">
-            <CategoryMedia
-              title="Page Top Banners For Desktop"
-              fileName={true}
-              altText={true}
-              spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
-              mediaData={mediaData}
-              setMediaData={setMediaData}
-            />
-            <CategoryMedia
-              title="Page Middle Banners For Mobile"
-              fileName={true}
-              altText={true}
-              spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
-              mediaData={mediaData}
-              setMediaData={setMediaData}
-            />
-          </CollapseComponent>
-          <CollapseComponent title="Featured Product Section">
-            <div className="bg-white mt-[-20px]">
-              <p className="text-[#616161] font-semibold mb-[20px] mt-[20px]">
-                Section Details
-              </p>
-              <div className="border-2 rounded-lg border-dashed">
-                <>
-                  <div className="mb-[-10px] p-3 ">
-                    <SelectComponent
-                      label="Select Category"
-                      type="text"
-                      name="brand"
-                      placeholder="Text Field"
-                    />
-                    <SelectComponent
-                      label="Select Product"
-                      type="text"
-                      name="product"
-                      placeholder="Text Field"
-                    />
-                    <SelectComponent
-                      label="Select By"
-                      type="text"
-                      name="product"
-                      defaultOption="If Automatic Select (Popular,Best Sellet, etc)"
-                      placeholder="Text Field"
-                    />
+            </CollapseComponent>
+            <CollapseComponent title="Website Banner" errors={errors}>
+              <CategoryMedia
+                title="Page Middle Banners For Desktop"
+                fileName={true}
+                altText={true}
+                control={control}
+                register={register}
+                setValue={setValue}
+                namePrefix="page_middle_banners_desktop"
+                selectedFileName={brandPageDetails?.page_middle_banners_desktop_file_name}
+                selectedAltText={brandPageDetails?.page_middle_banners_desktop_alt_text}
+                selectedBanner={
+                  brandPageDetails &&
+                  brandPageDetails?.page_middle_banners_desktop
+                }
+                spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
+              />
+              <CategoryMedia
+                title="Page Middle Banners For Mobile"
+                fileName={true}
+                altText={true}
+                control={control}
+                register={register}
+                setValue={setValue}
+                namePrefix="page_middle_banners_mobile"
+                selectedFileName={brandPageDetails?.page_middle_banners_mobile_file_name}
+                selectedAltText={brandPageDetails?.page_middle_banners_mobile_alt_text}
+                selectedBanner={
+                  brandPageDetails &&
+                  brandPageDetails?.page_middle_banners_mobile
+                }
+                spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
+              />
+            </CollapseComponent>
 
-                    <label>Select Product (If Select Manual)</label>
+            {/* Pending need to implemnt the api */}
+            <CollapseComponent title="Featured Product Section">
+              <div className="bg-white mt-[-20px]">
+                <p className="text-[#616161] font-semibold mb-[20px] mt-[20px]">
+                  Section Details
+                </p>
+                <div className="border-2 rounded-lg border-dashed">
+                  <>
+                    <div className="mb-[-10px] p-3 ">
+                         {categoryLoader?<Loader/>:''}
+                      <Controller
+                        name="category_ids"
+                        control={control}
+                        rules={{ required: "Category is required" }}
+                        render={({ field }) => (
+                          <MultiSelectComponentForProducts
+                            label="Category (required)"
+                            value={field.value || []}
+                            option={
+                              (!!categories && categories?.categories?.map((item) => ({
+                                value: item.id,
+                                label: item.name
+                              }))) || []
+                            }
+                            onChange={(selected) => {
+                              handleCategoryChange(selected);
+                              field.onChange(selected);
+                            }}
+                            isOptionDisabled={(option) =>
+                              field.value?.length >= 5 &&
+                              !field.value?.find(
+                                (selected) => selected.value === option.value
+                              )
+                            }
+                          />
+                        )}
+                      />
+                      {errors.category_ids && (
+                        <p className="text-red-500">
+                          {errors.category_ids.message}
+                        </p>
+                      )}
 
-                  </div>
+                      {categoriesError && (
+                        <p className="text-red-500">
+                          Either select rest categories or remove the rest selected categories
+                        </p>
+                      )}
+                      {!!category_id && category_id.length > 0 ? (
+                        <>
+                          <label>Select Product (If Select Manual)</label>
+                          <div className="mt-1 bg-white border-2 border-[#DFDFDF] rounded-lg w-[50%]">
+                            {/* Header (Click to Expand/Collapse) */}
+                            <div className="flex rounded-md py-[5px] border-[#DFDFDF] bg-[#F9F9FB] px-4 items-center cursor-pointer justify-between">
+                              {/* Left Side (Options) */}
+                              <div className="flex gap-2 w-[50%]">
+                                {category_id &&
+                                  category_id.map((item) => (
+                                    <div
+                                      key={item.value}
+                                      onClick={() =>
+                                        setTypeFunction(item.value)
+                                      }
+                                      className={`text-[13px] whitespace-nowrap  font-light text-[${item.textColor
+                                        }] ${selectedType.includes(item.value)
+                                          ? `bg-[${COLORS.bgPrimary}]`
+                                          : "bg-[#E2E2E2]"
+                                        }  font-${item.fontWeight
+                                        } rounded-[5px] p-2   flex items-center gap-2`}
+                                    >
+                                      {item.label}
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        ""
+                      )}
 
-                  <div className="mb-[10px] p-4">
-                    <div className="grid grid-cols-5 gap-4">
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
-                      <CommonMediaInput showInput={false} />
+                      <div className="mt-3">
+                        <>
+                          {productLoader ? (
+                            <Loader />
+                          ) : (
+                            <div className="mb-5">
+                              <Controller
+                                name="products_ids"
+                                control={control}
+                                rules={{ required: "Products is required" }}
+                                render={({ field }) => (
+                                  <MultiSelectComponentForProducts
+                                    label="Products (required)"
+                                    option={
+                                      (!!allProducts && allProducts?.map((item) => ({
+                                        value: item.id + ',' + parseInt(item.category_id),
+                                        label: item.sku
+                                      }))) || []
+                                    }
+                                    onChange={(selected) => {
+                                      handleProductSelectionChange(selected);
+                                      field.onChange(selected);
+                                    }}
+                                    value={field.value || []}
+                                  />
+                                )}
+                              />
+                              {errors.products_ids && (
+                                <p className="text-red-500">
+                                  {errors.products_ids.message}
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="mb-[10px] p-4">
+                            <div className="grid grid-cols-5 gap-4">
+                              {!!matchedProducts &&
+                                matchedProducts.map((item) => {
+                                  return (
+                                    <CommonMediaInput
+                                      key={item.id}
+                                      showInput={false}
+                                      showName={true}
+                                      name={item.name}
+                                      image={item.image}
+                                      sku={item.sku}
+                                    />
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        </>
+                      </div>
                     </div>
-                  </div>
-                </>
+                  </>
+                </div>
               </div>
-            </div>
-          </CollapseComponent>
-          <CollapseComponent title="Website Banners & videos">
-            <CategoryMedia
-              title="Page Top Banners For Desktop"
-              fileName={true}
-              altText={true}
-              spanTags="Main Hero Banner (Webp format allowed (max 10MB, must be 1920x450px)"
-              mediaData={mediaData}
-              setMediaData={setMediaData}
-            />
-            <CategoryMedia
-              title="Page Middle Banners For Mobile"
-              fileName={true}
-              altText={true}
-              spanTags="Main Hero Banner (Webp format allowed (max 10MB, must be 1920x450px)"
-              mediaData={mediaData}
-              setMediaData={setMediaData}
-            />
-          </CollapseComponent>
-          <CollapseComponent title="SEO Attributes">
-            <SeoComponent seo={seoData} setSeo={setSeoData} />
-          </CollapseComponent>
-        </div>
+            </CollapseComponent>
+            <CollapseComponent title="Website Banners & Videos" errors={errors}>
+              <CategoryMedia
+                title="Page Top Banners & Videos For Desktop"
+                fileName={true}
+                altText={true}
+                control={control}
+                register={register}
+                setValue={setValue}
+                namePrefix="website_banners_videos"
+                selectedFileName={brandPageDetails?.website_banners_videos_file_name}
+                selectedAltText={brandPageDetails?.website_banners_videos_alt_text}
+                selectedBanner={
+                  brandPageDetails && brandPageDetails?.website_banners_videos
+                }
+                spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
+              />
+              <CategoryMedia
+                title="Page Middle Banners & Videos For Mobile"
+                fileName={true}
+                altText={true}
+                control={control}
+                register={register}
+                setValue={setValue}
+                namePrefix="website_banners_videos_mobile"
+                selectedFileName={brandPageDetails?.website_banners_videos_mobile_file_name}
+                selectedAltText={brandPageDetails?.website_banners_videos_mobile_alt_text}
+                selectedBanner={
+                  brandPageDetails &&
+                  brandPageDetails?.website_banners_videos_mobile
+                }
+                spanTags="Upload Image (Webp format allowed (max 10MB, must be 1920x450px)"
+              />
+            </CollapseComponent>
+
+
+            {/* 
+            <SeoManagement
+              manageSeoProduct={manageSeoProduct}
+              setManageSeoProduct={setManageSeoProduct}
+              id={uid}
+              type={"Brand"}
+            />  */}
+
+          </div>
+        </form>
       )}
     </>
   );

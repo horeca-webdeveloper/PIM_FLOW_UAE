@@ -6,7 +6,7 @@ import UserGeneralSettingHeader from "./components/UserGeneralSettingHeader";
 const AttributePrivileges = () => {
   return (
     <>
-      <UserManagementHeader />
+      <UserManagementHeader heading={"Attribute Privileges"} />
       <UserGeneralSettingHeader />
       <table className="min-w-full border border-gray-200">
         <thead className="bg-gray-50">

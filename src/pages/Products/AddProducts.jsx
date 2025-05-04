@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import AddProductsHeader from "../../components/ui/Products/AddProductsHeader";
 import General from "../../components/ui/Products/ProductsAttribute/General";
 import Marketing from "../../components/ui/Products/ProductsAttribute/Marketing";
@@ -9,21 +9,20 @@ import {
   useFetchBrands,
   useFetchCategoriesAttributes,
   useFetchStore,
-  useUpdateProduct,
 } from "../../services/apis/Products/Hooks";
 import PricingAndSales from "../../components/ui/Products/ProductsAttribute/PricingAndSales";
 import ShippinDimension from "../../components/ui/Products/ProductsAttribute/ShippinDimension";
 import PerformanceAnalytics from "../../components/ui/Products/ProductsAttribute/PerformanceAnalytics";
 import StoreVendorInformation from "../../components/ui/Products/ProductsAttribute/StoreVendorInformation";
-import ProductVariation from "../../components/ui/Products/ProductsAttribute/ProductVariation";
 import InventoryStockManagement from "../../components/ui/Products/ProductsAttribute/InventoryStockManagement";
 import Loader from "../../utils/Loader";
 import toast from "react-hot-toast";
 import axios from "axios";
-import Other from "../../components/ui/Products/ProductsAttribute/Other";
 import SEO from "../../components/ui/Products/ProductsAttribute/SEO";
 import AttributesGroupsComp from "../../components/ui/Products/ProductsAttribute/AttributesGroupsComp";
-
+import { baseUrls } from "../../utils/apiWrapper";
+import SeoManagement from "../../components/ui/Products/ProductsAttribute/SeoManagement";
+import { useFetchSEO } from "../../services/apis/SEO/Hooks";
 const AddProducts = () => {
   const location = useLocation();
   const id = location?.pathname?.split("/")[2];
@@ -32,37 +31,12 @@ const AddProducts = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [attributeData, setAttributeData] = useState({});
 
-  const handleCreateProduct = async () => {
- 
-    // if (marketingData.apiBenefits?.length == null) {
-    //   toast.error("Please Generate Benefits And Features");
-    //   return;
-    // }
-  
+  const handleSubmit = async (e) => {
     try {
       setUpdateLoading(true);
       const formData = new FormData();
       const token = localStorage.getItem("token");
-      //handle attributes
-      // Prepare a copy of attributes (excluding files)
-      // const attributesCopy = { ...attributeData.attributes };
 
-      // Object.entries(attributeData.attributes).forEach(([key, value]) => {
-      //   if (value instanceof File) {
-      //     // Convert File to an object that FormData can handle
-      //     attributesCopy[key] = {
-      //       name: value.name,
-      //       type: value.type,
-      //       size: value.size,
-      //     };
-      //     formData.append(`product_attributes[${key}]`, value); // Append actual file separately
-      //   }
-      // });
-    
-      // Append attributes including file metadata
-      // formData.append("product_attributes", JSON.stringify(attributeData.attributes));
-
-    
       formData.append(
         "product_attributes",
         JSON.stringify(attributeData.attributes)
@@ -109,13 +83,6 @@ const AddProducts = () => {
       }, {});
 
       formData.append("faqs", JSON.stringify(faqsObject));
-
-      // const reviewsObject = customerReviews.reduce((acc, review, index) => {
-      //   acc[index] = review; // Assign each review object to a numbered key
-      //   return acc;
-      // }, {});
-
-      // formData.append("review", JSON.stringify(reviewsObject));
 
       // General Order Data
       formData.append("order", other?.order || 1);
@@ -168,6 +135,23 @@ const AddProducts = () => {
       formData.append("sale_price", pricingSales?.sale_price || 0);
       formData.append("sale_type", "");
       formData.append("cost_per_item", pricingSales?.cost_per_item || 0);
+      formData.append(
+        "cost_per_item_currency",
+        pricingSales?.cost_per_item_currency || 0
+      );
+      formData.append(
+        "additional_cost_value",
+        pricingSales?.additional_cost_value || 0
+      );
+      formData.append("cost_type", pricingSales?.cost_type || 0);
+      formData.append(
+        "additional_cost_percentage",
+        pricingSales?.additional_cost_percentage || 0
+      );
+      formData.append(
+        "total_cost_per_item",
+        pricingSales?.total_cost_per_item || 0
+      );
       formData.append("box_quantity", pricingSales?.box_quantity || 0);
       formData.append(
         "tax_id",
@@ -327,7 +311,13 @@ const AddProducts = () => {
       formData.append("units_sold", performanceAnalytics?.units_sold || 0);
       formData.append(
         "frequently_bought_together",
-        JSON.stringify(performanceAnalytics?.frequently_bought_together || [])
+        JSON.stringify(
+          performanceAnalytics?.frequently_bought_together_value ||
+            performanceAnalytics?.frequently_bought_together.map(
+              (item) => item.id
+            )
+          // frequently_bought_together
+        )
       );
       formData.append("compare_type", "");
       formData.append("compare_products", JSON.stringify([]));
@@ -335,15 +325,16 @@ const AddProducts = () => {
       // SEO
       formData.append(
         "google_shopping_category",
-        seoData?.google_shopping_category || ""
+        seoData?.google_shopping_category ||
+          data?.product.google_shopping_category
       );
       formData.append(
         "google_shopping_mpn",
-        seoData?.google_shopping_mpn || ""
+        seoData?.google_shopping_mpn || data?.product.google_shopping_mpn
       );
 
       const response = await axios.post(
-        `https://pim.thehorecastore.co/api/products/${id}`,
+        `${baseUrls}/products/${id}`,
         formData,
         {
           headers: {
@@ -352,8 +343,6 @@ const AddProducts = () => {
           },
         }
       );
-
-      // Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse, maxime consequuntur. Necessitatibus cumque nostrum, dolores obcaecati deleniti, tenetur, quo possimus velit fuga hic nesciunt est! Dicta ea numquam cumque molestias!
 
       if (response.data?.success) {
         setUpdateLoading(false);
@@ -393,6 +382,7 @@ const AddProducts = () => {
     barcode: "",
     warranty_information: "",
     status: [],
+    websites: "",
     status_value: "",
     warranty_info: [],
     refund: [],
@@ -431,6 +421,11 @@ const AddProducts = () => {
     sale_price: "",
     sale_type: "",
     cost_per_item: "",
+    cost_per_item_currency: "",
+    cost_type: "",
+    additional_cost_percentage: "",
+    additional_cost_value: "",
+    total_cost_per_item: "",
     tax: [],
     box_quantity: "",
     taxValue: "",
@@ -503,6 +498,7 @@ const AddProducts = () => {
   const [performanceAnalytics, setPerformanceAnalytics] = useState({
     views: "",
     units_sold: "",
+    frequently_bought_together_value: "",
     frequently_bought_together: [],
   });
   const [comparisonBundling, setComparisonBundling] = useState({
@@ -520,12 +516,108 @@ const AddProducts = () => {
     seo_meta_data: "",
   });
 
+  const [seoManageData, setSeoManageData] = useState([]);
+
+  const getSEOData = async () => {
+    setLoader(true);
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`${baseUrls}/seo-management/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSeoManageData(response);
+      setLoader(false);
+      // console.log("response from the api ", response?.data?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getSEOData();
+  }, [id]);
+
+  const [manageSeoProduct, setManageSeoProduct] = useState({
+    id: "",
+    relational_id: "",
+    relational_type: "",
+    url: "",
+    primary_keyword: "",
+    monthly_search_volume: 0,
+    title_tag: "",
+    meta_title: "",
+    meta_description: "",
+    internal_links: "",
+    indexing: 0,
+    og_title: "",
+    og_description: "",
+    og_image_url: "",
+    og_image_file: "",
+    og_image_alt_text: "",
+    og_image_name: "",
+    tags: "",
+    schema: "",
+    schema_rating: 0,
+    schema_reviews_count: 0,
+    created_by: 1,
+    updated_by: null,
+    created_at: "",
+    updated_at: "",
+    secondary_keyword_details: [],
+    paragraph_1: "",
+    paragraph_2: "",
+    paragraph_3: "",
+    paragraph_4: "",
+    popular_tags: [],
+  });
+
+  useEffect(() => {
+    setManageSeoProduct({
+      id: seoManageData?.data?.data?.id,
+      relational_id: seoManageData?.data?.data?.relational_id,
+      relational_type: seoManageData?.data?.data?.relational_type,
+      url: seoManageData?.data?.data?.url,
+      primary_keyword: seoManageData?.data?.data?.primary_keyword,
+      monthly_search_volume: seoManageData?.data?.data?.monthly_search_volume,
+      title_tag: seoManageData?.data?.data?.title_tag,
+      meta_title: seoManageData?.data?.data?.meta_title,
+      meta_description: seoManageData?.data?.data?.meta_description,
+      internal_links: seoManageData?.data?.data?.internal_links,
+      indexing: seoManageData?.data?.data?.indexing,
+      og_title: seoManageData?.data?.data?.og_title,
+      og_description: seoManageData?.data?.data?.og_description,
+      og_image_url: seoManageData?.data?.data?.og_image_url,
+      og_image_file: seoManageData?.data?.data?.og_image_url,
+      og_image_alt_text: seoManageData?.data?.data?.og_image_alt_text,
+      og_image_name: seoManageData?.data?.data?.og_image_name,
+      tags: seoManageData?.data?.data?.tags,
+      schema: seoManageData?.data?.data?.schema,
+      schema_rating: seoManageData?.data?.data?.schema_rating,
+      schema_reviews_count: seoManageData?.data?.data?.schema_reviews_count,
+      created_by: seoManageData?.data?.data?.created_by,
+      updated_by: seoManageData?.data?.data?.updated_by,
+      created_at: seoManageData?.data?.data?.created_at,
+      updated_at: seoManageData?.data?.data?.updated_at,
+      secondary_keyword_details:
+        seoManageData?.data?.data?.secondary_keyword_details,
+      paragraph_1: seoManageData?.data?.data?.paragraph_1 || "",
+      paragraph_2: seoManageData?.data?.data?.paragraph_2 || "",
+      paragraph_3: seoManageData?.data?.data?.paragraph_3 || "",
+      paragraph_4: seoManageData?.data?.data?.paragraph_4 || "",
+      popular_tags: seoManageData?.data?.data?.popular_tags || [],
+    });
+  }, [seoManageData]);
+
   // Effect to update state when API data is available
   useEffect(() => {
     if (data?.product) {
       setGeneralData({
         sku: data?.product?.sku,
         barcode: data?.product?.barcode,
+        websites: data?.product?.website_ids,
         warranty_info: [
           { value: "30 Days Warranty" },
           { value: "90 Days Warranty" },
@@ -550,7 +642,7 @@ const AddProducts = () => {
           { value: "pending" },
           { value: "published" },
         ],
-        status_value: data?.product?.status.selected || "",
+        status_value: data?.product?.status[0]?.value || "",
       });
 
       setInventoryStockManagement({
@@ -580,6 +672,11 @@ const AddProducts = () => {
         sale_price: data?.product.sale_price,
         sale_type: data?.product.sale_type,
         cost_per_item: data?.product.cost_per_item,
+        cost_per_item_currency: data?.product?.cost_per_item_currency,
+        cost_type: data?.product?.cost_type,
+        additional_cost_percentage: data?.product?.additional_cost_percentage,
+        additional_cost_value: data?.product?.additional_cost_value,
+        total_cost_per_item: data?.product?.total_cost_per_item,
         tax: [{ value: "VAT" }, { value: "None" }, { value: "Import Tax" }],
         taxValue: data?.product?.tax[0]?.rate || "VAT",
         minimum_order_quantity: data?.product.minimum_order_quantity,
@@ -611,7 +708,7 @@ const AddProducts = () => {
         content: data.product.content,
         apiBenefits: data?.product?.benefits_features,
         description: data.product.description,
-        faqs: data.faq, // ✅ Ensure faqs is always an array
+        faqs: data.faq,
       });
 
       setMediaData({
@@ -724,10 +821,11 @@ const AddProducts = () => {
           <Loader />
         </div>
       ) : (
+        // <form onSubmit={handleSubmit}>
         <div className="min-h-screen">
           <AddProductsHeader
             data={data}
-            handleCreateProduct={handleCreateProduct}
+            handleCreateProduct={handleSubmit}
             updateProductLoading={updateLoading}
             general={generalData}
             setGeneralData={setGeneralData}
@@ -765,6 +863,12 @@ const AddProducts = () => {
             setPerformanceAnalytics={setPerformanceAnalytics}
           />
           <SEO seoData={seoData} setSeoData={setSeoData} />
+          <SeoManagement
+            manageSeoProduct={manageSeoProduct}
+            setManageSeoProduct={setManageSeoProduct}
+            id={id}
+            type={"Product"}
+          />
           {!!attributes && attributes?.data?.length > 0
             ? attributes.data.map((item, index) => (
                 <AttributesGroupsComp
@@ -777,6 +881,7 @@ const AddProducts = () => {
               ))
             : null}
         </div>
+        // </form>
       )}
     </>
   );

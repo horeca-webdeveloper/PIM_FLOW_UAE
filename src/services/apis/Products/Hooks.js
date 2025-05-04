@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createProduct, fetchAllProducts, fetchBrands, fetchCategoriesAttributes, fetchStores, updateProduct } from "./Api";
+import { createProduct, deleteProduct, fetchAllProducts, fetchBrands, fetchCategoriesAttributes, fetchStores, updateProduct } from "./Api";
 
 export const useCreateProduct = () => {
     return useMutation({
@@ -24,7 +24,13 @@ export const useFetchCategoriesAttributes = (params) => {
   };
 
 
-  
+export const useDeleteProduct = () => {
+    return useMutation({
+    mutationFn: (data) => deleteProduct(data),
+  });
+};
+        
+
   export const useFetchProducts = (params) => {
     return useQuery({
       queryKey: ["fetchAllProducts",params],

@@ -15,12 +15,12 @@ const MultiAttributesHeader = ({ type }) => {
         </div>
         <div>
           <Link to="/export">
-          <button type="button" className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px]">
+          <button type="button" className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px] hover:text-white  group hover:bg-[#26683A]">
             Export
           </button>
           </Link>
           <Link to="/import">
-          <button type="button" className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px]">
+          <button type="button" className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px] hover:text-white  group hover:bg-[#26683A]">
             Import
           </button>
           </Link>
@@ -30,7 +30,7 @@ const MultiAttributesHeader = ({ type }) => {
         </div>
       </div>
       <p className="text-[14px] text-[#282828] leading-[21.82px] text-[#616161] font-semibold capitalize">
-        Attribute Type : {type}
+        Attribute Type : <span className="text-[green]">{type}</span>
       </p>
       <p className="text-[14px] text-[#282828] leading-[21.82px] text-[#616161] mt-[5px] font-semibold">
         Quality Score : ABCDE

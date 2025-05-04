@@ -17,14 +17,14 @@ const SeoComponent = ({ SEO }) => {
     setVolumes([...volumes, { id: volumes.length + 1 }]);
   };
   return (
-    <div className="grid grid-cols-2 p-4 gap-4 w-[60%]">
+    <div className="grid grid-cols-2 p-4 gap-4 w-[100%]">
       <div>
         <label className="block text-[16px] font-medium leading-[21.82px] text-[#616161] mb-[10px]">
           Primary Keyword
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field"
         />
       </div>
@@ -35,12 +35,10 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="number"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Numeric"
         />
       </div>
-
-
 
       {/* <CommonMultiKeywordInput
         secondaryKeywords={secondaryKeywords}
@@ -53,7 +51,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field"
         />
       </div>
@@ -65,7 +63,7 @@ const SeoComponent = ({ SEO }) => {
           </label>
           <input
             type="number"
-            className="w-full border p-2 rounded"
+            className="w-full border border-[#A8A4A4] p-2 rounded"
             placeholder="Numeric"
           />
         </div>
@@ -77,17 +75,13 @@ const SeoComponent = ({ SEO }) => {
         </button>
       </div>
 
-
-
-
-
       <div className="col-span-2">
         <label className="block text-[16px] font-medium leading-[21.82px] text-[#616161] mb-[10px]">
           URL Slug
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field"
         />
       </div>
@@ -98,7 +92,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field"
         />
       </div>
@@ -109,7 +103,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field (Limit 60)"
         />
 
@@ -128,7 +122,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field (Limit 60)"
         />
         <label className="block text-sm font-medium pt-4">OG Description</label>
@@ -146,7 +140,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field "
         />
 
@@ -155,7 +149,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field "
         />
       </div>
@@ -205,7 +199,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="text"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field"
         />
       </div>
@@ -216,7 +210,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="url"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="URL"
         />
       </div>
@@ -239,7 +233,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="url"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field (60 Character Limit)"
         />
       </div>
@@ -261,7 +255,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="url"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field (60 Character Limit)"
         />
       </div>
@@ -283,7 +277,7 @@ const SeoComponent = ({ SEO }) => {
         </label>
         <input
           type="url"
-          className="w-full border p-2 rounded"
+          className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Text Field (60 Character Limit)"
         />
       </div>

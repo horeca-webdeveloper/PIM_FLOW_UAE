@@ -4,6 +4,7 @@ import { urls } from "../../../config/baseUrls";
 import PaginationComponent from "../../common/PaginationComponent";
 const CategoryTable = ({ tableHeading, datas, options, showFilter, showCheckBox, getDatafn, deleteData, disableDelete, setPage, totalPages, changePage, currentPage }) => {
 
+    
     return (
         <div className="p-0 bg-white border-t border-l border-r border-[#BCBCBC] rounded-md mt-[20px]">
             {/* Tabs */}
@@ -60,6 +61,7 @@ const CategoryTable = ({ tableHeading, datas, options, showFilter, showCheckBox,
                         {datas?.length > 0 ? (
                             datas.map((row, rowIndex) => (
 
+                           
                                 <tr
                                     key={rowIndex}
                                     className="hover:bg-gray-100 transition border-b border-[#BCBCBC]"
@@ -68,29 +70,29 @@ const CategoryTable = ({ tableHeading, datas, options, showFilter, showCheckBox,
  
 
                                     <td
-                                        key={row.name}
+                                        key={row?.name}
                                         className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC]"
                                     >
-                                        {row.category.name}
+                                        {row?.category?.name}
                                     </td>
                                     <td
-                                        key={row.image}
+                                        key={row?.image}
                                         className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC]"
                                     >
-                                        <img src={row.category.image} alt={row.name} />
+                                        <img src={row?.category?.image} alt={row?.name} />
                                     </td>
 
                                     <td
-                                        key={row.slug}
+                                        key={row?.slug}
                                         className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC]"
                                     >
-                                        {row.category.slug}
+                                        {row?.category?.slug}
                                     </td>
                                     <td
-                                        key={row.status}
+                                        key={row?.status}
                                         className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC]"
                                     >
-                                        {row.category.status}
+                                        {row?.category?.status}
                                     </td>
 
 

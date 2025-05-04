@@ -6,20 +6,58 @@ body {
   @apply font-nunito;
 }
 
-
 .circle {
-    width: 5px;  /* Set the width */
-    height: 5px; /* Set the height */
-    background-color: #26683A; /* Circle color */
-    border-radius: 50%; /* Makes it a circle */
-  }
+  width: 5px;
+  /* Set the width */
+  height: 5px;
+  /* Set the height */
+  background-color: #26683a;
+  /* Circle color */
+  border-radius: 50%;
+  /* Makes it a circle */
+}
 
-  .ck-editor {
-    display: flex;
-    flex-direction: column-reverse; /* Moves toolbar below the editor */
-  }
-  
-  .ck-toolbar {
-    order: 1; /* Moves toolbar to the bottom */
-  }
-  
+.ck-content {
+  height: 150px !important;
+}
+
+.ck-editor {
+  display: flex;
+  flex-direction: column-reverse;
+  /* Moves toolbar below the editor */
+}
+
+.ck-toolbar {
+  order: 1;
+  /* Moves toolbar to the bottom */
+}
+
+.cell-style {
+  @apply border border-gray-300 p-2;
+}
+
+/* Custom style for active paginator button */
+.p-paginator .p-paginator-page.p-highlight {
+  background-color: #26683a !important;
+  border-radius: 20px;
+  /* Tailwind's green-500 */
+  border-color: #26683a !important;
+  color: white !important;
+}
+
+ 
+
+  .p-datatable-header {
+  font-size: 18px;
+  font-weight: 450; /* or 500 if you prefer medium */
+  line-height: 25.2px;
+  color: black;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE and Edge */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, and Opera */
+}

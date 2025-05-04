@@ -17,12 +17,12 @@ const AttributesHeader = ({ setShowModal, setUpdateDatas, totalRecords }) => {
         </div>
         <div>
           <Link to="/export">
-          <button className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px]">
+          <button className="text-[14px]  leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px] hover:text-white  group hover:bg-[#26683A]">
             Export
           </button>
           </Link>
           <Link to="/import">
-          <button className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px]">
+          <button className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px] hover:text-white  group hover:bg-[#26683A]">
             Import
           </button>
           </Link>

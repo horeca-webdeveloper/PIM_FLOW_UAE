@@ -43,6 +43,7 @@ const CreateRolePopup = ({ setShowPopup }) => {
         toast.success("Role Created Successfully");
         window.location.reload();
         setShowPopup(false);
+        document.body.style.overflow = "auto";
       },
       onError: (err) => {
         setLoader(false);
@@ -84,7 +85,10 @@ const CreateRolePopup = ({ setShowPopup }) => {
           <div className="flex mt-[20px] justify-end space-x-2 mt-[10px]">
             <button
               type="button"
-              onClick={() => setShowPopup(false)}
+              onClick={() => {
+                setShowPopup(false);
+                document.body.style.overflow = "auto";
+              }}
               className="flex-1 bg-[#F1EFEF] border border-[#A8A4A4] text-[#303030] py-2 px-4 mr-2 rounded"
             >
               Cancel

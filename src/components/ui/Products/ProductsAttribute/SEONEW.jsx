@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CommonMultiKeywordInput from "../../../common/CommonMultiKeywordInput";
+import SeoComponent from "../../../common/SeoComponent";
 
 const SEONEW = ({ SEO }) => {
   const [show, setShow] = useState(true);
@@ -50,7 +51,7 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="text"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] border-[#A8A4A4] p-2 rounded"
               placeholder="Text Field"
             />
           </div>
@@ -61,15 +62,12 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="number"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Numeric"
             />
           </div>
 
-          <CommonMultiKeywordInput
-            secondaryKeywords={secondaryKeywords}
-            setSecondaryKeywords={setSecondaryKeywords}
-          />
+          <SeoComponent />
 
           <div>
             <label className="block text-[16px] font-medium leading-[21.82px] text-[#616161] mb-[10px]">
@@ -77,7 +75,7 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="number"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Numeric"
             />
           </div>
@@ -88,7 +86,7 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="text"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Text Field"
             />
           </div>
@@ -99,25 +97,25 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="text"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Text Field"
             />
           </div>
 
-          <div>
+          <div className="col-span-2">
             <label className="block text-[16px] font-medium leading-[21.82px] text-[#616161] mb-[10px]">
               Meta Title
             </label>
             <input
               type="text"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Text Field (Limit 60)"
             />
             <label className="block text-sm font-medium pt-4">
               Meta Description
             </label>
             <textarea
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Text Field (Limit 160)"
             ></textarea>
           </div>
@@ -128,7 +126,7 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="url"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="URL"
             />
           </div>
@@ -139,7 +137,7 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="url"
-              className="w-full border p-2 rounded"
+              className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="URL"
             />
           </div>
