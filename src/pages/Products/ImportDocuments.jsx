@@ -9,6 +9,7 @@ import CollapseComponent from "../../components/common/CollapseComponent";
 import FullScreenLoader from "../../utils/FullScreenLoader";
 import { notify } from "../../utils/notify";
 import Logs from "../Logs/Logs";
+import ImportZipLogs from "../../components/ui/Logs/ImportZipLogs";
 
 const ImportDocuments = () => {
     const [loader, setLoader] = useState(false);
@@ -87,13 +88,17 @@ const ImportDocuments = () => {
                         <InputComponent
                             label="Upload File"
                             type="file"
-                             accept="*/*"
+                            accept=".zip"
                             {...register("file", { required: "File is required" })}
                         />
                         {errors.file && <p className="text-red-500">{errors.file.message}</p>}
                     </div>
                 </CollapseComponent>
 
+                <CollapseComponent title="Import History">
+                <ImportZipLogs  datas={!!response && response?.processed_skus}/>
+
+    </CollapseComponent>
             
 
             </form>

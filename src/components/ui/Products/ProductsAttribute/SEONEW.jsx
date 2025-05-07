@@ -62,6 +62,7 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="number"
+              minLength={0}
               className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Numeric"
             />
@@ -75,6 +76,7 @@ const SEONEW = ({ SEO }) => {
             </label>
             <input
               type="number"
+              minLength={0}
               className="w-full border border-[#A8A4A4] p-2 rounded"
               placeholder="Numeric"
             />

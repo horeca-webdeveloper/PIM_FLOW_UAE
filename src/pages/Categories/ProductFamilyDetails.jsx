@@ -105,6 +105,7 @@ const ProductFamilyDetails = () => {
             title: 'Attribute as label',
             key: 'label', // Ensure this matches the object key in datas
         },
+        
 
     ];
 

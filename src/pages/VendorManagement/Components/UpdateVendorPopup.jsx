@@ -135,6 +135,7 @@ const UpdateVendorPopup = ({
                 </label>
                 <input
                   type="number"
+                  minLength={0}
                   {...register("landline_number", {
                     required: "Landline number is required",
                   })}
@@ -155,6 +156,7 @@ const UpdateVendorPopup = ({
                 </label>
                 <input
                   type="number"
+                  minLength={0}
                   {...register("mobile_number", {
                     required: "Mobile no. is required",
                   })}

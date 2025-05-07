@@ -171,12 +171,12 @@ const ProductExport = () => {
 
     useEffect(() => {
         if (brands?.success && brands.brands) {
-            const brandDatas = Object.entries(brands.brands).map(([id, name]) => ({
-                id,
-                name,
-            }));
+            // const brandDatas = Object.entries(brands.brands).map(([id, name]) => ({
+            //     id,
+            //     name,
+            // }));
 
-            setBrandArray(brandDatas);
+            setBrandArray(brands.brands);
         }
 
         if (stores?.stores && Object.keys(stores.stores).length) {

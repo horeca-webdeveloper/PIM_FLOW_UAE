@@ -25,7 +25,7 @@ const convertToTreeData = (nodes) => {
         return {
             id: node.id,
             slug: node.slug,
-            parentId: node.parent_id,
+            parentId: node.parent_id ? node.parent_id : 0,
             title: `${node.name} (${totalDescendants})`, // e.g., "Food Equipment (5)"
             children,
         };
@@ -39,9 +39,14 @@ const convertToTreeData = (nodes) => {
 const CategoryDragAndDrop = () => {
     const [treeData, setTreeData] = useState([]);
     const [loader, setLoader] = useState(false);
+    const [categories, setCategoriesMain] = useState([]);
     const [getCategories, setCategories] = useState([]);
-    const [response,setResponse]=useState(null);
-    const [reorderResponse,setReorderResponse]=useState(null);
+    const [parentCategory, setParentCategories] = useState([]);
+    const [secondryCategory, setSecondCategories] = useState([]);
+    const [thirdCategory, setThirdCategories] = useState([]);
+    const [fourthCategory, setFourthCategories] = useState([]);
+    const [response, setResponse] = useState(null);
+    const [reorderResponse, setReorderResponse] = useState(null);
     const status = [{
         id: 'draft',
         name: 'Draft'
@@ -64,20 +69,24 @@ const CategoryDragAndDrop = () => {
         setValue,
         control,
         reset,
+        watch,
         formState: { errors },
     } = useForm();
-
+    const parentId = watch("primary_category", "");
+    const secondCatId = watch("second_category", "");
+    const thirdCatId = watch("third_category", "");
+    const fourthCatId = watch("fourth_category", "");
     const buttons = [
-        {
-            label: "Update Changes",
-            link: "/",
-            icon: "icons/import.png",
-            type: "button",
-            bgColor: "#E2E2E2",
-            textColor: COLORS.darkCharcoal,
-            fontSize: "14px",
-            fontWeight: "normal",
-        },
+        // {
+        //     label: "Update Changes",
+        //     link: "/",
+        //     icon: "icons/import.png",
+        //     type: "button",
+        //     bgColor: "#E2E2E2",
+        //     textColor: COLORS.darkCharcoal,
+        //     fontSize: "14px",
+        //     fontWeight: "normal",
+        // },
         {
             label: "Add Category",
             link: "",
@@ -122,7 +131,7 @@ const CategoryDragAndDrop = () => {
             result.push({
                 id,
                 title: node.title,
-                parentId,
+                parentId: parentId ? parentId : 0,
                 position: index,
             });
 
@@ -137,48 +146,61 @@ const CategoryDragAndDrop = () => {
     const handleDrop = (newTree) => {
         const oldMeta = generateTreeMeta(treeData);
         const newMeta = generateTreeMeta(newTree);
-    
+
         // Find changed nodes
         const changes = newMeta.filter(newNode => {
             const oldNode = oldMeta.find(o => o.id === newNode.id);
             return !oldNode || oldNode.parentId !== newNode.parentId || oldNode.position !== newNode.position;
         });
-    
+
         if (changes.length > 0) {
-           const categories={
-                    changes
-           }
+            const categories = {
+                changes
+            }
             // You can now send only these to your API
-            Apis.categoryReorder(changes,setLoader,setReorderResponse)
+            Apis.categoryReorder(changes, setLoader, setReorderResponse)
         }
-    
+
         setTreeData(newTree);
     };
-    
+
 
     const onSubmit = (data) => {
+        let categoryId;
+        if (data.fourth_category) {
+            categoryId = data.fourth_category
+        }
+        else if (data.third_category) {
+            categoryId = data.third_category
+        } else if (data.second_category) {
+            categoryId = data.second_category
+        }
+        else if (data.primary_category) {
+            categoryId = data.primary_category
+        }
         const formData = new FormData();
         formData.append("name", data.category_name);
         formData.append("is_featured", data.featured);
-        formData.append("parent_id", parseInt(data.parentId));
+        formData.append("parent_id", parseInt(categoryId));
         formData.append("description", '');
         formData.append("status", data.status);
         formData.append("order", '');
         formData.append("icon", data.icon);
 
         data.thumbnail?.forEach((banner, index) => {
-      
-            if (banner.file?.[0] instanceof File) {
-              formData.append(`icon_image`, banner.file[0]);
-            } 
-          });
 
-   
-         Apis.createNewCategory(formData, setLoader, setResponse);
+            if (banner.file?.[0] instanceof File) {
+                formData.append(`icon_image`, banner.file[0]);
+            }
+        });
+
+
+        Apis.createNewCategory(formData, setLoader, setResponse);
     };
 
     useEffect(() => {
         Apis.allCategoriesTree(setLoader, setCategories);
+        Apis.fetchCategories(setLoader, setCategoriesMain);
     }, []);
 
 
@@ -190,16 +212,56 @@ const CategoryDragAndDrop = () => {
         }
     }, [getCategories]);
 
-    useEffect(()=>{
-       
-        if(!!response && response?.success){
+    useEffect(() => {
+
+        if (!!response && response?.success) {
             notify(response.message)
             Apis.allCategoriesTree(setLoader, setCategories);
+            Apis.fetchCategories(setLoader, setCategoriesMain);
             reset();
-            
+
         }
-    },[response]);
-  
+
+    }, [response]);
+
+    useEffect(() => {
+
+        if (!!reorderResponse && reorderResponse?.success) {
+            notify(reorderResponse.message)
+            Apis.fetchCategories(setLoader, setCategoriesMain);
+        }
+
+    }, [reorderResponse]);
+
+
+    useEffect(() => {
+
+
+        if (categories && categories?.categories?.length > 0) {
+            const parentCat = categories.categories.filter((it) => it.parent_id == 0);
+            setParentCategories(parentCat);
+        }
+        if (parentId && categories.categories.length > 0) {
+            console.log("getCategories.categories.length", categories);
+            const secondCat = categories.categories.filter((it) => it.parent_id == parentId);
+            setSecondCategories(secondCat);
+        }
+        if (secondCatId && categories.categories.length > 0) {
+            const thirdCat = categories.categories.filter((it) => it.parent_id == secondCatId);
+            setThirdCategories(thirdCat);
+        }
+        if (thirdCatId && categories.categories.length > 0) {
+            const fourthCat = categories.categories.filter((it) => it.parent_id == thirdCatId);
+            setFourthCategories(fourthCat);
+        }
+
+    }, [parentId, secondCatId, thirdCatId, categories]);
+    useEffect(() => {
+        setThirdCategories([]);
+        setFourthCategories([]);
+    }, [parentId]);
+
+
     return (
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -216,82 +278,143 @@ const CategoryDragAndDrop = () => {
                     </div>
 
                     <div className="col-span-8 bg-white border border-[#979797] rounded-lg p-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Category Name */}
                             <div>
-                            <InputComponent
-                                label="Category Name"
-                                bgTransparent={true}
-                                width="full"
-                                name="category_name"
-                                placeholder="Text Field"
-                                {...register("category_name", { required: "Category name is required" })}
-                            />
-                            {errors.category_name && <p className="text-red-500">{errors.category_name.message}</p>}
+                                <InputComponent
+                                    label="Category Name"
+                                    bgTransparent={true}
+                                    width="full"
+                                    name="category_name"
+                                    placeholder="Text Field"
+                                    {...register("category_name", { required: "Category name is required" })}
+                                />
+                                {errors.category_name && (
+                                    <p className="text-red-500">{errors.category_name.message}</p>
+                                )}
                             </div>
-                            <div>
-                            <InputComponent
-                                label="Category URL"
-                                bgTransparent={true}
-                                width="full"
-                                name="url"
-                                placeholder="https://"
-                                {...register("url", { required: "Url  is required" })}
-                            />
-                            {errors.url && <p className="text-red-500">{errors.url.message}</p>}
-                            </div>
-                            <div>
-                            <SelectComponent width="full" label="Parent " name="parentId" option={!!getCategories && getCategories.categories} {...register("parentId", { required: "Parent Id is required" })} />
-                            {errors.parentId && <p className="text-red-500">{errors.parentId.message}</p>}
-                            </div>
-                            <div>
 
-                            <SelectComponent width="full" label="Status " name="status" option={status} {...register("status", { required: "Status is required" })} />
-                            {errors.status && <p className="text-red-500">{errors.status.message}</p>}
+                            {/* Category URL */}
+                            {/* <div>
+                                <InputComponent
+                                    label="Category URL"
+                                    bgTransparent={true}
+                                    width="full"
+                                    name="url"
+                                    placeholder="https://"
+                                    {...register("url", { required: "Url is required" })}
+                                />
+                                {errors.url && (
+                                    <p className="text-red-500">{errors.url.message}</p>
+                                )}
+                            </div> */}
+
+                            {/* Primary Category */}
+                            <div>
+                                <SelectComponent
+                                    width="full"
+                                    label="Primary Category (Required)"
+                                    name="primary_category"
+                                    option={!!parentCategory && parentCategory}
+                                    {...register("primary_category", { required: "Primary category is required" })}
+                                />
+                                {errors.primary_category && (
+                                    <p className="text-red-500">{errors.primary_category.message}</p>
+                                )}
+                            </div>
+
+                            {/* Secondary Category */}
+                            {secondryCategory?.length > 0 && (
+                                <div>
+                                    <SelectComponent
+                                        width="full"
+                                        label="Second Category"
+                                        name="second_category"
+                                        option={secondryCategory}
+                                        {...register("second_category")}
+                                    />
+                                    {errors.second_category && (
+                                        <p className="text-red-500">{errors.second_category.message}</p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Third Category */}
+                            {thirdCategory?.length > 0 && (
+                                <div>
+                                    <SelectComponent
+                                        width="full"
+                                        label={fourthCategory?.length > 0 ? 'Third Category' : 'Product Family'}
+                                        name="third_category"
+                                        option={thirdCategory}
+                                        {...register("third_category")}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Fourth Category */}
+                            {fourthCategory?.length > 0 && (
+                                <div>
+                                    <SelectComponent
+                                        width="full"
+                                        label="Product Family"
+                                        name="fourth_category"
+                                        option={fourthCategory}
+                                        {...register("fourth_category")}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Status */}
+                            <div>
+                                <SelectComponent
+                                    width="full"
+                                    label="Status"
+                                    name="status"
+                                    option={status}
+                                    {...register("status", { required: "Status is required" })}
+                                />
+                                {errors.status && (
+                                    <p className="text-red-500">{errors.status.message}</p>
+                                )}
+                            </div>
+
+                            {/* Featured */}
+                            <div>
+                                <SelectComponent
+                                    width="full"
+                                    label="Featured"
+                                    name="featured"
+                                    option={featured}
+                                    {...register("featured", { required: "Featured is required" })}
+                                />
+                                {errors.featured && (
+                                    <p className="text-red-500">{errors.featured.message}</p>
+                                )}
+                            </div>
+
+                            {/* Thumbnail (spans full width) */}
+                            <div className="md:col-span-2">
+                                <SingleSelectFileComponent
+                                    title="Category Thumbnail"
+                                    fileLength={1}
+                                    fileName={false}
+                                    altText={false}
+                                    control={control}
+                                    register={register}
+                                    setValue={setValue}
+                                    namePrefix="thumbnail"
+                                    notInArray={true}
+                                    border={false}
+                                    accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml"
+                                />
+                                {errors.thumbnail && (
+                                    <p className="text-red-500">{errors.thumbnail.message}</p>
+                                )}
                             </div>
                         </div>
-
-                        <div>
-                            <SingleSelectFileComponent
-                                title="Category Thumbnail"
-                                fileLength={1}
-                                fileName={false}
-                                altText={false}
-                                control={control}
-                                register={register}
-                                setValue={setValue}
-                                namePrefix="thumbnail"
-                                notInArray={true}
-                                border={false}
-                                accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml"
-                            />
-                            {errors.thumbnail && <p className="text-red-500">{errors.thumbnail.message}</p>}
-                        </div>
-
-                        <div>
-                            <SelectComponent width="full" label="Featured " name="featured" option={featured} {...register("featured", { required: "Featured is required" })} />
-                            {errors.featured && <p className="text-red-500">{errors.featured.message}</p>}
-
-                        </div>
-
-                        {/* <div className="flex gap-4 flex-wrap mt-4">
-                            {buttons2.map((item, index) => {
-                                const textColorClass = item.textColor ? `text-[${item.textColor}]` : "";
-                                const bgColorClass = item.bgColor ? `bg-[${item.bgColor}]` : "";
-                                const textSizeClass = item.textSize ? `text-[${item.textSize}]` : "";
-                                const fontWeightClass = item.fontWeight ? `font-${item.fontWeight}` : "";
-
-                                return (
-                                    <button
-                                        key={index}
-                                        type={item.type}
-                                        className={`${textSizeClass} leading-[17.64px] ${textColorClass} ${bgColorClass} px-[20px] ${fontWeightClass} rounded-[5px] py-[8px] flex items-center gap-2 cursor-pointer`}
-                                    >
-                                        {item.label}
-                                    </button>
-                                );
-                            })}
-                        </div> */}
                     </div>
+
                 </div>
             </div>
         </form>

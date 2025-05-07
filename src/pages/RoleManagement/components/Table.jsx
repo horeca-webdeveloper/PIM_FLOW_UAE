@@ -76,7 +76,15 @@ const Table = ({ data, isLoading, setId, setShowDelete }) => {
                       className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                     />
                   </td>
-                  <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
+                  <td
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate("/user-general-setting", {
+                        state: { roleData: item },
+                      });
+                    }}
+                    className="px-3 py-4 cursor-pointer text-sm text-[#303030] font-normal border border-gray-200"
+                  >
                     {item?.name}
                   </td>
                   <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
@@ -86,7 +94,7 @@ const Table = ({ data, isLoading, setId, setShowDelete }) => {
                     <div className="flex justify-center space-x-2">
                       <button
                         onClick={() =>
-                          navigate("/user-general-setting", {
+                          navigate("/update-permission", {
                             state: { roleData: item },
                           })
                         }

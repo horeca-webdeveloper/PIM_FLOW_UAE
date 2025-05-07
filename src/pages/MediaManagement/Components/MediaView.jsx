@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import folderIcon from "../../../assets/icons/folderIcon.png";
 // import threeDot from "../../../assets/icons/threeDot.png";
-import { FaFileCsv } from "react-icons/fa";
+import { FaFileCsv, FaFolder } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 
@@ -67,6 +67,7 @@ const MediaView = ({ data, index, type }) => {
         return (
           <a
             href={fileUrl}
+            target="_blank"
             download={`${fileName}.csv`}
             className="flex items-center"
           >
@@ -78,6 +79,7 @@ const MediaView = ({ data, index, type }) => {
         return (
           <a
             href={fileUrl}
+            target="_blank"
             download={`${fileName}.pdf`}
             className="flex items-center"
           >
@@ -89,6 +91,7 @@ const MediaView = ({ data, index, type }) => {
         return (
           <a
             href={fileUrl}
+            target="_blank"
             download={`${fileName}.xlsx`}
             className="flex items-center"
           >
@@ -111,7 +114,7 @@ const MediaView = ({ data, index, type }) => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center flex-grow">
-          <img src={folderIcon} alt="Folder" className="mr-2" />
+          <FaFolder className="text-[#26683A] hover:text-green-700 text-xl mr-[4px] mb-[2px]" />
           <span className="text-sm">{""}</span>
         </div>
         {/* <img src={threeDot} alt="Menu" className="ml-full" /> */}

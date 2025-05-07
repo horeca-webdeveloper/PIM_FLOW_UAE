@@ -76,6 +76,7 @@ const VendorMediaFiles = () => {
                       </p>{" "}
                       :{" "}
                       <a
+                        target="_blank"
                         href={item?.url}
                         download={`${item?.name}.csv`}
                         className="hover:text-blue-400 cursor-pointer ml-[4px]"

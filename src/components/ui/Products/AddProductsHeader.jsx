@@ -37,7 +37,7 @@ const AddProductsHeader = ({
     setGeneralData((prev) => ({ ...prev, [name]: sanitizedValue }));
   };
   return (
-    <div className="sticky top-[48px] z-50 pt-[15px] border-b border-[#26683A] bg-[#F1F1F1] pb-[10px] p-0 flex justify-between items-start">
+    <div className="sticky top-0 z-50 pt-[15px] pb-[10px] border-b border-[#26683A] bg-[#F1F1F1] flex justify-between items-start">
       {/* Left Section */}
       <div className="flex items-center gap-4">
         {/* Product Icon */}

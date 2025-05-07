@@ -5,7 +5,14 @@ import SelectField from "../../../components/common/MultiAttributes/CommonOption
 import CollapseComponent from "../../../components/common/CollapseComponent";
 import MultiSelectComponent from "../../../components/common/MultiSelectComponent";
 import { Controller } from "react-hook-form";
-const MeasurementAttributes = ({ stateData, register, errors, control, setValue, attributeGroups }) => {
+const MeasurementAttributes = ({
+  stateData,
+  register,
+  errors,
+  control,
+  setValue,
+  attributeGroups,
+}) => {
   const [selectedAttributes, setSelectedAttributes] = useState([]);
   let validation;
   if (typeof stateData.validations === "string") {
@@ -21,7 +28,7 @@ const MeasurementAttributes = ({ stateData, register, errors, control, setValue,
     if (stateData) {
       const selectedAttributes = stateData?.attribute_groups?.map((items) => ({
         value: items.id,
-        label: items.name
+        label: items.name,
       }));
       setSelectedAttributes(selectedAttributes);
       setValue("attribute_group_id", selectedAttributes);
@@ -30,8 +37,6 @@ const MeasurementAttributes = ({ stateData, register, errors, control, setValue,
       setValue("decimal", validation?.decimal ? "Yes" : "No");
     }
   }, [stateData, setValue]);
-
-
 
   return (
     <div className="min-h-screen">
@@ -46,14 +51,11 @@ const MeasurementAttributes = ({ stateData, register, errors, control, setValue,
           defaultValue={stateData?.code}
           {...register("code", { required: "Code is required" })}
           placeholder="Enter your code"
-
         />
         {errors.code && <p className="text-red-500">{errors.code.message}</p>}
 
-
-
         <Controller
-          name='attribute_group_id'
+          name="attribute_group_id"
           control={control}
           rules={{ required: `Attribute group are required` }}
           render={({ field }) => (
@@ -68,7 +70,9 @@ const MeasurementAttributes = ({ stateData, register, errors, control, setValue,
           )}
         />
 
-        {errors.attribute_group_id && <p className="text-red-500">{errors.attribute_group_id.message}</p>}
+        {errors.attribute_group_id && (
+          <p className="text-red-500">{errors.attribute_group_id.message}</p>
+        )}
       </CollapseComponent>
 
       {/* Validation Parameters */}
@@ -76,57 +80,55 @@ const MeasurementAttributes = ({ stateData, register, errors, control, setValue,
         <SelectField
           label="Measurement Family (required)"
           name="measurment_family"
-
-          {...register("measurment_family", { required: "Measurment family  required" })}
+          {...register("measurment_family", {
+            required: "Measurment family  required",
+          })}
           options={[
             { label: "Inches", value: "Inches" },
             { label: "mm", value: "mm" },
             { label: "cm", value: "cm" },
           ]}
-
         />
-        {errors.measurment_family && <p className="text-red-500">{errors.measurment_family.message}</p>}
+        {errors.measurment_family && (
+          <p className="text-red-500">{errors.measurment_family.message}</p>
+        )}
         <SelectField
           label="Negative Values Allowed"
           name="negative"
-
           {...register("negative")}
           options={[
             { label: "Yes", value: "Yes" },
             { label: "No", value: "No" },
           ]}
-
         />
         <SelectField
           label="Decimal Values Allowed"
           name="decimal"
           {...register("decimal")}
-
           options={[
             { label: "Yes", value: "Yes" },
             { label: "No", value: "No" },
           ]}
-
         />
         <CommonInput
           label="Min Number"
           name="min"
           type="number"
+          minLength={0}
           min="0"
           defaultValue={validation?.min}
           {...register("min")}
           placeholder="Min number"
-
         />
         <CommonInput
           label="Max Number"
           name="max"
           type="number"
+          minLength={0}
           min="0"
           defaultValue={validation?.max}
           {...register("max")}
           placeholder="Max number"
-
         />
       </CollapseComponent>
     </div>

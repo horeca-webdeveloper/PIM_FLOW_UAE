@@ -238,8 +238,18 @@ const AddVendorValuationPopup = ({
                 </label>
                 <input
                   {...register(field.name, {
-                    required: `${field.label} is required`,
+                    required: `${field.label} Is Required`,
+                    ...(field.name === "phone_number"
+                      ? {
+                          min: {
+                            value: 0,
+                            message: `${field.label} Cannot Be Negative`,
+                          },
+                        }
+                      : {}),
                   })}
+                  type={field.name === "phone_number" ? "number" : "text"}
+                  min={field.name === "phone_number" ? 0 : undefined}
                   className="w-full border border-gray-300 rounded px-3 py-2"
                   placeholder={`Enter ${field.label.toLowerCase()}`}
                 />
@@ -250,6 +260,7 @@ const AddVendorValuationPopup = ({
                 )}
               </div>
             ))}
+
             {/* Select Inputs with Controller */}
             {[
               {
@@ -290,7 +301,7 @@ const AddVendorValuationPopup = ({
                 <Controller
                   name={name}
                   control={control}
-                  rules={{ required: `${label} is required` }}
+                  rules={{ required: `${label} Is Required` }}
                   render={({ field }) => (
                     <select
                       {...field}
@@ -299,7 +310,7 @@ const AddVendorValuationPopup = ({
                       <option value="">Select {label}</option>
                       {options.map((opt) => (
                         <option key={opt} value={opt}>
-                          {opt}
+                          {opt.charAt(0).toUpperCase() + opt.slice(1)}
                         </option>
                       ))}
                     </select>
@@ -319,8 +330,15 @@ const AddVendorValuationPopup = ({
                 </label>
                 <input
                   {...register(field.name, {
-                    required: `${field.label} is required`,
+                    required: `${field.label} Is Required`,
+                    min: {
+                      value: 0,
+                      message: `${field.label} cannot be negative`,
+                    },
                   })}
+                  type="number"
+                  minLength={0}
+                  style={{ WebkitAppearance: "none" }}
                   className="w-full border border-gray-300 rounded px-3 py-2"
                   placeholder={`Enter ${field.label.toLowerCase()}`}
                 />
@@ -335,7 +353,7 @@ const AddVendorValuationPopup = ({
               <Controller
                 control={control}
                 name="category_ids"
-                rules={{ required: "Primary Category is required" }}
+                rules={{ required: "Primary Category Is Required" }}
                 render={({ field }) => (
                   <VendorMultiOption
                     label="Primary Category"
@@ -372,7 +390,7 @@ const AddVendorValuationPopup = ({
                 Country
               </label>
               <select
-                {...register("country_id", { required: "Country is required" })}
+                {...register("country_id", { required: "Country Is Required" })}
                 className="border p-2 w-full"
               >
                 <option value="">Select Country</option>
@@ -403,13 +421,13 @@ const AddVendorValuationPopup = ({
                   <Controller
                     name="city_ids"
                     control={control}
-                    rules={{ required: "City is required" }}
+                    rules={{ required: "City Is Required" }}
                     render={({ field }) => (
                       <div>
                         <Controller
                           name="city_ids"
                           control={control}
-                          rules={{ required: "City is required" }}
+                          rules={{ required: "City Is Required" }}
                           render={({ field }) => (
                             <VendorMultiOption
                               label="Warehouse Locations"

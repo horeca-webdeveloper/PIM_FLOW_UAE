@@ -46,13 +46,13 @@ const Table = ({
     "Net Terms",
     "Business License Number",
     "Country Name",
-    "Account No",
-    "Status",
-    "Category",
-    "Grade",
-    "Brands",
-    "No Of Products",
-    "Warehouse Locations",
+    // "Account No",
+    // "Status",
+    // "Category",
+    // "Grade",
+    // "Brands",
+    // "gi",
+    // "Warehouse Locations",
     "Created By",
   ];
   const [showColumn, setShowColumn] = useState(false);
@@ -292,6 +292,7 @@ const Table = ({
                     />
                   </th>
                   {[
+                    { name: "Vendor Code.", id: "serialno" },
                     { name: "Vendor Name", id: "name" },
                     { name: "Logo", id: "logo" },
                     { name: "Email", id: "email" },
@@ -308,13 +309,13 @@ const Table = ({
                       id: "business_licence_number",
                     },
                     { name: "Country Name", id: "country_name" },
-                    { name: "Account No", id: "Account No" },
-                    { name: "Status", id: "Status" },
-                    { name: "Category", id: "Category" },
-                    { name: "Grade", id: "Grade" },
-                    { name: "Brands", id: "Brands" },
-                    { name: "No Of Products", id: "No Of Products" },
-                    { name: "Warehouse Locations", id: "Warehouse Locations" },
+                    // { name: "Account No", id: "Account No" },
+                    // { name: "Status", id: "Status" },
+                    // { name: "Category", id: "Category" },
+                    // { name: "Grade", id: "Grade" },
+                    // { name: "Brands", id: "Brands" },
+                    // { name: "No Of Products", id: "No Of Products" },
+                    // { name: "Warehouse Locations", id: "Warehouse Locations" },
                     { name: "Created By", id: "created_at" },
                     { name: "Action", id: "action" },
                   ].map((header, index) => {
@@ -326,10 +327,8 @@ const Table = ({
                           if (
                             header?.id !== "logo" &&
                             header?.id !== "action" &&
-                            header?.id !== "country_name" &&
-                            header?.id !== "credit_limit" &&
-                            header?.id !== "net_terms" &&
-                            header?.id !== "created_at"
+                            header?.id !== "serialno" &&
+                            header?.id !== "country_name"
                           ) {
                             sortBy === header?.id
                               ? setSortBy("")
@@ -345,11 +344,9 @@ const Table = ({
                               <div className="ml-[20px]">
                                 {!(
                                   header?.id === "logo" ||
+                                  header?.id === "serialno" ||
                                   header?.id === "action" ||
-                                  header?.id === "country_name" ||
-                                  header?.id === "credit_limit" ||
-                                  header?.id === "net_terms" ||
-                                  header?.id === "created_at"
+                                  header?.id === "country_name"
                                 ) && (
                                   <div className="w-[20px]">
                                     {sortBy === header?.id ? (
@@ -391,7 +388,11 @@ const Table = ({
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                       />
                     </td>
-
+                    {!checkedColumn?.includes("Vendor Name") && (
+                      <td className="px-3 py-4 text-left text-sm text-[#303030] font-normal border border-gray-200">
+                        {item?.id}
+                      </td>
+                    )}
                     {!checkedColumn?.includes("Vendor Name") && (
                       <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
                         {item?.name}
@@ -470,7 +471,7 @@ const Table = ({
                       </td>
                     )}
                     {/* New Columns */}
-                    {!checkedColumn?.includes("Account No") && (
+                    {/* {!checkedColumn?.includes("Account No") && (
                       <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
                         {""}
                       </td>
@@ -504,7 +505,7 @@ const Table = ({
                       <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
                         {""}
                       </td>
-                    )}
+                    )} */}
                     {!checkedColumn?.includes("Created By") && (
                       <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
                         {item?.created_by}
@@ -514,6 +515,7 @@ const Table = ({
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 border">
                       <div className="flex justify-center space-x-3 w-[150px] p-1 border rounded-md border-[#BCBCBC]">
                         <span
+                          title="View Vendor Assets"
                           onClick={() => {
                             setVendorName(item?.name);
                             navigate(`/VendorAsset/${item?.id}`);
@@ -526,6 +528,7 @@ const Table = ({
                         <div className="w-px h-5 bg-gray-300"></div>
 
                         <span
+                          title="Upload Asset"
                           onClick={() => {
                             setUploadShow(true);
                             setId(item.id);
@@ -538,6 +541,7 @@ const Table = ({
                         <div className="w-px h-5 bg-gray-300"></div>
 
                         <span
+                          title="Edit Vendor"
                           onClick={() => {
                             setShowEdit(true);
                             setEditData(item);
@@ -551,6 +555,7 @@ const Table = ({
                         <div className="w-px h-5 bg-gray-300"></div>
 
                         <span
+                          title="Delete Vendor"
                           onClick={() => {
                             setShowDelete(true);
                             setId(item.id);

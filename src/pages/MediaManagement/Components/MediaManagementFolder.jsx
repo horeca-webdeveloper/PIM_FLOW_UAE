@@ -3,6 +3,7 @@ import folderIcon from "../../../assets/icons/folderIcon.png";
 import threeDot from "../../../assets/icons/threeDot.png";
 import MainFolderIcon from "../../../assets/icons/MainFolderIcon.png";
 import { useNavigate } from "react-router-dom";
+import { FaFolder } from "react-icons/fa";
 
 const MediaManagementFolder = ({ data }) => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const MediaManagementFolder = ({ data }) => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center flex-grow">
-          <img src={folderIcon} alt="Folder" className="mr-2" />
+          <FaFolder className="text-[#26683A] hover:text-green-700 text-xl mr-[4px] mb-[2px]" />
           <span className="text-sm">{data?.name}</span>
         </div>
         {/* <img src={threeDot} alt="Menu" className="ml-auto" /> */}

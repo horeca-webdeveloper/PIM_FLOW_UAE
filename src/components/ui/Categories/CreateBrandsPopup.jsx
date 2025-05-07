@@ -5,13 +5,6 @@ import { Controller } from "react-hook-form";
 const CreateBrandsPopup = ({ isOpen, onClose, getBrands, register, errors, loader, setValue, control, getFamilyDataById,title }) => {
 
 
-    const brandInArray = !!getBrands && Object.entries(getBrands).map(([key, value]) => ({
-        name: value,
-        id: key
-
-    }));
-  
-
     useEffect(() => {
         if (getFamilyDataById.success) {
             setValue('category', getFamilyDataById?.data?.category)
@@ -49,7 +42,7 @@ const CreateBrandsPopup = ({ isOpen, onClose, getBrands, register, errors, loade
                                 <MultiSelectComponent
                                     label="Brands (required)" width="full"
                                     isMulti={false}
-                                    option={brandInArray || []}
+                                    option={getBrands || []}
                                     {...field}
                                 />
                             )}

@@ -822,7 +822,7 @@ const AddProducts = () => {
         </div>
       ) : (
         // <form onSubmit={handleSubmit}>
-        <div className="min-h-screen">
+        <div className="h-screen overflow-y-auto">
           <AddProductsHeader
             data={data}
             handleCreateProduct={handleSubmit}
@@ -831,12 +831,12 @@ const AddProducts = () => {
             setGeneralData={setGeneralData}
           />
           <General general={generalData} setGeneralData={setGeneralData} />
-          <StoreVendorInformation
+          {/* <StoreVendorInformation
             storeVendor={storeVendor}
             setStoreVendor={setStoreVendor}
             store={storeData}
             brand={brandsData}
-          />
+          /> */}
           <InventoryStockManagement
             inventoryStockManagement={inventoryStockManagement}
             setInventoryStockManagement={setInventoryStockManagement}

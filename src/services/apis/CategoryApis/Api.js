@@ -289,7 +289,7 @@ const categoryReorder = async (datas, setLoader, setResponse) => {
     const data = datas
     try {
         setLoader(true);
-        const response = await apiClient.post('/categories/reorder',
+        const response = await apiClient.post('/reorder',
             data
         );
         setResponse(response.data);

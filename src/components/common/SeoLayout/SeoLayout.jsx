@@ -136,6 +136,7 @@ const SeoLayout = ({ manageSeoProduct, setManageSeoProduct }) => {
         </label>
         <input
           type="number"
+          minLength={0}
           className="w-full border border-[#A8A4A4] p-2 rounded"
           placeholder="Numeric"
           name="monthly_search_volume"
@@ -167,6 +168,7 @@ const SeoLayout = ({ manageSeoProduct, setManageSeoProduct }) => {
               </label>
               <input
                 type="number"
+                minLength={0}
                 className="w-full border border-[#A8A4A4] p-2 rounded"
                 placeholder="Monthly Search Volume"
                 value={item.monthly_search_volume}

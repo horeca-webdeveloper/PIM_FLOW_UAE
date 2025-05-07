@@ -67,6 +67,7 @@ const CategoryAttrTable = ({
                                 >
                                     {item.title}
                                 </th>
+                               
                             ))}
                             <th className="p-3 text-[#4A4A4A] text-[14px] font-normal leading-[19.1px] border border-[#BCBCBC] text-center">
                                 Actions

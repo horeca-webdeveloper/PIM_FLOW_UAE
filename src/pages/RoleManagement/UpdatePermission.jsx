@@ -3,20 +3,29 @@ import UserManagementHeader from "../UserManagement/components/UserManagementHea
 import UserGeneralSettingHeader from "../UserManagement/components/UserGeneralSettingHeader";
 import PermissionTable from "../UserManagement/components/PermissionTable";
 import { useLocation } from "react-router-dom";
-import { useFetchRolesPermission } from "../../services/apis/Roles/Hooks";
+import {
+  useFetchRolesPermission,
+  useFetchRolesPermissionById,
+} from "../../services/apis/Roles/Hooks";
 import Loader from "../../utils/Loader";
-import AddPermissionTable from "../UserManagement/components/AddPermissionTable";
-import AddRolePopup from "./components/AddRolePopup";
+import UpdatePermissionTable from "../UserManagement/components/UpdatePermissionTable";
+import UpdateRolePopup from "./components/UpdateRolePopup";
 
-const AddPermission = () => {
+const UpdatePermission = () => {
   const location = useLocation();
-  const id = location.state?.id;
+  const id = location.state?.roleData?.id;
   const { data, isLoading, error } = useFetchRolesPermission();
+
+  const {
+    data: permissionsAllowed,
+    isLoading: permissionsLoading,
+    error: permissionsError,
+  } = useFetchRolesPermissionById(id);
+  console.log("---->>>>", permissionsAllowed?.data?.modules);
+
   const [permission, setPermission] = useState([]);
   const [addPermission, setAddPermission] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
-
-  console.log("add permission", addPermission);
 
   useEffect(() => {
     setPermission(data?.data);
@@ -28,7 +37,7 @@ const AddPermission = () => {
       <UserManagementHeader
         type={"show"}
         setShowPopup={setShowPopup}
-        heading={"Add Role"}
+        heading={"Update Role"}
         addPermission={addPermission}
       />
       <div className="overflow-x-auto bg-white rounded-lg ">
@@ -90,10 +99,11 @@ const AddPermission = () => {
                 </th>
               </tr>
             </thead>
-            {permission?.map((item) => {
+            {permission?.map((item, index) => {
               return (
-                <AddPermissionTable
+                <UpdatePermissionTable
                   data={item}
+                  allowed={permissionsAllowed?.data?.modules}
                   setAddPermission={setAddPermission}
                 />
               );
@@ -101,7 +111,7 @@ const AddPermission = () => {
           </table>
         )}
         {showPopup && (
-          <AddRolePopup
+          <UpdateRolePopup
             setShowPopup={setShowPopup}
             addPermission={addPermission}
           />
@@ -111,4 +121,4 @@ const AddPermission = () => {
   );
 };
 
-export default AddPermission;
+export default UpdatePermission;

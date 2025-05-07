@@ -96,7 +96,7 @@ const InventoryStockManagement = ({
               label={"Delivery Days"}
               value={inventoryStockManagement?.delivery_days}
               name={"delivery_days"}
-              type="Number"
+              type="number" minLength={0}
               onChange={handleChange}
             /> */}
           </div>

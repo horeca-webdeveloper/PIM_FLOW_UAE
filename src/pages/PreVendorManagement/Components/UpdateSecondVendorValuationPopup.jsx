@@ -340,13 +340,22 @@ const UpdateSecondVendorValuationPopup = ({
                               <input
                                 {...field}
                                 className="w-full border border-gray-300 rounded p-1 text-sm"
+                                type="number"
+                                min="0"
+                                onKeyDown={(e) => {
+                                  if (e.key === "-" || e.key === "e")
+                                    e.preventDefault();
+                                }}
                                 onChange={(e) => {
-                                  field.onChange(e);
-                                  handleProductFormChange(
-                                    form.id,
-                                    "search_volume",
-                                    e.target.value
-                                  );
+                                  const value = Number(e.target.value);
+                                  if (value >= 0 || e.target.value === "") {
+                                    field.onChange(e);
+                                    handleProductFormChange(
+                                      form.id,
+                                      "search_volume",
+                                      e.target.value
+                                    );
+                                  }
                                 }}
                               />
                             )}
@@ -368,13 +377,21 @@ const UpdateSecondVendorValuationPopup = ({
                                 {...field}
                                 className="w-full border border-gray-300 rounded p-1 text-sm"
                                 type="number"
+                                min="0"
+                                onKeyDown={(e) => {
+                                  if (e.key === "-" || e.key === "e")
+                                    e.preventDefault();
+                                }}
                                 onChange={(e) => {
-                                  field.onChange(e);
-                                  handleProductFormChange(
-                                    form.id,
-                                    "supplier_price",
-                                    e.target.value
-                                  );
+                                  const value = Number(e.target.value);
+                                  if (value >= 0 || e.target.value === "") {
+                                    field.onChange(e);
+                                    handleProductFormChange(
+                                      form.id,
+                                      "supplier_price",
+                                      e.target.value
+                                    );
+                                  }
                                 }}
                               />
                             )}
@@ -394,13 +411,21 @@ const UpdateSecondVendorValuationPopup = ({
                                 {...field}
                                 className="w-full border border-gray-300 rounded p-1 text-sm"
                                 type="number"
+                                min="0"
+                                onKeyDown={(e) => {
+                                  if (e.key === "-" || e.key === "e")
+                                    e.preventDefault();
+                                }}
                                 onChange={(e) => {
-                                  field.onChange(e);
-                                  handleProductFormChange(
-                                    form.id,
-                                    "competitor_price_online",
-                                    e.target.value
-                                  );
+                                  const value = Number(e.target.value);
+                                  if (value >= 0 || e.target.value === "") {
+                                    field.onChange(e);
+                                    handleProductFormChange(
+                                      form.id,
+                                      "competitor_price_online",
+                                      e.target.value
+                                    );
+                                  }
                                 }}
                               />
                             )}
@@ -422,13 +447,21 @@ const UpdateSecondVendorValuationPopup = ({
                                 {...field}
                                 className="w-full border border-gray-300 rounded p-1 text-sm"
                                 type="number"
+                                min="0"
+                                onKeyDown={(e) => {
+                                  if (e.key === "-" || e.key === "e")
+                                    e.preventDefault();
+                                }}
                                 onChange={(e) => {
-                                  field.onChange(e);
-                                  handleProductFormChange(
-                                    form.id,
-                                    "competitor_price_offline",
-                                    e.target.value
-                                  );
+                                  const value = Number(e.target.value);
+                                  if (value >= 0 || e.target.value === "") {
+                                    field.onChange(e);
+                                    handleProductFormChange(
+                                      form.id,
+                                      "competitor_price_offline",
+                                      e.target.value
+                                    );
+                                  }
                                 }}
                               />
                             )}

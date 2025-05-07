@@ -27,8 +27,6 @@ const PerformanceAnalytics = ({
     search: "",
   });
 
-  
-
   // Format products from values using useMemo
   const formattedGetFBT = useMemo(() => {
     if (!performanceAnalytics?.frequently_bought_together) return [];
@@ -129,7 +127,8 @@ const PerformanceAnalytics = ({
               label={"Views"}
               name={"views"}
               disabled={true}
-              type="Number"
+              type="number"
+              minLength={0}
               value={performanceAnalytics?.views}
               onChange={handleChange}
             />
@@ -137,7 +136,8 @@ const PerformanceAnalytics = ({
               label={"Unit Sold"}
               name={"units_sold"}
               disabled={true}
-              type="Number"
+              type="number"
+              minLength={0}
               value={performanceAnalytics?.units_sold}
               onChange={handleChange}
             />

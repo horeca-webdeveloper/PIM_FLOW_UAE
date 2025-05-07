@@ -38,6 +38,7 @@ const Table = ({
   ];
 
   const TableOptions = [
+    { name: "Vendor Code.", id: "" },
     { name: "Vendor Name", id: "name" },
     { name: "Direct/Indirect", id: "" },
     { name: "Contact Persons", id: "contact_person" },
@@ -197,14 +198,7 @@ const Table = ({
                   return (
                     <th
                       onClick={() => {
-                        if (
-                          header?.id !== "" &&
-                          header?.id !== "" &&
-                          header?.id !== "" &&
-                          header?.id !== "" &&
-                          header?.id !== "" &&
-                          header?.id !== ""
-                        ) {
+                        if (header?.id !== "") {
                           sortBy === header?.id
                             ? setSortBy("")
                             : setSortBy(header?.id);
@@ -218,14 +212,7 @@ const Table = ({
                           {header?.name}
                         </p>
                         <div className="ml-[20px]">
-                          {!(
-                            header?.id === "" ||
-                            header?.id === "" ||
-                            header?.id === "" ||
-                            header?.id === "" ||
-                            header?.id === "" ||
-                            header?.id === ""
-                          ) && (
+                          {!(header?.id === "") && (
                             <div className="w-[20px]">
                               {sortBy === header?.id ? (
                                 <BiSortUp className="w-full h-auto" />
@@ -248,6 +235,11 @@ const Table = ({
                     <td className="p-2 text-center border border-gray-200">
                       <input type="checkbox" className="h-4 w-4" />
                     </td>
+                    {!hiddenColumns.includes("Vendor Name") && (
+                      <td className="px-3 py-4 border text-[#303030] text-sm font-normal border-gray-200">
+                        {item?.id}
+                      </td>
+                    )}
                     {!hiddenColumns.includes("Vendor Name") && (
                       <td className="px-3 py-4 border text-[#303030] text-sm font-normal border-gray-200">
                         {item?.name}

@@ -213,44 +213,44 @@ const AddSecondVendorPopup = ({
               )}
             </div>
           </div>
-          <div>
+          {/* <div>
             <div className="w-[100%] mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[5px]">
                 Rebate Target
-              </label>
-              <input
+              </label> */}
+          {/* <input
                 // {...register("email", {
                 //   required: "Email is required",
                 // })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Rebate Target"
-              />
-              {/* {errors.email && (
+              /> */}
+          {/* {errors.email && (
                 <span className="text-red-500 text-sm">
                   {errors.email.message}
                 </span>
               )} */}
-            </div>
+          {/* </div>
           </div>
           <div>
             <div className="w-[100%] mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[5px]">
                 Rebate %
-              </label>
-              <input
+              </label> */}{" "}
+          {/* <input
                 // {...register("email", {
                 //   required: "Email is required",
                 // })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Rebate %"
-              />
-              {/* {errors.email && (
+              /> */}
+          {/* {errors.email && (
                 <span className="text-red-500 text-sm">
                   {errors.email.message}
                 </span>
               )} */}
-            </div>
-          </div>
+          {/* </div>
+          </div> */}
           <div>
             <label className="block text-sm font-semibold text-[#616161] mb-1">
               Country
@@ -272,7 +272,6 @@ const AddSecondVendorPopup = ({
               </p>
             )}
           </div>
-
           {/* City Multi-select */}
           {selectedCountryId && (
             <div
@@ -377,7 +376,7 @@ const AddSecondVendorPopup = ({
             {/* Logo */}
             <div className=" mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[4px]">
-                Logo
+                Logo (webp, .png)
               </label>
               <div className="flex items-center">
                 <input
@@ -407,7 +406,7 @@ const AddSecondVendorPopup = ({
             {/* Business License Upload */}
             <div className="mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[4px]">
-                Business License
+                Business License (pdf)
               </label>
               <div className="flex items-center">
                 <input
@@ -437,7 +436,7 @@ const AddSecondVendorPopup = ({
             {/* Tax Certificate Upload */}
             <div className="mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[4px]">
-                Tax Certificate
+                Tax Certificate (pdf)
               </label>
               <div className="flex items-center">
                 <input
@@ -464,7 +463,6 @@ const AddSecondVendorPopup = ({
               )}
             </div>
           </div>
-
           {/* Buttons */}
           <div className="flex justify-between gap-2 mt-4">
             <button

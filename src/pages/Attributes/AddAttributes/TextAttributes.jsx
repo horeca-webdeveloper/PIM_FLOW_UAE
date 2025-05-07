@@ -5,23 +5,27 @@ import SelectField from "../../../components/common/MultiAttributes/CommonOption
 import CollapseComponent from "../../../components/common/CollapseComponent";
 import { Controller } from "react-hook-form";
 import MultiSelectComponent from "../../../components/common/MultiSelectComponent";
-const TextAttributes = ({ stateData, register, errors, setValue,control, attributeGroups }) => {
-
+const TextAttributes = ({
+  stateData,
+  register,
+  errors,
+  setValue,
+  control,
+  attributeGroups,
+}) => {
   let validation = stateData.validations;
-  const [selectedAttributes,setSelectedAttributes]=useState([]);
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
   useEffect(() => {
     if (stateData) {
       const selectedAttributes = stateData?.attribute_groups?.map((items) => ({
         value: items.id,
-        label: items.name
+        label: items.name,
       }));
       setSelectedAttributes(selectedAttributes);
-      setValue("editor", validation?.editor ? 'Yes' : 'No');
+      setValue("editor", validation?.editor ? "Yes" : "No");
       setValue("attribute_group_id", selectedAttributes);
     }
   }, [stateData, setValue]);
-
-
 
   return (
     <div className="min-h-screen">
@@ -29,8 +33,6 @@ const TextAttributes = ({ stateData, register, errors, setValue,control, attribu
       {/* General Parameters */}
 
       <CollapseComponent title="General Parameters" errors={errors}>
-
-
         <CommonInput
           label="Code (required)"
           name="code"
@@ -39,12 +41,11 @@ const TextAttributes = ({ stateData, register, errors, setValue,control, attribu
           defaultValue={stateData?.code}
           {...register("code", { required: "Code is required" })}
           placeholder="Enter your code"
-
         />
         {errors.code && <p className="text-red-500">{errors.code.message}</p>}
 
         <Controller
-          name='attribute_group_id'
+          name="attribute_group_id"
           control={control}
           rules={{ required: `Attribute group are required` }}
           render={({ field }) => (
@@ -59,8 +60,9 @@ const TextAttributes = ({ stateData, register, errors, setValue,control, attribu
           )}
         />
 
-
-        {errors.attribute_group_id && <p className="text-red-500">{errors.attribute_group_id.message}</p>}
+        {errors.attribute_group_id && (
+          <p className="text-red-500">{errors.attribute_group_id.message}</p>
+        )}
       </CollapseComponent>
 
       {/* Validation Parameters */}
@@ -75,20 +77,21 @@ const TextAttributes = ({ stateData, register, errors, setValue,control, attribu
           ]}
           {...register("editor")}
         />
-        {errors.editor && <p className="text-red-500">{errors.editor.message}</p>}
+        {errors.editor && (
+          <p className="text-red-500">{errors.editor.message}</p>
+        )}
         <CommonInput
           label="Max Character"
           name="max"
           type="number"
+          minLength={0}
           min="0"
           placeholder="Text"
           {...register("max")}
           defaultValue={validation?.max}
-
         />
         {errors.max && <p className="text-red-500">{errors.max.message}</p>}
       </CollapseComponent>
-
     </div>
   );
 };

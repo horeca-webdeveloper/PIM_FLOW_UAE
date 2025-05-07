@@ -51,7 +51,11 @@ const VendorMultiOption = ({
 
   return (
     <div className="mt-[-12px] w-full">
-      {label && <label className="block text-[#616161] mb-1">{label}</label>}
+      {label && (
+        <label className="block text-[#616161] mb-1 text-sm font-semibold">
+          {label}
+        </label>
+      )}
 
       <div
         className="border rounded-md px-3 py-2 flex justify-between cursor-pointer"

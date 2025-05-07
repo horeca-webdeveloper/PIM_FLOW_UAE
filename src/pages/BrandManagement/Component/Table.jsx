@@ -16,7 +16,7 @@ const Table = ({
   setShowDelete,
   setId,
 }) => {
-  console.log(brandsData);
+
   return (
     <div className="bg-white  rounded-lg border  border-gray-200 w-[100%] overflow-x-scroll">
       <div className="flex items-center border-b border-gray-200">

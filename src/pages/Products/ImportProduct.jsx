@@ -7,7 +7,7 @@ import CommonTable from "../../components/common/CommonTable";
 import InputComponent from "../../components/common/InputComponent";
 import CollapseComponent from "../../components/common/CollapseComponent";
 import FullScreenLoader from "../../utils/FullScreenLoader";
-import { notify } from "../../utils/notify";
+import { notify,notifyError } from "../../utils/notify";
 import Logs from "../Logs/Logs";
 
 const ImportProduct = () => {
@@ -72,8 +72,12 @@ const ImportProduct = () => {
         if (response.success) {
             notify(response.message);
             setShowLogs(!showLogs);
+        }else if(response.success===false){
+            notifyError(response.message[0]);
         }
     }, [response])
+
+   
     return (
         <>
             {loader && <FullScreenLoader bgTransparent={true} />}

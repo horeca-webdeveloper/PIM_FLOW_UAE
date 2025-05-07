@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import folderIcon from "../../../assets/icons/folderIcon.png";
 import MainFolderIcon from "../../../assets/icons/MainFolderIcon.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import Loader from "../../../utils/Loader";
@@ -7,6 +6,8 @@ import { MdDownloadForOffline } from "react-icons/md";
 import axios from "axios";
 import { baseUrls } from "../../../utils/apiWrapper";
 import toast from "react-hot-toast";
+import { FaFolder } from "react-icons/fa";
+import { IoFolderOpen } from "react-icons/io5";
 
 const VendorFolderView = ({ data, title, type, vendorId, vendorName }) => {
   const location = useLocation();
@@ -55,7 +56,7 @@ const VendorFolderView = ({ data, title, type, vendorId, vendorName }) => {
     <div className="w-full cursor-pointer max-w-[250px] p-2 h-[250px] border border-gray-300 rounded-md bg-gray-200">
       <div className="flex items-center justify-between">
         <div className="flex items-center flex-grow">
-          <img src={folderIcon} alt="Folder" className="mr-2" />
+          <FaFolder className="text-[#26683A] hover:text-green-700 text-xl mr-[4px] mb-[2px]" />
           <span className="text-sm">{title}</span>
         </div>
         <div
@@ -85,11 +86,12 @@ const VendorFolderView = ({ data, title, type, vendorId, vendorName }) => {
         }
         className="flex items-center justify-center flex-col h-[calc(100%-30px)] w-full bg-[#F6F6F6] mt-[10px] rounded-md"
       >
-        <img
+        <IoFolderOpen className="text-[#26683A] hover:text-green-700 text-[100px] mr-[4px] mb-[2px]" />
+        {/* <img
           src={MainFolderIcon}
           alt="Main Folder"
           className="max-h-full w-auto object-contain"
-        />
+        /> */}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createRoles, deleteRoles, fetchAllRoles, fetchRoles, fetchRolesNameId, fetchRolesPermission, fetchUsers } from "./Api";
+import { createRoles, deleteRoles, fetchAllRoles, fetchRoles, fetchRolesNameId, fetchRolesPermission, fetchRolesPermissionById, fetchUsers } from "./Api";
 
 export const useFetchRolesId = () => {
     return useQuery({
@@ -20,6 +20,13 @@ export const useFetchRolesId = () => {
     return useQuery({
       queryKey: ["fetchRolesPermission"],
       queryFn: () => fetchRolesPermission(),
+    });
+  };
+
+  export const useFetchRolesPermissionById = (id) => {
+    return useQuery({
+      queryKey: ["fetchRolesPermissionById",id],
+      queryFn: () => fetchRolesPermissionById(id),
     });
   };
 

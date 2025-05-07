@@ -56,6 +56,7 @@ import ExportBenifits from "./pages/Products/ExportBenifits";
 import ImportDocuments from "./pages/Products/ImportDocuments";
 import ImportImages from "./pages/Products/ImportImages";
 import VendorExport from "./pages/VendorManagement/Components/VendorExport";
+import UpdatePermission from "./pages/RoleManagement/UpdatePermission";
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -190,6 +191,10 @@ const router = createBrowserRouter([
       {
         path: "/add-permission",
         element: <AddPermission />
+      },
+      {
+        path: "/update-permission",
+        element: <UpdatePermission />
       },
 
       {

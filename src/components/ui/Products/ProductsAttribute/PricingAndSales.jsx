@@ -111,7 +111,8 @@ const PricingAndSales = ({ pricingSalesData, setPricingSales }) => {
                 label={"Box Quantity"}
                 value={pricingSalesData?.box_quantity}
                 name={"box_quantity"}
-                type="Number"
+                type="number"
+                minLength={0}
                 onChange={handleChange}
               />
             </div>

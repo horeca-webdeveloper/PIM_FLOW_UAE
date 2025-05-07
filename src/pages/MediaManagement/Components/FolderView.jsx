@@ -8,6 +8,7 @@ import { MdDownloadForOffline } from "react-icons/md";
 import axios from "axios";
 import { baseUrls } from "../../../utils/apiWrapper";
 import toast from "react-hot-toast";
+import { FaFolder } from "react-icons/fa";
 
 const FolderView = ({ data, title, type }) => {
   const location = useLocation();
@@ -56,7 +57,7 @@ const FolderView = ({ data, title, type }) => {
     <div className="w-full cursor-pointer max-w-[250px] p-2 h-[250px] border border-gray-300 rounded-md bg-gray-200">
       <div className="flex items-center justify-between">
         <div className="flex items-center flex-grow">
-          <img src={folderIcon} alt="Folder" className="mr-2" />
+          <FaFolder className="text-[#26683A] hover:text-green-700 text-xl mr-[4px] mb-[2px]" />
           <span className="text-sm">{title}</span>
         </div>
         <div

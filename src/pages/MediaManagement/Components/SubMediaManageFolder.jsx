@@ -8,6 +8,7 @@ import axios from "axios";
 import { baseUrls } from "../../../utils/apiWrapper";
 import toast from "react-hot-toast";
 import Loader from "../../../utils/Loader";
+import { FaFolder } from "react-icons/fa";
 
 const SubMediaManageFolder = ({ data }) => {
   const location = useLocation();
@@ -61,7 +62,7 @@ const SubMediaManageFolder = ({ data }) => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center flex-grow">
-          <img src={folderIcon} alt="Folder" className="mr-2" />
+          <FaFolder className="text-[#26683A] hover:text-green-700 text-xl mr-[4px] mb-[2px]" />
           <span className="text-sm">{data?.sku}</span>
         </div>
         <div

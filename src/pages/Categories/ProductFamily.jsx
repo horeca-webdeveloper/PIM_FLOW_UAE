@@ -9,6 +9,7 @@ import { notify } from "../../utils/notify";
 import { useNavigate } from "react-router-dom";
 import CommonTable from "../../components/common/CommonTable"
 import FullScreenLoader from "../../utils/FullScreenLoader";
+import ProductFamilyTable from "../../components/common/ProductFamilyTable";
 const ProductFamily = () => {
     const navigate = useNavigate();
     const [show, setShow] = useState(false);
@@ -49,6 +50,10 @@ const ProductFamily = () => {
         {
             title: 'Family Name',
             key: 'name', // Ensure this matches the object key in datas
+        },
+        {
+            title: 'Total Attribute',
+            key: 'total_attr', // Ensure this matches the object key in datas
         },
         {
             title: 'Attribute as label',
@@ -137,7 +142,9 @@ const ProductFamily = () => {
             {fetchAttloader ? <FullScreenLoader bgTransparent={true} /> : <div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <HeaderComponent label="Product Families" setShow={setShow} span={`(${!!getFamilyData && getFamilyData?.total_records} Results)`} buttons={buttons} />
-                    <CommonTable totalPages={totalPages}
+                   
+                   <ProductFamilyTable
+                    totalPages={totalPages}
                         changePage={changePage}
                         setPage={setPage}
                         currentPage={page}

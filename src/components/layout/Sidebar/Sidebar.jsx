@@ -54,6 +54,11 @@ const Sidebar = ({
           link: "/sub-categories",
           icon: sidebarAttributeIcon,
         },
+        {
+          label: "Manage Category",
+          link: "/category-drag-and-drop",
+          icon: sidebarAttributeIcon,
+        },
         // { label: "Schemas", link: "/", icon: sidebarAttributeIcon },
         // { label: "Lifecycles", link: "/", icon: sidebarAttributeIcon },
         {
@@ -148,7 +153,7 @@ const Sidebar = ({
       link: "#",
       submenu: [
         {
-          label: "Manage Vendor",
+          label: "Manage Vendors",
           link: "/VendorManagement",
           icon: sidebarAttributeIcon,
         },
@@ -263,10 +268,11 @@ const Sidebar = ({
                     <button
                       key={subIndex}
                       onClick={() => handleNavigation(subItem.link)}
-                      className={`min-w-[200px] mt-[10px] ml-[-20px] whitespace-nowrap flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-[#26683A] hover:my-[10px] hover:text-white hover:w-[90%] hover:rounded-md ${activeLink === subItem.link
+                      className={`min-w-[200px] mt-[10px] ml-[-20px] whitespace-nowrap flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-[#26683A] hover:my-[10px] hover:text-white hover:w-[90%] hover:rounded-md ${
+                        activeLink === subItem.link
                           ? "bg-[#26683A] text-white rounded-md"
                           : ""
-                        }`}
+                      }`}
                     >
                       <img
                         className="mr-[10px]  mt-[-10px]"

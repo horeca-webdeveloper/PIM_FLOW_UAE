@@ -386,7 +386,7 @@ const UpdateSecondVendorPopup = ({
             {/* Logo */}
             <div className=" mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[4px]">
-                Logo{" "}
+                Logo (webp, .png)
                 {fetchData.logo_url && (
                   <a
                     href={fetchData.logo_url}
@@ -426,7 +426,7 @@ const UpdateSecondVendorPopup = ({
             {/* Business License Upload */}
             <div className="mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[4px]">
-                Business License
+                Business License (pdf)
                 {fetchData.business_licence_url && (
                   <a
                     href={fetchData.business_licence_url}
@@ -466,7 +466,7 @@ const UpdateSecondVendorPopup = ({
             {/* Tax Certificate Upload */}
             <div className="mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[4px]">
-                Tax Certificate
+                Tax Certificate (pdf)
                 {fetchData.tax_certificate_url && (
                   <a
                     href={fetchData.tax_certificate_url}

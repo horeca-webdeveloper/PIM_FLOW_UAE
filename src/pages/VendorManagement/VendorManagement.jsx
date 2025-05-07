@@ -119,7 +119,7 @@ const VendorManagement = () => {
     setTotalPage(data?.total_pages);
   }, [data]);
 
-  console.log(data);
+ 
 
   return (
     <div className="bg-[#f1f1f1] min-h-[90vh] w-[82vw]">

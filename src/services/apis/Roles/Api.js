@@ -17,6 +17,11 @@ export const fetchRolesPermission = async () => {
 };
 
 
+export const fetchRolesPermissionById = async (id) => {
+  return await apiCall("get", `${RolesApiPath}/${id}`, null);
+};
+
+
 export const fetchAllRoles = async (data) => {
   const {page, length}=data
   return await apiCall("get", `${RolesApiPath}?page=${page}&length=${length}`, null);

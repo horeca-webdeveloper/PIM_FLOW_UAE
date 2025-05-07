@@ -90,8 +90,13 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
               </label>
               <input
                 type="number"
+                minLength={0}
                 {...register("landline_number", {
                   required: "Landline number is required",
+                  min: {
+                    value: 0,
+                    message: `Landline number Cannot Be Negative`,
+                  },
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Landline Number"
@@ -110,8 +115,13 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
               </label>
               <input
                 type="number"
+                minLength={0}
                 {...register("mobile_number", {
                   required: "Mobile no. is required",
+                  min: {
+                    value: 0,
+                    message: `Mobile No. Cannot Be Negative`,
+                  },
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Mobile Number"
@@ -148,6 +158,10 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
               <input
                 {...register("credit_limit", {
                   required: "Credit limit is required",
+                  min: {
+                    value: 0,
+                    message: ` Credit Limit Cannot Be Negative`,
+                  },
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Credit Limit"
@@ -165,6 +179,10 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
               <input
                 {...register("net_terms", {
                   required: "Net terms is required",
+                  min: {
+                    value: 0,
+                    message: `Net terms Cannot Be Negative`,
+                  },
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Net Terms "

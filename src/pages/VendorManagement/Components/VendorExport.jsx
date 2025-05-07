@@ -70,6 +70,7 @@ const VendorExport = () => {
             <InputComponent
               label="From Range"
               type="number"
+              minLength={0}
               min="1"
               placeholder="Enter from range"
               name="from"
@@ -81,6 +82,7 @@ const VendorExport = () => {
             <InputComponent
               label="To Range"
               type="number"
+              minLength={0}
               min="1"
               max="2000"
               placeholder="Enter To range"

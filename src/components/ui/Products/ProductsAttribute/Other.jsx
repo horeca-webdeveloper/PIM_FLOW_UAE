@@ -66,7 +66,8 @@ const Other = ({ other, setOther }) => {
               label={"Order"}
               value={other?.order}
               name={"order"}
-              type="Number"
+              type="number"
+              minLength={0}
               onChange={handleChange}
             />
           </div>

@@ -6,12 +6,13 @@ import { notify } from "../../utils/notify";
 import { Apis } from "../../services/apis/Attributes/Api";
 import FullScreenLoader from "../../utils/FullScreenLoader";
 import { useNavigate } from "react-router-dom";
-
+import { useDebounce } from "use-debounce";
+import PaginationComponent from "../../components/common/PaginationComponent";
 const Attributes = () => {
   const navigate = useNavigate();
   const [type, setType] = useState(null);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(100000);
+  const [limit, setLimit] = useState(10000);
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [fetchAttloader, setAttrLoader] = useState(false);
@@ -21,15 +22,26 @@ const Attributes = () => {
   const [getDeleteResponse, setDeleteResponse] = useState([]);
   const [getAttributes, setAttibutes] = useState([]);
   const [updateDatas, setUpdateDatas] = useState([]);
+  const [id, setId] = useState("");
+  const [editData, setEditData] = useState({});
+  const [showDelete, setShowDelete] = useState(false);
 
+  const [uploadShow, setUploadShow] = useState(false);
+  const [searchquery, setSearchQuery] = useState("");
+  const [fetchLoading, setFetchLoading] = useState(false);
+  const [fetchData, setFetchData] = useState([]);
+  const [showEdit, setShowEdit] = useState(false);
+  const [sort, setSort] = useState("asc");
+  const [sortBy, setSortBy] = useState("");
+  const [query] = useDebounce(searchquery, 300);
   const changePage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
   };
-  const updateAttributeTypes=(data)=>{
+  const updateAttributeTypes = (data) => {
     setUpdateDatas(data)
-      setShowModal(true);
+    setShowModal(true);
   }
   useEffect(() => {
     Apis.fetchAttributes(page, limit, setAttrLoader, setAttibutes);
@@ -38,9 +50,9 @@ const Attributes = () => {
   useEffect(() => {
     if (getResponse.success) {
       notify(getResponse.message);
-   
-      window.location.href=`/MutliAttributes/${getResponse.data.id}`
-    
+
+      window.location.href = `/MutliAttributes/${getResponse.data.id}`
+
       setShowModal(false);
     }
 
@@ -56,7 +68,7 @@ const Attributes = () => {
       Apis.fetchAttributes(page, limit, setAttrLoader, setAttibutes);
     }
   }, [getDeleteResponse]);
- 
+
   const th = [
     { title: "ID", key: "id" },
     { title: "Attribute Name", key: "name" },
@@ -90,10 +102,11 @@ const Attributes = () => {
             setUpdateDatas={setUpdateDatas}
           />
 
-        
-         
+
+
             <AttributesTable
-            updateAttributeTypes={updateAttributeTypes}
+           
+              updateAttributeTypes={updateAttributeTypes}
               totalPages={totalPages}
               changePage={changePage}
               setPage={setPage}
@@ -102,7 +115,20 @@ const Attributes = () => {
               datas={!!getAttributes && getAttributes.data}
               setShowModal={setShowModal}
               setUpdateDatas={setUpdateDatas}
-              
+              setLimit={setLimit}
+              setSortBy={setSortBy}
+              sortBy={sortBy}
+              setShowDelete={setShowDelete}
+              isLoading={loader}
+              setSearchQuery={setSearchQuery}
+              setId={setId}
+              setSort={setSort}
+              searchquery={searchquery}
+              setEditData={setEditData}
+              setShowEdit={setShowEdit}
+             
+
+
             />
 
 
@@ -116,6 +142,15 @@ const Attributes = () => {
               updateDatas={updateDatas && updateDatas}
               setType={setType}
             /></>}
+
+             {/* <div className="flex items-center justify-center mt-[40px]">
+                    <PaginationComponent
+                      setPage={setPage}
+                      totalPages={totalPages}
+                      changePage={changePage}
+                      currentPage={page}
+                    />
+                  </div> */}
 
       </div>
     </>

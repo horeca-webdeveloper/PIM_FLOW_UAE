@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 const PermissionTable = ({ data }) => {
   const { name, permissions } = data;
 
+  
+
   const [rolePermission, setRolePermission] = useState([]);
 
   useEffect(() => {
