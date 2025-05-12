@@ -102,7 +102,6 @@ const ExportBenifits = () => {
       relational_id = parseInt(data.store_id);
     }
     const datas = {
-      selected_fields: ["name", "sku", "id", "benefits_features"],
       type: type,
       relational_id: relational_id,
       range_from: parseInt(data.from),
@@ -179,12 +178,7 @@ const ExportBenifits = () => {
 
   useEffect(() => {
     if (brands?.success && brands.brands) {
-      const brandDatas = Object.entries(brands.brands).map(([id, name]) => ({
-        id,
-        name,
-      }));
-
-      setBrandArray(brandDatas);
+      setBrandArray(brands.brands);
     }
 
     if (stores?.stores && Object.keys(stores.stores).length) {

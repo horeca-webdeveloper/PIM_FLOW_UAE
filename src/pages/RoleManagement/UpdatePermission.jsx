@@ -10,10 +10,12 @@ import {
 import Loader from "../../utils/Loader";
 import UpdatePermissionTable from "../UserManagement/components/UpdatePermissionTable";
 import UpdateRolePopup from "./components/UpdateRolePopup";
+import UpdateRoleHeader from "../UserManagement/components/UpdateRoleHeader";
 
 const UpdatePermission = () => {
   const location = useLocation();
   const id = location.state?.roleData?.id;
+  const RoleName = location?.state?.roleData?.name;
   const { data, isLoading, error } = useFetchRolesPermission();
 
   const {
@@ -21,11 +23,18 @@ const UpdatePermission = () => {
     isLoading: permissionsLoading,
     error: permissionsError,
   } = useFetchRolesPermissionById(id);
-  console.log("---->>>>", permissionsAllowed?.data?.modules);
 
   const [permission, setPermission] = useState([]);
   const [addPermission, setAddPermission] = useState([]);
+  console.log("added permission", addPermission);
   const [showPopup, setShowPopup] = useState(false);
+
+  const updateRole = () => {
+    try {
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     setPermission(data?.data);
@@ -34,20 +43,21 @@ const UpdatePermission = () => {
   return (
     <>
       {" "}
-      <UserManagementHeader
+      <UpdateRoleHeader
         type={"show"}
         setShowPopup={setShowPopup}
-        heading={"Update Role"}
+        heading={`Update Role Of (${RoleName})`}
+        RoleName={RoleName}
         addPermission={addPermission}
       />
-      <div className="overflow-x-auto bg-white rounded-lg ">
-        {isLoading ? (
+      <div className="overflow-x-auto bg-white h-[80vh] rounded-lg ">
+        {permissionsLoading ? (
           <div className="flex items-center justify-center">
             <Loader />
           </div>
         ) : (
-          <table className="min-w-full border border-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full sticky border border-gray-200">
+            <thead className="sticky top-0 bg-gray-50">
               <tr>
                 <th
                   scope="col"
@@ -97,6 +107,49 @@ const UpdatePermission = () => {
                 >
                   Export
                 </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Upload
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  View
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Download
+                </th>
+                {/* <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Import Feature Product
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  {" "}
+                  Export Feature Product
+                </th> */}
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Image Product
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Document Product
+                </th>
               </tr>
             </thead>
             {permission?.map((item, index) => {
@@ -114,6 +167,8 @@ const UpdatePermission = () => {
           <UpdateRolePopup
             setShowPopup={setShowPopup}
             addPermission={addPermission}
+            id={id}
+            fetchName={permissionsAllowed?.data?.name}
           />
         )}
       </div>

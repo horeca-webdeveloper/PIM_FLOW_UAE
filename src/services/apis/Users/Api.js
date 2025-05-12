@@ -1,8 +1,9 @@
 import { UsersApiPath } from "../../apiRoutes";
 import { apiCall } from "../../AxiosFactory";
 
-export const fetchUsers = async () => {
-  return await apiCall("get", `${UsersApiPath}`, null);
+export const fetchUsers = async (data) => {
+  const {page, length} = data
+  return await apiCall("get", `${UsersApiPath}?page=${page}&length=${length}`, null);
 };
 
 export const createUser = async (data) => {
@@ -11,10 +12,8 @@ export const createUser = async (data) => {
   
 
   export const updateUser = async (data) => {
-    console.log(data)
     const {id, ...restData} = data;
-    console.log(restData)
-    return await apiCall("post", `${UsersApiPath}/${id}`,  restData );
+    return await apiCall("put", `${UsersApiPath}/${id}`,  restData );
   };
   
 

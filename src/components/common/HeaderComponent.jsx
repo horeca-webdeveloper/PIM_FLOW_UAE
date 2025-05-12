@@ -1,6 +1,13 @@
 import { urls } from "../../config/baseUrls";
 import { Link, useNavigate } from "react-router-dom";
-const HeaderComponent = ({ label, span, buttons, setShow }) => {
+const HeaderComponent = ({
+  label,
+  span,
+  buttons,
+  UpdateProductVariantData,
+  results,
+  setShow,
+}) => {
   const navigation = useNavigate();
   const handleClick = () => {
     setShow(true);
@@ -13,9 +20,11 @@ const HeaderComponent = ({ label, span, buttons, setShow }) => {
       {/* Label and Span Text */}
       <div className="flex items-center">
         <p className="text-[20px]  leading-[25.2px] font-medium">{label}</p>
-        <p className="text-[20px] ml-[5px] font-light leading-[22.68px] text-[#26683A]">
-          {span}
-        </p>
+        {span && span !== "(undefined Results)" && (
+          <p className="text-[20px] ml-[5px] font-light leading-[22.68px] text-[#26683A]">
+            {span}
+          </p>
+        )}
       </div>
 
       {/* Buttons Wrapper */}
@@ -26,7 +35,7 @@ const HeaderComponent = ({ label, span, buttons, setShow }) => {
           <>
             {item.type === "submit" ? (
               <button
-                type="submit"
+                onClick={() => UpdateProductVariantData()}
                 className={`text-[${item.textSize}] leading-[17.64px]  text-[${item.textColor}] bg-[${item.bgColor}] px-[20px] font-${item.fontWeight} rounded-[5px] py-[8px] flex items-center gap-2 cursor-pointer`}
               >
                 {item.icon && (

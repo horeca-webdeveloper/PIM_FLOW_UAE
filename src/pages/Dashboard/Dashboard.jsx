@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import cardsImage from "../../assets/cardsImages/CardsImage.png";
 import upwordIcon from "../../assets/icons/upwordIcon.png";
 import Matrix from "../../components/common/Matrix";
@@ -17,6 +17,7 @@ import avgOrderIcon from "../../assets/DashboardIcons/Orders.png";
 import { useNavigate } from "react-router-dom";
 import { useFetchDashboardStatusList } from "../../services/apis/Dashboard/Hooks";
 import Loader from "../../utils/Loader";
+import { useFetchManageAuthPermissions } from "../../services/apis/AuthPermission/Hooks";
 const Dashboard = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -26,6 +27,13 @@ const Dashboard = () => {
       navigate("/login");
     }
   }, []);
+
+  const {
+    data: da,
+    isLoading: Df,
+    error: df,
+  } = useFetchManageAuthPermissions();
+
   const [statFilter, setStatFilter] = useState("lifetime");
   const { data, isLoading, error } = useFetchDashboardStatusList({
     range: statFilter,

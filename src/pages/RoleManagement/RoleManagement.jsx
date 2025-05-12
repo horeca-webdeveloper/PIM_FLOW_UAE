@@ -9,6 +9,7 @@ import {
 import CreateRolePopup from "../../components/ui/Popups/createProducts/CreateRolePopup";
 import DeleteUserPopup from "../UserManagement/components/DeleteUserPopup";
 import toast from "react-hot-toast";
+import RoleManagementHeader from "./components/RoleManagementHeader";
 
 const RoleManagement = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -43,7 +44,7 @@ const RoleManagement = () => {
   };
   return (
     <>
-      <UserManagementHeader setShowPopup={setShowPopup} heading={"Roles"} />
+      <RoleManagementHeader setShowPopup={setShowPopup} heading={"Roles"} />
       <div className="h-[80vh]">
         <Table
           data={data?.data}

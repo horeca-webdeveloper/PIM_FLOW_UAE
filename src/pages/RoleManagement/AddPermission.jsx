@@ -16,8 +16,6 @@ const AddPermission = () => {
   const [addPermission, setAddPermission] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
 
-  console.log("add permission", addPermission);
-
   useEffect(() => {
     setPermission(data?.data);
   }, [data]);
@@ -27,18 +25,19 @@ const AddPermission = () => {
       {" "}
       <UserManagementHeader
         type={"show"}
+        title={"Add New Role"}
         setShowPopup={setShowPopup}
         heading={"Add Role"}
         addPermission={addPermission}
       />
-      <div className="overflow-x-auto bg-white rounded-lg ">
+      <div className="overflow-x-auto h-[80vh] bg-white rounded-lg ">
         {isLoading ? (
           <div className="flex items-center justify-center">
             <Loader />
           </div>
         ) : (
           <table className="min-w-full border border-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="sticky top-0 bg-gray-50">
               <tr>
                 <th
                   scope="col"
@@ -87,6 +86,36 @@ const AddPermission = () => {
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
                 >
                   Export
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Upload
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  View
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Download
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Image Product
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200"
+                >
+                  Document Product
                 </th>
               </tr>
             </thead>

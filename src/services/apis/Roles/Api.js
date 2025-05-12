@@ -2,7 +2,7 @@ import { RolesApiPath, RolesPermissionApiPath } from "../../apiRoutes";
 import { apiCall } from "../../AxiosFactory";
 
 export const fetchRolesNameId = async () => {
-  return await apiCall("get", `${RolesApiPath}/names`, null);
+  return await apiCall("get", `${RolesApiPath}`, null);
 };
 
 

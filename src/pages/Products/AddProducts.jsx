@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AddProductsHeader from "../../components/ui/Products/AddProductsHeader";
 import General from "../../components/ui/Products/ProductsAttribute/General";
@@ -23,6 +23,7 @@ import AttributesGroupsComp from "../../components/ui/Products/ProductsAttribute
 import { baseUrls } from "../../utils/apiWrapper";
 import SeoManagement from "../../components/ui/Products/ProductsAttribute/SeoManagement";
 import { useFetchSEO } from "../../services/apis/SEO/Hooks";
+import { AppContext } from "../../Context/AppContext";
 const AddProducts = () => {
   const location = useLocation();
   const id = location?.pathname?.split("/")[2];
@@ -44,7 +45,7 @@ const AddProducts = () => {
       // Handle General Data
       formData.append("sku", generalData?.sku || "");
       formData.append("barcode", generalData?.barcode || "");
-      formData.append("status", generalData?.status_value || "draft");
+      formData.append("status", generalData?.status_value || "Draft");
       formData.append(
         "warranty_information",
         generalData?.warranty_information || ""
@@ -638,9 +639,9 @@ const AddProducts = () => {
         warranty_info_value: "",
         categories: data?.product?.categories,
         status: [
-          { value: "draft" },
-          { value: "pending" },
-          { value: "published" },
+          { value: "Draft" },
+          { value: "Pending" },
+          { value: "Published" },
         ],
         status_value: data?.product?.status[0]?.value || "",
       });
@@ -814,6 +815,10 @@ const AddProducts = () => {
     Apis.fetchCategoryAttributeGroups(id, setLoader, setAttributes);
   }, [id]);
 
+  const { AllowedPermissions } = useContext(AppContext);
+  const permissions = AllowedPermissions?.permissions || [];
+
+  console.log("generalData....", generalData);
   return (
     <>
       {isLoading ? (
@@ -825,6 +830,7 @@ const AddProducts = () => {
         <div className="h-screen overflow-y-auto">
           <AddProductsHeader
             data={data}
+            permissions={permissions}
             handleCreateProduct={handleSubmit}
             updateProductLoading={updateLoading}
             general={generalData}
@@ -862,13 +868,17 @@ const AddProducts = () => {
             performanceAnalytics={performanceAnalytics}
             setPerformanceAnalytics={setPerformanceAnalytics}
           />
+          {/* this SEO is for Google Shopping Keywords */}
           <SEO seoData={seoData} setSeoData={setSeoData} />
-          <SeoManagement
-            manageSeoProduct={manageSeoProduct}
-            setManageSeoProduct={setManageSeoProduct}
-            id={id}
-            type={"Product"}
-          />
+          {}
+          {permissions?.includes("list seo mgmt") && (
+            <SeoManagement
+              manageSeoProduct={manageSeoProduct}
+              setManageSeoProduct={setManageSeoProduct}
+              id={id}
+              type={"Product"}
+            />
+          )}
           {!!attributes && attributes?.data?.length > 0
             ? attributes.data.map((item, index) => (
                 <AttributesGroupsComp

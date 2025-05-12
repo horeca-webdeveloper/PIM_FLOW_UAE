@@ -21,11 +21,29 @@ const CreateProduct = ({ setShowPopup }) => {
     family: "",
     variant: "",
   });
-
+  const [formErrors, setFormErrors] = useState({});
   const { mutate, isLoading, error } = useCreateProduct();
   const [loading, setLoading] = useState(false);
 
   const handleCreateProduct = () => {
+    // let errors = {};
+    // if (formData.productName.trim() === "") {
+    //   errors.productName = "Product Name is required";
+    // }
+    // if (formData.sku.trim() === "") {
+    //   errors.sku = "SKU is required";
+    // }
+    // // if (formData.family === "") {
+    // //   errors.family = "Select a Product Family";
+    // // }
+    // // if (formData.website.length === 0) {
+    // //   errors.website = "Select at least one Website";
+    // // }
+    // if (Object.keys(errors).length > 0) {
+    //   setFormErrors(errors);
+    //   return;
+    // }
+    // setFormErrors({});
     if (formData.productName.trim() == "") {
       toast.error("Please Type Product Name");
       return null;
@@ -187,6 +205,7 @@ const CreateProduct = ({ setShowPopup }) => {
             productType={productType}
             setFormData={setFormData}
             handleInputChange={handleInputChange}
+            formErrors={formErrors}
           />
         </div>
 

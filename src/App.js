@@ -57,6 +57,13 @@ import ImportDocuments from "./pages/Products/ImportDocuments";
 import ImportImages from "./pages/Products/ImportImages";
 import VendorExport from "./pages/VendorManagement/Components/VendorExport";
 import UpdatePermission from "./pages/RoleManagement/UpdatePermission";
+import ProductVariants from "./pages/Products/ProductVariants";
+import UpdateProductVariants from "./pages/Products/UpdateProductVariants";
+import NewOrders from "./pages/Orders/NewOrders";
+import Pending from "./pages/Orders/Pending";
+import Confirmed from "./pages/Orders/Confirmed";
+import SuperDelivery from "./pages/Orders/SuperDelivery";
+import Delivered from "./pages/Orders/Delivered";
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -125,7 +132,15 @@ const router = createBrowserRouter([
         path: "/import",
         element: <Import />,
       },
+      {
+        path: "/product-variants",
+        element: <ProductVariants />,
+      },
 
+      {
+        path: "/product-variants-update/:id",
+        element: <UpdateProductVariants />,
+      },
 
       // {
       //   path: "/product/families",
@@ -277,6 +292,28 @@ const router = createBrowserRouter([
       {
         path: '/product/import-documents',
         element: <ImportDocuments />
+      },
+      {
+        path: '/new-orders',
+        element: <NewOrders />
+      }
+      ,
+      {
+        path: '/pendings',
+        element: <Pending />
+      }
+      ,
+      {
+        path: '/confirmed',
+        element: <Confirmed/>
+      },
+      {
+        path: '/supper-delivery',
+        element: <SuperDelivery />
+      },
+      {
+        path: '/delivered',
+        element: <Delivered />
       }
     ],
   }

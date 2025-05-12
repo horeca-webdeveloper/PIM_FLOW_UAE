@@ -25,4 +25,6 @@ export const DashbaordStatsApiPath = `${basePath}/dashboard/stats`
 
 export const UsersApiPath = `${basePath}/users`;
 export const RolesApiPath = `${basePath}/roles`;
+export const AuthPermissionApiPath = `${basePath}/auth/permissions`;
 export const RolesPermissionApiPath = `${basePath}/permissions`;
+export const ProductVariantApiPath =  `${basePath}/product-groups/brands-with-categories`;

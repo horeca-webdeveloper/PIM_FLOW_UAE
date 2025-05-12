@@ -60,7 +60,6 @@ const AddSecondVendorPopup = ({
           setCities(res.data?.data || []);
         })
         .catch((err) => {
-          console.error("City error:", err);
           setCities([]);
         })
         .finally(() => setLoadingCity(false));
@@ -156,7 +155,6 @@ const AddSecondVendorPopup = ({
         },
       });
 
-      console.log("Success:", response.data);
       setLoader(false);
       if (response?.data) {
         toast.success("Vendor Created Successfully");
@@ -165,7 +163,6 @@ const AddSecondVendorPopup = ({
         }, 500);
       }
     } catch (error) {
-      console.log("here is our error", error?.response?.data?.message);
       setLoader(false);
       toast.error(error?.response?.data?.message);
     }
@@ -176,7 +173,7 @@ const AddSecondVendorPopup = ({
       <div className="bg-white rounded-lg w-[35%] p-3 relative">
         <button
           onClick={() => setShowSecondPopup(false)}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-[20px]"
         >
           x
         </button>
@@ -200,8 +197,14 @@ const AddSecondVendorPopup = ({
                 Email
               </label>
               <input
+                type="text" 
+                inputMode="email"
                 {...register("email", {
                   required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address",
+                  },
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Email"
@@ -321,7 +324,7 @@ const AddSecondVendorPopup = ({
             {
               name: "dropshipping",
               label: "Dropshipping",
-              options: ["yes", "no"],
+              options: ["Yes", "No"],
             },
           ].map(({ name, label, options }) => (
             <div key={name}>
@@ -340,7 +343,7 @@ const AddSecondVendorPopup = ({
                     <option value="">Select {label}</option>
                     {options.map((opt) => (
                       <option key={opt} value={opt}>
-                        {opt}
+                        {opt.charAt(0).toUpperCase() + opt.slice(1)}
                       </option>
                     ))}
                   </select>
@@ -353,14 +356,14 @@ const AddSecondVendorPopup = ({
               )}
             </div>
           ))}
-          <div className=" overflow-y-scroll max-h-[450px]">
+          <div className="max-h-[450px]">
             <div className="w-[100%] mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[5px]">
                 Business License No. / Employer Identification No.
               </label>
               <input
                 {...register("business_licence_number", {
-                  required: " Sales person  name is required",
+                  required: "Business licence no. / Employer identification no is required",
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Business License No."
@@ -392,7 +395,7 @@ const AddSecondVendorPopup = ({
                 >
                   Choose File
                 </label>
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-500 max-w-[200px] truncate inline-block align-middle">
                   {logo ? logo.name : "No file chosen"}
                 </span>
               </div>
@@ -422,7 +425,7 @@ const AddSecondVendorPopup = ({
                 >
                   Choose File
                 </label>
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-500 max-w-[200px] truncate inline-block align-middle">
                   {business_licence ? business_licence.name : "No file chosen"}
                 </span>
               </div>
@@ -452,7 +455,7 @@ const AddSecondVendorPopup = ({
                 >
                   Choose File
                 </label>
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-500 max-w-[200px] truncate inline-block align-middle">
                   {tax_certificate ? tax_certificate.name : "No file chosen"}
                 </span>
               </div>

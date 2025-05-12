@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createUser, deleteRole, deleteUser, fetchUsers, updateUser } from "./Api";
 
-export const useFetchUsers = () => {
+export const useFetchUsers = (data) => {
     return useQuery({
-      queryKey: ["fetchUsers"],
-      queryFn: () => fetchUsers(),
+      queryKey: ["fetchUsers",data],
+      queryFn: () => fetchUsers(data),
     });
   };
 

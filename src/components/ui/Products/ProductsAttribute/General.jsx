@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { Editor, EditorProvider } from "react-simple-wysiwyg";
 import CommonInput from "../../../common/MultiAttributes/CommonInput";
 import CommonOption from "../../../common/MultiAttributes/CommonOption";
+import { useFetchAllProductCategories } from "../../../../services/apis/Categories/Hooks";
 
 const General = ({ general, setGeneralData }) => {
+  const { data, isLoading, error } = useFetchAllProductCategories();
+  const categories = data?.categories || [];
   const [show, setShow] = useState(true);
-
+  const requiredFields = ["barcode", "sku", "refundValue", "warranty_information", "categories"];
+  const missingFieldsCount = requiredFields.filter(field => !general?.[field])?.length;
   const formatTextWithParagraphs = (text, limit = 150) => {
     if (!text) return "";
 
@@ -42,17 +46,20 @@ const General = ({ general, setGeneralData }) => {
       <div className="mt-[20px] bg-white border border-[#979797] rounded-lg">
         <div
           onClick={() => setShow(!show)}
-          className={`flex cursor-pointer rounded-t-md h-[49px] border-b border-b-[#979797]  bg-[#F9F9FB] px-4 justify-between items-center ${
-            show ? "mb-4" : "mb-0"
-          }`}
+          className={`flex cursor-pointer rounded-t-md h-[49px] border-b border-b-[#979797]  bg-[#F9F9FB] px-4 justify-between items-center ${show ? "mb-4" : "mb-0"
+            }`}
         >
           <h2 className="text-[20px] text-[#4A4A4A] leading-[27.28px] font-normal">
             General Attributes
           </h2>
           <div className="text-sm text-red-500">
-            <span className="mr-1 cursor-pointer">
-              4 missing required attribute
-            </span>
+            {missingFieldsCount > 0 ? (
+              <>
+                <span className="mr-1 cursor-pointer">
+                  {missingFieldsCount} missing required attribute{missingFieldsCount > 1 ? 's' : ''}
+                </span>
+              </>
+            ) :""}
             <button className="ml-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -105,41 +112,14 @@ const General = ({ general, setGeneralData }) => {
                 options={general?.warranty_info || []}
                 onChange={handleChange} // Custom onChange
               />
-
-              {/* <CommonOption
-                label="Status"
-                name="status_value"
-                value={general?.status_value || ""}
-                options={general?.status || []}
-                onChange={handleChange} // Custom onChange
-              /> */}
+              <CommonOption
+                label="Categories"
+                name="Categories"
+                value={general?.categories || ""}
+                options={general?.categories || []}
+                onChange={handleChange}
+              />
             </div>
-
-            {/* WYSIWYG Editor with Formatting Options */}
-            {/* <label className="block text-gray-700">Warranty Info</label>
-            <Editor
-              value={general?.warranty_information || ""}
-              onChange={(e) =>
-                setGeneralData((prev) => ({
-                  ...prev,
-                  warranty_information: formatTextWithParagraphs(
-                    e.target.value
-                  ), // Apply paragraph formatting
-                }))
-              }
-              toolbar={[
-                "bold",
-                "italic",
-                "underline",
-                "strike",
-                "orderedList",
-                "unorderedList",
-                "link",
-                "image",
-                "undo",
-                "redo",
-              ]}
-            /> */}
           </form>
         )}
       </div>

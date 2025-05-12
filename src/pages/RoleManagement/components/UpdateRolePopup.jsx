@@ -4,14 +4,14 @@ import { basePath } from "../../../services/apiRoutes";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const UpdateRolePopup = ({ setShowPopup, addPermission }) => {
+const UpdateRolePopup = ({ setShowPopup, addPermission, id, fetchName }) => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [name, setName] = useState(fetchName);
   const [nameAlert, setNameAlert] = useState(false);
   const [loader, setLoader] = useState(false);
 
-  //this function is for create new role
-  const CreateNewRole = async () => {
+  //this function is for Update Role
+  const UpdateRole = async () => {
     setLoader(true);
     const token = localStorage.getItem("token");
     if (name.length == 0) {
@@ -23,7 +23,7 @@ const UpdateRolePopup = ({ setShowPopup, addPermission }) => {
       permissions: addPermission,
     };
     try {
-      const response = await axios.post(`${basePath}/roles`, data, {
+      const response = await axios.put(`${basePath}/roles/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -33,9 +33,9 @@ const UpdateRolePopup = ({ setShowPopup, addPermission }) => {
       console.log("Success:", response.data);
       setLoader(false);
       if (response?.data) {
-        toast.success("Role Created Successfully");
+        toast.success("Role Update Successfully");
         setTimeout(() => {
-          navigate("/role-management");
+          window.location.reload();
         }, 500);
       }
     } catch (error) {
@@ -47,7 +47,7 @@ const UpdateRolePopup = ({ setShowPopup, addPermission }) => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         {" "}
         <h2 className="text-[18px] text-left mb-[10px] font-semibold text-[#1D1C1C]">
-          Create Role
+          Update Role
         </h2>
         <div>
           <div className="flex flex-col">
@@ -74,10 +74,10 @@ const UpdateRolePopup = ({ setShowPopup, addPermission }) => {
                 Cancel
               </button>
               <button
-                onClick={() => CreateNewRole()}
+                onClick={() => UpdateRole()}
                 className="flex-1 bg-[#26683A]  text-white py-2 px-4 rounded"
               >
-                {loader ? "Creating..." : "Create"}
+                {loader ? "Updating..." : "Update"}
               </button>
             </div>
           </div>

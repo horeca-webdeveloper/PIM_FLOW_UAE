@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CommonInput from "../../../common/MultiAttributes/CommonInput";
 
 import SeoLayout from "../../../common/SeoLayout/SeoLayout";
@@ -8,6 +8,7 @@ import axios from "axios";
 import { baseUrls } from "../../../../utils/apiWrapper";
 import toast from "react-hot-toast";
 import Loader from "../../../../utils/Loader";
+import { AppContext } from "../../../../Context/AppContext";
 
 const SeoManagement = ({ manageSeoProduct, setManageSeoProduct, id, type }) => {
   const [loading, setLoading] = useState(false);
@@ -177,6 +178,9 @@ const SeoManagement = ({ manageSeoProduct, setManageSeoProduct, id, type }) => {
     }
   };
 
+  const { AllowedPermissions } = useContext(AppContext);
+  const permissions = AllowedPermissions?.permissions || [];
+
   return (
     <div className="mt-[20px] bg-white border border-[#979797] rounded-lg">
       <div
@@ -192,17 +196,29 @@ const SeoManagement = ({ manageSeoProduct, setManageSeoProduct, id, type }) => {
           <span className="mr-1 cursor-pointer">
             missing required attribute
           </span>
+
           <button
             type="button"
-            className="bg-[#26683A] px-[15px] py-[8px] ml-[20px] text-white rounded-md"
+            className={`px-[15px] py-[8px] ml-[20px] text-white rounded-md ${
+              permissions?.includes("update seo mgmt")
+                ? "bg-[#26683A] cursor-pointer"
+                : "bg-gray-400 cursor-not-allowed opacity-50"
+            }`}
             onClick={() => handleUpdateSeo()}
+            disabled={!permissions?.includes("update seo mgmt")}
           >
             Update SEO
           </button>
+
           <button
             type="button"
-            className="bg-[#26683A] px-[15px] py-[8px] ml-[20px] text-white rounded-md"
+            className={`px-[15px] py-[8px] ml-[20px] text-white rounded-md ${
+              permissions?.includes("add seo mgmt")
+                ? "bg-[#26683A] cursor-pointer"
+                : "bg-gray-400 cursor-not-allowed opacity-50"
+            }`}
             onClick={() => handleCreateSeo()}
+            disabled={!permissions?.includes("add seo mgmt")}
           >
             Create SEO
           </button>

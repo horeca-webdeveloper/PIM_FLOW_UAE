@@ -16,10 +16,9 @@ const Table = ({
   setShowDelete,
   setId,
 }) => {
-
   return (
     <div className="bg-white  rounded-lg border  border-gray-200 w-[100%] overflow-x-scroll">
-      <div className="flex items-center border-b border-gray-200">
+      <div className="flex sticky top-0 bg-[white] items-center border-b border-gray-200">
         {/* <div className="flex-1 flex h-[50px]">
           {["Option One", "Option Two", "Option Three", "Option Four"].map(
             (option, index) => (
@@ -66,7 +65,7 @@ const Table = ({
           </div>
         </div>
       </div>
-      <div className="">
+      <div className="h-[65vh]">
         {isLoading ? (
           <div className="flex items-center justify-center h-[100px]">
             <Loader />
@@ -74,7 +73,7 @@ const Table = ({
         ) : (
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-50 h-[50px]">
+              <tr className="sticky top-[50px] bg-gray-50 h-[50px]">
                 <th className="w-10 p-2 border border-gray-200">
                   <input
                     type="checkbox"

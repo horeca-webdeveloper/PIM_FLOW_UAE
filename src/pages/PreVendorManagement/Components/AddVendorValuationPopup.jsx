@@ -180,10 +180,10 @@ const AddVendorValuationPopup = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-[28%] max-h-[90vh] p-4 relative">
+      <div className="bg-white rounded-lg w-[30%] p-4 relative">
         <button
           onClick={() => setShowPopup(false)}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-[20px]"
         >
           x
         </button>
@@ -250,7 +250,11 @@ const AddVendorValuationPopup = ({
                   })}
                   type={field.name === "phone_number" ? "number" : "text"}
                   min={field.name === "phone_number" ? 0 : undefined}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  className={`w-full border border-gray-300 rounded px-3 py-2 ${
+                    field.name === "phone_number"
+                      ? "appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      : ""
+                  }`}
                   placeholder={`Enter ${field.label.toLowerCase()}`}
                 />
                 {errors[field.name] && (

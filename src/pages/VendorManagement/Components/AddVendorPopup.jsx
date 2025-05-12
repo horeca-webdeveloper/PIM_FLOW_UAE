@@ -32,7 +32,7 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
       <div className="bg-white rounded-lg w-[35%] p-3 relative">
         <button
           onClick={() => setShowPopup(false)}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute right-4 text-gray-500 text-[20px] hover:text-gray-700"
         >
           x
         </button>
@@ -90,15 +90,22 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 minLength={0}
+                onWheel={(e) => e.target.blur()}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                  }
+                }}
                 {...register("landline_number", {
                   required: "Landline number is required",
                   min: {
                     value: 0,
-                    message: `Landline number Cannot Be Negative`,
+                    message: `Landline number cannot be negative`,
                   },
                 })}
-                className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
+                className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px] appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="Enter Landline Number"
               />
               {errors.landline_number && (
@@ -116,14 +123,20 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
               <input
                 type="number"
                 minLength={0}
+                onWheel={(e) => e.target.blur()}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                  }
+                }}
                 {...register("mobile_number", {
                   required: "Mobile no. is required",
                   min: {
                     value: 0,
-                    message: `Mobile No. Cannot Be Negative`,
+                    message: `Mobile no. cannot be negative`,
                   },
                 })}
-                className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
+                className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px] appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="Enter Mobile Number"
               />
               {errors.mobile_number && (
@@ -160,7 +173,7 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
                   required: "Credit limit is required",
                   min: {
                     value: 0,
-                    message: ` Credit Limit Cannot Be Negative`,
+                    message: ` Credit limit cannot be negative`,
                   },
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
@@ -173,25 +186,42 @@ const AddVendorPopup = ({ setShowPopup, setShowSecondPopup }) => {
               )}
             </div>
             <div className="w-[100%]">
-              <label className="block text-sm font-semibold text-[#616161] mb-[5px]">
-                Net Terms
-              </label>
-              <input
-                {...register("net_terms", {
-                  required: "Net terms is required",
-                  min: {
-                    value: 0,
-                    message: `Net terms Cannot Be Negative`,
-                  },
-                })}
-                className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
-                placeholder="Enter Net Terms "
-              />
-              {errors.net_terms && (
-                <span className="text-red-500 text-sm">
-                  {errors.net_terms.message}
-                </span>
-              )}
+            {[
+              {
+                name: "net_terms",
+                label: "Credit Terms",
+                options: ["Net 60", "Net 45", "Net 30", "Net 15", "Advance"],
+              },
+            ].map(({ name, label, options }) => (
+              <div key={name}>
+                <label className="block text-sm font-semibold text-[#616161] mb-1">
+                  {label}
+                </label>
+                <Controller
+                  name={name}
+                  control={control}
+                  rules={{ required: `Credit terms is required` }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      className="w-full border border-gray-300 rounded px-3 py-[0.4rem]"
+                    >
+                      <option value="">Select {label}</option>
+                      {options.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+                {errors[name] && (
+                  <span className="text-red-500 text-sm">
+                    {errors[name]?.message}
+                  </span>
+                )}
+              </div>
+            ))}
             </div>
           </div>
           {/* Country Multi-select */}

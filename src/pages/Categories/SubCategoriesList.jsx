@@ -138,14 +138,15 @@ const SubCategoriesList = () => {
         <div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <HeaderComponent
-              label="Sub Categories List"
+              label="Product Families List"
               setShow={setShow}
-              span={`(${!!getSubCatData && getSubCatData?.data?.length
-                } Results)`}
+              span={`(${
+                !!getSubCatData && getSubCatData?.data?.length
+              } Results)`}
               buttons={buttons}
             />
             <SubcategoryTable
-              title="List Of Subcategories"
+              title="List Of Product Families"
               totalPages={totalPages}
               changePage={changePage}
               setPage={setPage}
@@ -158,11 +159,7 @@ const SubCategoriesList = () => {
               showFilter={true}
             />
 
-            {loader ? (
-              <FullScreenLoader bgTransparent={true} />
-            ) : (
-              ""
-            )}
+            {loader ? <FullScreenLoader bgTransparent={true} /> : ""}
             <CreateSubCategoriesPopUp
               title="Create Sub Category"
               loader={loader}

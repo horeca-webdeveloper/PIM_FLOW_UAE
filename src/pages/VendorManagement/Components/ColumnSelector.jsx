@@ -22,7 +22,6 @@ const ColumnSelector = ({
       const updated = prev.includes(column)
         ? prev.filter((col) => col !== column)
         : [...prev, column];
-      console.log("Toggled hiddenColumns:", updated);
       localStorage.setItem("vendorCheckedColumns", JSON.stringify(updated));
       return updated;
     });
@@ -49,7 +48,6 @@ const ColumnSelector = ({
   };
 
   const handleSubmit = () => {
-    console.log("Selected:", selectedColumns);
     setShowColumn(false);
   };
 

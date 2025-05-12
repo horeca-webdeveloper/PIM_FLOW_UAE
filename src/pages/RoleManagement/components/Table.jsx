@@ -12,27 +12,16 @@ const Table = ({ data, isLoading, setId, setShowDelete }) => {
     <div className="bg-white rounded-lg border border-gray-200 w-full overflow-hidden">
       {/* Top navigation */}
       <div className="flex items-center border-b border-gray-200">
-        <div className="flex-1 flex h-[50px]">
-          {["Option One", "Option Two", "Option Three", "Option Four"].map(
-            (option, index) => (
-              <button
-                key={index}
-                className="font-semibold px-[10px] text-[14px] leading-[100%] text-[#4A4A4A]"
-              >
-                {option}
-              </button>
-            )
-          )}
-        </div>
+        <div className="flex-1 flex h-[50px]"></div>
         <div className="flex px-2">
           <button className="p-2 text-gray-400">
-            <FaSearchLocation size={16} />
+            {/* <FaSearchLocation size={16} /> */}
           </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto h-[80vh]">
         {isLoading ? (
           <div className="flex items-center justify-center h-[100px]">
             <Loader />
@@ -41,7 +30,7 @@ const Table = ({ data, isLoading, setId, setShowDelete }) => {
           <table className="w-full text-left">
             {/* Table Header */}
             <thead>
-              <tr className="bg-gray-50 h-[50px]">
+              <tr className="sticky top-0 bg-gray-50 h-[50px]">
                 <th className="w-10 p-2 border border-gray-200">
                   <div className="flex items-center">
                     <input

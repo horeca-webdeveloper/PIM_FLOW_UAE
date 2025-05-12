@@ -9,7 +9,14 @@ import toast from "react-hot-toast";
 import { FaFolder } from "react-icons/fa";
 import { IoFolderOpen } from "react-icons/io5";
 
-const VendorFolderView = ({ data, title, type, vendorId, vendorName }) => {
+const VendorFolderView = ({
+  data,
+  title,
+  type,
+  vendorId,
+  vendorName,
+  permissions,
+}) => {
   const location = useLocation();
   const [loader, setLoader] = useState(false);
   const id = location?.pathname.split("/")[2];
@@ -59,23 +66,25 @@ const VendorFolderView = ({ data, title, type, vendorId, vendorName }) => {
           <FaFolder className="text-[#26683A] hover:text-green-700 text-xl mr-[4px] mb-[2px]" />
           <span className="text-sm">{title}</span>
         </div>
-        <div
-          onClick={() => handleSubmit()}
-          className="relative group inline-block"
-        >
-          {loader ? (
-            <div>
-              <Loader />
-            </div>
-          ) : (
-            <>
-              <MdDownloadForOffline color="#444746" size={20} />
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-0 w-max bg-gray-600 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                Download
+        {permissions?.includes("download vendor") && (
+          <div
+            onClick={() => handleSubmit()}
+            className="relative group inline-block"
+          >
+            {loader ? (
+              <div>
+                <Loader />
               </div>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <MdDownloadForOffline color="#444746" size={20} />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-0 w-max bg-gray-600 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Download
+                </div>
+              </>
+            )}
+          </div>
+        )}
         {/* <img src={threeDot} alt="Menu" className="ml-auto" /> */}
       </div>
       <div

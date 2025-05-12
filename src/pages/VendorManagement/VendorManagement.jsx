@@ -60,7 +60,6 @@ const VendorManagement = () => {
     mutate(id, {
       onSuccess: (data) => {
         setDeleteLoading(false);
-        console.log(data);
         toast.success("Vendor Deleted Successfully");
         setTimeout(() => {
           window.location.reload();
@@ -68,7 +67,6 @@ const VendorManagement = () => {
       },
       onError: (err) => {
         setDeleteLoading(false);
-        console.log(err);
       },
     });
   };
@@ -119,7 +117,17 @@ const VendorManagement = () => {
     setTotalPage(data?.total_pages);
   }, [data]);
 
- 
+  useEffect(() => {
+    if (showPopup || showEdit) {
+      document.body.style.overflow = "hidden"; // Lock scroll
+    } else {
+      document.body.style.overflow = "auto"; // Restore scroll
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"; // Cleanup on unmount
+    };
+  }, [showPopup, showEdit]);
 
   return (
     <div className="bg-[#f1f1f1] min-h-[90vh] w-[82vw]">
@@ -180,7 +188,7 @@ const VendorManagement = () => {
           deleteLoading={deleteLoading}
         />
       )}
-      <div className="flex items-center justify-center mt-[40px]">
+      <div className="flex items-center justify-center mt-[10px]">
         <PaginationComponent
           setPage={setPage}
           totalPages={totalPages}

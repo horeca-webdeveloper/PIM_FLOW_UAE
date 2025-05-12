@@ -181,7 +181,7 @@ const Table = ({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto h-[65vh]">
         {isLoading ? (
           <div className="flex items-center justify-center h-[100px]">
             <Loader />

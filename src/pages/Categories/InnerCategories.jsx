@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CollapseComponent from "../../components/common/CollapseComponent";
 import Loader from "../../utils/Loader";
@@ -13,6 +13,7 @@ import MultiSelectComponent from "../../components/common/MultiSelectComponent";
 import SeoManagement from "../../components/ui/Products/ProductsAttribute/SeoManagement";
 import axios from "axios";
 import { baseUrls } from "../../utils/apiWrapper";
+import { AppContext } from "../../Context/AppContext";
 
 const InnerCategories = () => {
   const navigate = useNavigate();
@@ -52,7 +53,6 @@ const InnerCategories = () => {
     getSEOData();
   }, [id]);
 
-   
   const [manageSeoProduct, setManageSeoProduct] = useState({
     id: "",
     relational_id: "",
@@ -170,15 +170,13 @@ const InnerCategories = () => {
   const products_ids = watch("products_ids", "");
 
   const onSubmit = (data) => {
-   
-
     let productIds;
-    if (data?.products_ids?.length>0) {
+    if (data?.products_ids?.length > 0) {
       productIds = data.products_ids?.map((prod) => prod.value).join(",");
     } else {
       productIds = 1683;
     }
- 
+
     const formData = new FormData();
     formData.append("name", categoryName);
     formData.append("category_id", parseInt(id));
@@ -211,12 +209,14 @@ const InnerCategories = () => {
     });
 
     if (uid) {
- 
       Apis.updateSubCategory(formData, uid, setLoader, setResponse);
     } else {
       Apis.createSubCategory(formData, setLoader, setResponse);
     }
   };
+
+  const { AllowedPermissions } = useContext(AppContext);
+  const permissions = AllowedPermissions?.permissions || [];
 
   useEffect(() => {
     Apis.getAttributesByCategory(id, setLoader, setAttributeByCategory);
@@ -322,7 +322,9 @@ const InnerCategories = () => {
               <Controller
                 name="attributes_ids"
                 control={control}
-                rules={{ required: "Category Filterable Attributes is required" }}
+                rules={{
+                  required: "Category Filterable Attributes is required",
+                }}
                 render={({ field }) => (
                   <MultiSelectComponent
                     label="Category Filterable Attributes (required)"
@@ -398,7 +400,9 @@ const InnerCategories = () => {
                 register={register}
                 namePrefix="web_banners"
                 setValue={setValue}
-                selectedAltText={subCategoryDetails && subCategoryDetails?.web_banners}
+                selectedAltText={
+                  subCategoryDetails && subCategoryDetails?.web_banners
+                }
                 selectedBanner={
                   subCategoryDetails && subCategoryDetails?.web_banners
                 }
@@ -412,7 +416,9 @@ const InnerCategories = () => {
                 register={register}
                 setValue={setValue}
                 namePrefix="mobile_banners"
-                selectedAltText={subCategoryDetails && subCategoryDetails?.mobile_banners}
+                selectedAltText={
+                  subCategoryDetails && subCategoryDetails?.mobile_banners
+                }
                 selectedBanner={
                   subCategoryDetails && subCategoryDetails?.mobile_banners
                 }
@@ -420,12 +426,14 @@ const InnerCategories = () => {
               />
             </CollapseComponent>
 
-            <SeoManagement
-              manageSeoProduct={manageSeoProduct}
-              setManageSeoProduct={setManageSeoProduct}
-              id={id}
-              type={"Category"}
-            />
+            {permissions?.includes("list seo mgmt") && (
+              <SeoManagement
+                manageSeoProduct={manageSeoProduct}
+                setManageSeoProduct={setManageSeoProduct}
+                id={id}
+                type={"Category"}
+              />
+            )}
 
             {/* <CollapseComponent title="SEO Attributes">
               <SeoComponent seo={seoData} setSeo={setSeoData} />

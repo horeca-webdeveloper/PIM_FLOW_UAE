@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import Loader from "../../../utils/Loader";
 import saveIcon from "../../../../src/assets/icons/saveIcon.png";
+import { AppContext } from "../../../Context/AppContext";
 const AddProductsHeader = ({
   handleCreateProduct,
   updateProductLoading,
   general,
   data,
+  permissions,
   setGeneralData,
 }) => {
   const countryMap = {
@@ -13,7 +15,6 @@ const AddProductsHeader = ({
     2: "United Arab Emirates",
     3: "Saudi Arabia",
   };
-
   const countryString = general?.websites; // or "3", or "1,2"
 
   // Handle input changes
@@ -105,7 +106,7 @@ const AddProductsHeader = ({
                 Status
               </span>
               <select
-                value={general?.status_value || "draft"}
+                value={general?.status_value || "Draft"}
                 onChange={(e) => handleChange(e)}
                 name="status_value"
                 className="ml-[8px] border rounded-md px-[10px] py-[3px]"
@@ -120,23 +121,25 @@ const AddProductsHeader = ({
       </div>
 
       {/* Right Section (Buttons) */}
+
       <div className="flex items-center gap-2">
         <button
-          type="button"
-          className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px]"
-        >
-          Export
-        </button>
-        <button
-          type="button"
-          className="text-[14px] leading-[17.64px] font-light text-[#303030] bg-[#E2E2E2] px-[20px] rounded-[5px] mr-[10px] py-[8px]"
-        >
-          Import
-        </button>
-        <button
-          onClick={() => handleCreateProduct()}
-          // type="submit"
-          className="flex text-[14px] leading-[17.64px] font-light text-[white] bg-[#26683A] px-[20px] rounded-[5px] mr-[10px] py-[8px]"
+          onClick={() => {
+            if (permissions?.includes("show product")) {
+              handleCreateProduct();
+            }
+          }}
+          disabled={!permissions?.includes("show product")}
+          className={`flex text-[14px] leading-[17.64px] font-light text-white px-[20px] rounded-[5px] mr-[10px] py-[8px] ${
+            permissions?.includes("show product")
+              ? "bg-[#26683A] cursor-pointer"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
+          title={
+            permissions?.includes("show product")
+              ? "Save Product"
+              : "Not allowed"
+          }
         >
           {updateProductLoading ? (
             ""

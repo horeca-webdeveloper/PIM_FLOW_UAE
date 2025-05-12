@@ -8,6 +8,9 @@ import {
   useUpdateUser,
 } from "../../../services/apis/Users/Hooks";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Loader from "../../../utils/Loader";
+import { UsersApiPath } from "../../../services/apiRoutes";
+import axios from "axios";
 
 const UpdateUserPopup = ({ setShowEdit, editData }) => {
   const [loader, setLoader] = useState(false);
@@ -24,15 +27,15 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
     defaultValues: {
       id: editData?.id,
       email: editData?.email,
+      username: editData?.username,
       first_name: editData?.first_name,
       last_name: editData?.last_name,
       old_password: "",
       new_password: "",
       confirm_password: "",
-      role_id: [],
+      role: editData?.role_id,
     },
   });
-
   const { data, isLoading, error } = useFetchRolesId();
 
   const {
@@ -41,24 +44,50 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
     error: createUserError,
   } = useUpdateUser();
 
-  const handleFormSubmit = (formData) => {
-    console.log("Submitted Data:", formData);
+  const handleFormSubmit = async (formData) => {
+    const roleId = parseInt(formData.role, 10);
+    const selectedRole = data?.data?.find((role) => role.id === roleId)
+    const updatedData = {
+      ...formData,
+      password: formData.confirm_password,
+      role: selectedRole.name
+    };
+    delete updatedData.confirm_password;
+    delete updatedData.new_password;
+    delete updatedData.old_password;
     setLoader(true);
-    mutate(formData, {
-      onSuccess: (data) => {
-        console.log(data);
-        setLoader(false);
-        toast.success("User Updated Successfully");
-        window.location.reload();
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.put(
+        `${UsersApiPath}/${editData?.id}`,
+        updatedData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setLoader(false);
+      if (response?.data) {
         setShowEdit(false);
-        document.body.style.overflow = "auto";
-      },
-      onError: (err) => {
-        setLoader(false);
-        console.log(err);
-      },
-    });
+        toast.success("User Updated Successfully");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+      setLoader(false);
+    }
   };
+
+  useEffect(() => {
+    if (editData?.role_id) {
+      setValue("role", editData.role_id);
+    }
+  }, [editData?.role_id, setValue]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -75,6 +104,17 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
           />
           {errors.email && (
             <p className="text-red-500 text-[14px]">{errors.email.message}</p>
+          )}
+
+          <CommonInput
+            label="User Name"
+            name="username"
+            {...register("username", { required: "Username is required" })}
+          />
+          {errors.username && (
+            <p className="text-red-500 text-[14px]">
+              {errors.username.message}
+            </p>
           )}
 
           <div className="mb-2">
@@ -194,27 +234,26 @@ const UpdateUserPopup = ({ setShowEdit, editData }) => {
             </p>
           )}
 
-          <div>
-            <label className="text-[16px] text-[#616161] font-semibold">
-              Select a role
-            </label>
-            <select
-              {...register("role_id", { required: "Role is required" })}
-              className="border border-[#A8A4A4] w-[100%] rounded-[4px] px-3 py-2 h-[42px] text-[#616161]"
-            >
-              <option value="">Select a role</option>
-              {data?.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
-            </select>
-            {errors.role_id && (
-              <p className="text-red-500 text-[14px]">
-                {errors.role_id.message}
-              </p>
-            )}
-          </div>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <div>
+              <label className="text-[16px] text-[#616161] font-semibold">
+                Select a role
+              </label>
+              <select
+                {...register("role", { required: "Role is required" })}
+                className="border border-[#A8A4A4] w-[100%] rounded-[4px] px-3 py-2 h-[42px] text-[#616161]"
+              >
+                <option value="">Select a role</option>
+                {data?.data?.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="flex mt-[20px] justify-end space-x-2">
             <button

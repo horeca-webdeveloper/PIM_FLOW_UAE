@@ -7,6 +7,7 @@ const UserManagementHeader = ({
   type,
   heading,
   addPermission,
+  title,
 }) => {
   const navigate = useNavigate();
   return (
@@ -24,19 +25,19 @@ const UserManagementHeader = ({
         </button> */}
         <button
           onClick={() => {
-            if (type == "show") {
+            if (addPermission) {
               if (addPermission.length > 0) {
                 setShowPopup(true);
               } else {
-                toast.success("Pleaes Select A Checkbox");
+                toast.error("Please Select A Role");
               }
             } else {
-              navigate("/add-permission");
+              setShowPopup(true);
             }
           }}
-          className="text-[14px] leading-[17.64px] font-normal h-[38px] text-[white] bg-[#26683A] px-[20px] rounded-[5px] mr-[10px] py-[8px]"
+          className="text-[14px] leading-[17.64px] font-normal h-[38px] text-white bg-[#26683A] px-[20px] rounded-[5px] mr-[10px] py-[8px]"
         >
-          {type == "show" ? "Add New Role" : "Create New Role"}
+          {title || "Add New User"}
         </button>
       </div>
     </div>

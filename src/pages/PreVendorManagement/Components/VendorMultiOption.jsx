@@ -33,7 +33,18 @@ const VendorMultiOption = ({
   // Filter options based on search query
   const filtered = options.filter((opt) =>
     opt?.label?.toLowerCase()?.includes(searchQuery?.toLowerCase())
-  );
+  ).sort((a, b) => {
+    const query = searchQuery.toLowerCase();
+    const aLabel = a.label.toLowerCase();
+    const bLabel = b.label.toLowerCase();
+
+    const aStartsWith = aLabel.startsWith(query);
+    const bStartsWith = bLabel.startsWith(query);
+
+    if (aStartsWith && !bStartsWith) return -1;
+    if (!aStartsWith && bStartsWith) return 1;
+    return aLabel.localeCompare(bLabel); 
+  });
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -61,7 +72,12 @@ const VendorMultiOption = ({
         className="border rounded-md px-3 py-2 flex justify-between cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
-          setIsOpen(!isOpen);
+          // setIsOpen(!isOpen);
+          setIsOpen((prev) => {
+            const next = !prev;
+            if (next) setSearchQuery(""); 
+            return next;
+          });
         }}
       >
         {selectedValues.length

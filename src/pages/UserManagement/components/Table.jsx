@@ -8,35 +8,39 @@ const Table = ({
   data,
   isLoading,
   setShowEdit,
+  setLimit,
   setEditData,
   setShowDelete,
   setId,
 }) => {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 w-full overflow-hidden">
+    <div className="bg-white h-[70vh] rounded-lg border border-gray-200 w-full">
       {/* Top navigation */}
       <div className="flex items-center border-b border-gray-200">
-        <div className="flex-1 flex h-[50px]">
-          {["Option One", "Option Two", "Option Three", "Option Four"].map(
-            (option, index) => (
-              <button
-                key={index}
-                className="font-semibold px-[10px] text-[14px] leading-[100%] text-[#4A4A4A]"
-              >
-                {option}
-              </button>
-            )
-          )}
-        </div>
-        <div className="flex px-2">
+        <div className="flex-1 flex h-[50px]"></div>
+
+        {/* <div className="flex px-2">
           <button className="p-2 text-gray-400">
             <FaSearchLocation size={16} />
           </button>
+        </div> */}
+        <div className="flex items-center mr-[10px] justify-center">
+          <span>Limit :</span>
+          <select
+            onChange={(e) => setLimit(e.target.value)}
+            className="w-[110px] border border-[#BCBCBC] rounded-md p-[5px] ml-[10px] text-[14px]"
+          >
+            <option value={"10"}>10 Results</option>
+            <option value={"20"}>20 Results</option>
+            <option value={"50"}>50 Results</option>
+          </select>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-auto max-h-[calc(70vh-50px-50px)]">
+        {" "}
+        {/* Adjust height based on header & nav */}
         {isLoading ? (
           <div className="flex items-center justify-center h-[100px]">
             <Loader />
@@ -45,7 +49,7 @@ const Table = ({
           <table className="w-full text-left">
             {/* Table Header */}
             <thead>
-              <tr className="bg-gray-50 h-[50px]">
+              <tr className="sticky top-0 bg-gray-50 h-[50px]">
                 <th className="w-10 p-2 border border-gray-200">
                   <div className="flex items-center">
                     <input
@@ -54,21 +58,27 @@ const Table = ({
                     />
                   </div>
                 </th>
-                {["User Name", "User Role", "Description", "Action"].map(
-                  (header, index) => (
-                    <th
-                      key={index}
-                      className="px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200"
-                    >
-                      <div className="flex items-center">
-                        <p className="font-semibold text-[14px] cursor-pointer leading-[100%] text-[#616161]">
-                          {header}
-                        </p>
-                        {header !== "Action" && <span className="ml-1">▼</span>}
-                      </div>
-                    </th>
-                  )
-                )}
+                {[
+                  "First Name",
+                  "Last Name",
+                  "User Name",
+                  "Email",
+                  "Profile Img",
+                  "Role Name",
+                  "Action",
+                ].map((header, index) => (
+                  <th
+                    key={index}
+                    className="px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200"
+                  >
+                    <div className="flex items-center">
+                      <p className="font-semibold text-[14px] cursor-pointer leading-[100%] text-[#616161]">
+                        {header}
+                      </p>
+                      {header !== "Action" && <span className="ml-1">▼</span>}
+                    </div>
+                  </th>
+                ))}
               </tr>
             </thead>
 
@@ -86,10 +96,20 @@ const Table = ({
                     {item?.first_name}
                   </td>
                   <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
-                    {item?.roles[0]?.name}
+                    {item?.last_name}
                   </td>
                   <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
-                    {item?.roles[0]?.description}
+                    {item?.username}
+                  </td>
+                  <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
+                    {item?.email}
+                  </td>
+
+                  <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
+                    {item?.profile_img}
+                  </td>
+                  <td className="px-3 py-4 text-sm text-[#303030] font-normal border border-gray-200">
+                    {item?.role_name}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 border">
                     <div className="flex justify-center space-x-2">

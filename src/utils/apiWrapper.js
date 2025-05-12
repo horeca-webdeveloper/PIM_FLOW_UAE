@@ -1,15 +1,15 @@
 import axios from 'axios';
 const hostUrl = window.location.origin;
- const apiUrl=process.env.REACT_APP_API_URL;
-   const baseUrls=process.env.REACT_APP_BASE_URL;
- 
+const apiUrl = process.env.REACT_APP_API_URL;
+const baseUrls = process.env.REACT_APP_BASE_URL;
+
 // // const apiUrl='https://pimflow.thehorecastore.co/api';
 // // const baseUrls='https://pimflow.thehorecastore.co/api';
-// // const apiUrl='https://testpim.thehorecastore.co/api';
-// // const baseUrls='https://testpim.thehorecastore.co/api';
+//  const apiUrl='https://testpim.thehorecastore.co/api';
+//  const baseUrls='https://testpim.thehorecastore.co/api';
 // const apiUrl='https://pim.thehorecastore.co/api';
 // const baseUrls='https://pim.thehorecastore.co/api';
- 
+
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -36,4 +36,4 @@ export const api = {
     delete: (url, config = {}) => apiClient.delete(url, config),
 };
 
-export { apiClient,apiUrl,baseUrls,hostUrl };
+export { apiClient, apiUrl, baseUrls, hostUrl };

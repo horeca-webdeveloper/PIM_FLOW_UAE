@@ -14,6 +14,7 @@ import arrowUp from "../../../assets/icons/arrowUp.png";
 import { ImSortAmountDesc } from "react-icons/im";
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import { VendorManagementContext } from "../VendorManagementContext";
+import { AppContext } from "../../../Context/AppContext";
 
 const Table = ({
   brandsData,
@@ -55,6 +56,8 @@ const Table = ({
     // "Warehouse Locations",
     "Created By",
   ];
+  const { AllowedPermissions } = useContext(AppContext);
+  const permissions = AllowedPermissions?.permissions || [];
   const [showColumn, setShowColumn] = useState(false);
   const { setVendorName } = useContext(VendorManagementContext);
   const [hiddenColumns, setHiddenColumns] = useState(() => {
@@ -89,7 +92,6 @@ const Table = ({
   }, []);
   const checkedColumn =
     JSON.parse(localStorage.getItem("vendorCheckedColumns")) || [];
-  console.log(checkedColumn);
 
   useEffect(() => {
     const storedColumns =
@@ -275,7 +277,7 @@ const Table = ({
           )}
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto h-[65vh]">
         {isLoading ? (
           <div className="flex items-center justify-center h-[100px]">
             <Loader />
@@ -284,7 +286,7 @@ const Table = ({
           <table className="w-full text-left">
             {brandsData?.length > 0 && (
               <thead>
-                <tr className="bg-gray-50 h-[50px]">
+                <tr className="sticky top-0 bg-gray-50 h-[50px]">
                   <th className="w-10 p-2 border border-gray-200">
                     <input
                       type="checkbox"
@@ -514,56 +516,88 @@ const Table = ({
 
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 border">
                       <div className="flex justify-center space-x-3 w-[150px] p-1 border rounded-md border-[#BCBCBC]">
-                        <span
-                          title="View Vendor Assets"
-                          onClick={() => {
-                            setVendorName(item?.name);
-                            navigate(`/VendorAsset/${item?.id}`);
-                          }}
-                          className="text-blue-500 w-[38px] mt-[1px] hover:text-blue-700 cursor-pointer"
-                        >
-                          <img src={vendorFolder} alt="folder" />
-                        </span>
+                        {permissions?.includes("view vendor") && (
+                          <>
+                            <span
+                              title="View Vendor Assets"
+                              onClick={() => {
+                                setVendorName(item?.name);
+                                navigate(`/VendorAsset/${item?.id}`);
+                              }}
+                              className="text-blue-500 w-[38px] mt-[1px] hover:text-blue-700 cursor-pointer flex items-center justify-center"
+                            >
+                              <img
+                                className="w-5 h-5 object-contain"
+                                src={vendorFolder}
+                                alt="folder"
+                              />
+                            </span>
 
-                        <div className="w-px h-5 bg-gray-300"></div>
+                            <div className="w-px h-5 bg-gray-300"></div>
+                          </>
+                        )}
 
-                        <span
-                          title="Upload Asset"
-                          onClick={() => {
-                            setUploadShow(true);
-                            setId(item.id);
-                          }}
-                          className="text-blue-500 w-[40px] hover:text-blue-700 cursor-pointer"
-                        >
-                          <img src={vendorUploadIcon} alt="upload" />
-                        </span>
+                        {permissions?.includes("upload vendor") && (
+                          <>
+                            <span
+                              title="Upload Asset"
+                              onClick={() => {
+                                setUploadShow(true);
+                                setId(item.id);
+                              }}
+                              className="text-blue-500 w-[38px] hover:text-blue-700 cursor-pointer flex items-center justify-center"
+                            >
+                              <img
+                                className="w-5 h-5 object-contain"
+                                src={vendorUploadIcon}
+                                alt="upload"
+                              />
+                            </span>
 
-                        <div className="w-px h-5 bg-gray-300"></div>
+                            <div className="w-px h-5 bg-gray-300"></div>
+                          </>
+                        )}
 
-                        <span
-                          title="Edit Vendor"
-                          onClick={() => {
-                            setShowEdit(true);
-                            setEditData(item);
-                            setId(item.id);
-                          }}
-                          className="text-blue-500 hover:text-blue-700 cursor-pointer"
-                        >
-                          <img src={pencilWrite} alt="edit" />
-                        </span>
+                        {permissions?.includes("update vendor") && (
+                          <>
+                            <span
+                              title="Edit Vendor"
+                              onClick={() => {
+                                setShowEdit(true);
+                                setEditData(item);
+                                setId(item.id);
+                              }}
+                              className="text-blue-500 w-[38px] hover:text-blue-700 cursor-pointer flex items-center justify-center"
+                            >
+                              <img
+                                className="w-5 h-5 object-contain"
+                                src={pencilWrite}
+                                alt="edit"
+                              />
+                            </span>
 
-                        <div className="w-px h-5 bg-gray-300"></div>
+                            <div className="w-px h-5 bg-gray-300"></div>
+                          </>
+                        )}
 
-                        <span
-                          title="Delete Vendor"
-                          onClick={() => {
-                            setShowDelete(true);
-                            setId(item.id);
-                          }}
-                          className="text-red-500 hover:text-red-700 cursor-pointer"
-                        >
-                          <img src={vendorBin} alt="trash" />
-                        </span>
+                        {permissions?.includes("update vendor") && (
+                          <>
+                            <span
+                              title="Delete Vendor"
+                              onClick={() => {
+                                setShowDelete(true);
+                                setId(item.id);
+                              }}
+                              className="text-red-500 w-[38px] hover:text-red-700 cursor-pointer flex items-center justify-center"
+                            >
+                              <img
+                                className="w-5 h-5 object-contain"
+                                src={vendorBin}
+                                alt="trash"
+                              />
+                            </span>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

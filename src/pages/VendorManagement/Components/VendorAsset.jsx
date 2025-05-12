@@ -10,12 +10,16 @@ import Loader from "../../../utils/Loader";
 import VendorFolderView from "./VendorFolderView";
 import VendorManagementHeader from "./VendorManagementHeader";
 import { VendorManagementContext } from "../VendorManagementContext";
+import { AppContext } from "../../../Context/AppContext";
 
 const VendorAsset = () => {
   const location = useLocation();
   const id = location?.pathname?.split("/")[2];
   const [loader, setLoader] = useState(false);
   const { vendorName } = useContext(VendorManagementContext);
+
+  const { AllowedPermissions } = useContext(AppContext);
+  const permissions = AllowedPermissions?.permissions || [];
 
   const handleSubmit = async () => {
     setLoader(true);
@@ -60,6 +64,7 @@ const VendorAsset = () => {
         handleSubmit={handleSubmit}
         loader={loader}
         title={"Download All"}
+        permissions={permissions}
       />
       {false ? (
         <div>
@@ -69,18 +74,21 @@ const VendorAsset = () => {
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-5">
           <VendorFolderView
             vendorName={vendorName}
+            permissions={permissions}
             type={"video"}
             title={"Videos"}
             vendorId={id}
           />
           <VendorFolderView
             vendorName={vendorName}
+            permissions={permissions}
             type={"image"}
             title={"Images"}
             vendorId={id}
           />
           <VendorFolderView
             vendorName={vendorName}
+            permissions={permissions}
             type={"file"}
             title={"Documents"}
             vendorId={id}

@@ -141,7 +141,6 @@ const UpdateSecondVendorPopup = ({
   const onSubmit = async (data) => {
     setLoader(true);
     const finalData = { ...data, ...editData };
-    console.log(finalData);
     const formData = new FormData();
     const token = localStorage.getItem("token");
 
@@ -195,7 +194,6 @@ const UpdateSecondVendorPopup = ({
         },
       });
 
-      console.log("Success:", response.data);
       setLoader(false);
       if (response?.data) {
         toast.success("Vendor Updated Successfully");
@@ -204,7 +202,6 @@ const UpdateSecondVendorPopup = ({
         }, 500);
       }
     } catch (error) {
-      console.log("here is our error", error?.response?.data?.message);
       setLoader(false);
       toast.error(error?.response?.data?.message);
     }
@@ -215,7 +212,7 @@ const UpdateSecondVendorPopup = ({
       <div className="bg-white rounded-lg w-[35%] p-3 relative">
         <button
           onClick={() => setSecondShowEdit(false)}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute right-4 text-gray-500 hover:text-gray-700 text-[20px]"
         >
           x
         </button>
@@ -350,7 +347,7 @@ const UpdateSecondVendorPopup = ({
                     <option value="">Select {label}</option>
                     {options.map((opt) => (
                       <option key={opt} value={opt}>
-                        {opt}
+                        {opt.charAt(0).toUpperCase() + opt.slice(1)}
                       </option>
                     ))}
                   </select>
@@ -363,14 +360,14 @@ const UpdateSecondVendorPopup = ({
               )}
             </div>
           ))}
-          <div className=" overflow-y-scroll max-h-[450px]">
+          <div className="max-h-[450px]">
             <div className=" mb-[10px]">
               <label className="block text-sm font-semibold text-[#616161] mb-[5px]">
                 Business License No. / Employer Identification No.
               </label>
               <input
                 {...register("business_licence_number", {
-                  required: " Sales person  name is required",
+                  required: "Business licence no. / Employer identification no is required",
                 })}
                 className="w-full border border-gray-300 rounded-[4px] px-3 py-[6px]"
                 placeholder="Enter Business License No."
@@ -412,7 +409,7 @@ const UpdateSecondVendorPopup = ({
                 >
                   Choose File
                 </label>
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-500 max-w-[200px] truncate inline-block align-middle">
                   {logo ? logo.name : "No file chosen"}
                 </span>
               </div>
@@ -452,7 +449,7 @@ const UpdateSecondVendorPopup = ({
                 >
                   Choose File
                 </label>
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-500 max-w-[200px] truncate inline-block align-middle">
                   {business_licence ? business_licence.name : "No file chosen"}
                 </span>
               </div>
@@ -492,7 +489,7 @@ const UpdateSecondVendorPopup = ({
                 >
                   Choose File
                 </label>
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-500  max-w-[200px] truncate inline-block align-middle">
                   {tax_certificate ? tax_certificate.name : "No file chosen"}
                 </span>
               </div>

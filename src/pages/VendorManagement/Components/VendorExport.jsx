@@ -27,8 +27,6 @@ const VendorExport = () => {
       range_to: parseInt(data?.to),
     };
 
-    console.log(datas);
-
     Apis.exportVendorData(
       datas,
       setLoader,

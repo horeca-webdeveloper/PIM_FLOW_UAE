@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { urls } from "../../../config/baseUrls";
 import AddHeaderIcon from "../../../assets/icons/AddHeaderIcon.png";
 import importIcon from "../../../assets/icons/importIcon.png";
+import { AppContext } from "../../../Context/AppContext";
 
-const VendorManagementHeader = ({ title, handleSubmit, loader }) => {
+const VendorManagementHeader = ({
+  title,
+  handleSubmit,
+  loader,
+  permissions,
+}) => {
   return (
     <div className=" border-b-2 border-[#26683A] pb-[10px] p-0 mb-[20px] flex justify-between items-start">
       {/* Right Section (Buttons) */}
@@ -26,15 +32,17 @@ const VendorManagementHeader = ({ title, handleSubmit, loader }) => {
             Export
           </span>
         </button> */}
-        <button
-          onClick={() => title && handleSubmit()}
-          className="flex items-center  text-[14px] leading-[17.64px] font-normal h-[38px] text-[white] bg-[#26683A] px-[20px] rounded-[5px] mr-[10px] py-[8px]"
-        >
-          <img src={AddHeaderIcon} />
-          <span className="ml-[5px] text-[14px] font-light text-white">
-            {loader ? "Downloading..." : title}
-          </span>
-        </button>
+        {permissions?.includes("download vendor") && (
+          <button
+            onClick={() => title && handleSubmit()}
+            className="flex items-center  text-[14px] leading-[17.64px] font-normal h-[38px] text-[white] bg-[#26683A] px-[20px] rounded-[5px] mr-[10px] py-[8px]"
+          >
+            <img src={AddHeaderIcon} />
+            <span className="ml-[5px] text-[14px] font-light text-white">
+              {loader ? "Downloading..." : title}
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );

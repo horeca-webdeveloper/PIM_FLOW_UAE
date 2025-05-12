@@ -165,7 +165,7 @@ const UpdateSecondVendorValuationPopup = ({
       }
       toast.success("Vendor Updated Successfully");
       console.log(result);
-      // window.location.reload();
+      window.location.reload();
       setLoader(false);
       setShowEdit(false);
       setSecondShowEdit(false);

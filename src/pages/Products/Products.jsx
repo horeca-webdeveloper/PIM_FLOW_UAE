@@ -20,23 +20,32 @@ import { useDeleteFaq } from "../../services/apis/FAQ/Hooks";
 import toast from "react-hot-toast";
 import DeleteBrandPopup from "../BrandManagement/Component/DeleteBrandPopup";
 import { useFetchDashboardStatusList } from "../../services/apis/Dashboard/Hooks";
+import TableForCategoriesPage from "../../components/common/TableForCategoriesPage";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
   const [globalFilter, setGlobalFilter] = useState("");
-
+  const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [page, setPage] = useState("1");
   const [showDelete, setShowDelete] = useState(false);
   const [id, setId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [sort, setSort] = useState("asc");
+  const [limit, setLimit] = useState(10);
+  const [sortBy, setSortBy] = useState("");
+  const [status, setStatus] = useState("")
+  
   const {
     data: productsData,
     isLoading: productsLoading,
     error: productsError,
   } = useFetchProducts({
     page: page,
-    per_page: 50,
+    per_page: limit,
     search: globalFilter,
+    sort_dir: sort,
+    sort_by: sortBy,
   });
 
   const {
@@ -50,14 +59,12 @@ const Products = () => {
     mutate(id, {
       onSuccess: (data) => {
         setDeleteLoading(false);
-        console.log(data);
         toast.success("Product Deleted Successfully");
         setTimeout(() => {
           window.location.reload();
         }, 500);
       },
       onError: (err) => {
-        console.log(err);
         setDeleteLoading(false);
       },
     });
@@ -71,6 +78,7 @@ const Products = () => {
   const { data, isLoading, error } = useFetchDashboardStatusList({
     range: statFilter,
   });
+
 
   const cardData = [
     {
@@ -141,6 +149,25 @@ const Products = () => {
       key: "qualityScore", // Ensure this matches the object key in datas
     },
   ];
+
+  const handleCardClick = (title) => {
+    switch (title) {
+      case "Total Products":
+        setStatus("all")
+        break;
+      case "Draft Products":
+        setStatus("draft")
+        break;
+      case "Live Products":
+        setStatus("live")
+        break;
+      case "Categories Count":
+        navigate("/category-drag-and-drop");
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <>
       <div>
@@ -159,6 +186,7 @@ const Products = () => {
               growth={8.5}
               growthType={upwordIcon}
               icon={item?.icon}
+              onClick={() => handleCardClick(item.title)}
             />
           );
         })}
@@ -175,7 +203,11 @@ const Products = () => {
           page={page}
           setGlobalFilter={setGlobalFilter}
           globalFilter={globalFilter}
+          setSort={setSort}  
+          setLimit={setLimit}
+
         />
+
         {/* Pagination  */}
         {/* <div className="mt-[20px]">
           <Pagination

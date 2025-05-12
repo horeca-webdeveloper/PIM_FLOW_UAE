@@ -63,7 +63,7 @@ const VendorLogs = ({ module, action, showLogs }) => {
     <>
       {loader ? <FullScreenLoader bgTransparent={true} /> : ""}
       <CollapseComponent title="Import History">
-        {response && response.data.length > 0 ? (
+        {response && response?.data?.length > 0 ? (
           <LogsTable
             totalPages={!!response && response?.total_pages}
             changePage={changePage}

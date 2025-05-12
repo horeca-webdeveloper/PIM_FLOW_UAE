@@ -12,6 +12,7 @@ const CreateProductsInputs = ({
   formData,
   setFormData,
   handleInputChange,
+  formErrors,
 }) => {
   const { data, isLoading, error } = useFetchAllProductCategories();
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -50,6 +51,9 @@ const CreateProductsInputs = ({
               value={formData.productName}
               onChange={(e) => handleInputChange("productName", e.target.value)}
             />
+            {formErrors?.productName && (
+              <span className="text-red-500 text-sm">{formErrors.productName}</span>
+            )}
           </div>
           <div>
             <label className="block font-semibold text-[14px] text-[#616161] mb-1">
@@ -62,6 +66,9 @@ const CreateProductsInputs = ({
               value={formData.sku}
               onChange={(e) => handleInputChange("sku", e.target.value)}
             />
+              {formErrors?.sku && (
+              <span className="text-red-500 text-sm">{formErrors.sku}</span>
+            )}
           </div>
           <div className="p-0 ">
             {/* First Level Dropdown */}
@@ -186,6 +193,10 @@ const CreateProductsInputs = ({
               <option value="family1">Family 1</option>
               <option value="family2">Family 2</option>
             </select>
+            {formErrors?.family && (
+              <span className="text-red-500 text-sm">{formErrors.family}</span>
+            )}
+            
           </div>
 
           <div>

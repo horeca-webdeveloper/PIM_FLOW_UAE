@@ -51,9 +51,6 @@ export default function UploadVendorFile({
 
   const handleUpload = async () => {
     setLoading(true);
-    console.log(id);
-    console.log(name);
-    console.log(selectedFile);
     try {
       const formData = new FormData();
       const token = localStorage.getItem("token");
@@ -77,7 +74,6 @@ export default function UploadVendorFile({
         }, 500);
       }
     } catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };

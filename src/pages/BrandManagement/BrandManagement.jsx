@@ -89,7 +89,7 @@ const BrandManagement = () => {
           deleteLoading={deleteLoading}
         />
       )}
-      <div className="mt-[40px]">
+      <div className="mt-[10px]">
         <Pagination
           paginationData={data?.pagination}
           setPage={setPage}

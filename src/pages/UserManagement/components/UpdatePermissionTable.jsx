@@ -2,21 +2,48 @@ import React, { useEffect, useState } from "react";
 
 const UpdatePermissionTable = ({ data, setAddPermission, allowed }) => {
   const { name, permissions } = data;
-
-  console.log(allowed?.name);
-
   const [rolePermission, setRolePermission] = useState([]);
 
+  // Store selected permission names
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
+
+  // Sync initial permissions from props
   useEffect(() => {
     setRolePermission(permissions);
-  }, [permissions]);
 
+    const allowedForThisModule = allowed?.find((item) => item.name === name);
+    const allowedPermNames =
+      allowedForThisModule?.permissions.map((p) => p.name) || [];
+
+    setSelectedPermissions(allowedPermNames);
+    setAddPermission((prev) => {
+      const merged = [...new Set([...prev, ...allowedPermNames])];
+      return merged;
+    });
+  }, [permissions, allowed, name, setAddPermission]);
+
+  // Toggle permission name
   const handleRole = (permissionName) => {
-    setAddPermission((prev) =>
-      prev.includes(permissionName)
-        ? prev.filter((perm) => perm !== permissionName)
-        : [...prev, permissionName]
-    );
+    setSelectedPermissions((prev) => {
+      let updated;
+      if (prev.includes(permissionName)) {
+        updated = prev.filter((perm) => perm !== permissionName);
+      } else {
+        updated = [...prev, permissionName];
+      }
+
+      // Update parent without removing other module's permissions
+      setAddPermission((prevAdd) => {
+        const merged = updated.concat(
+          prevAdd.filter(
+            (perm) => !rolePermission.some((rp) => rp.name === perm)
+          )
+        );
+        return [...new Set(merged)];
+      });
+
+      return updated;
+    });
   };
 
   return (
@@ -26,37 +53,60 @@ const UpdatePermissionTable = ({ data, setAddPermission, allowed }) => {
           <div className="text-sm font-medium text-gray-900">{name}</div>
         </td>
 
-        {["list", "add", "update", "delete", "show", "import", "export"].map(
-          (key, index) => {
-            const isChecked =
-              rolePermission?.[index]?.name.includes(key) || false;
+        {[
+          "list",
+          "add",
+          "update",
+          "delete",
+          "show",
+          "import",
+          "export",
+          "upload",
+          "view",
+          "download",
+          // "importfeatures",
+          // "exportfeatures",
+          "image",
+          "document",
+        ].map((key) => {
+          const fullPermissionName = `${key} ${name}`;
+          const currentPermission = rolePermission?.find(
+            (perm) => perm?.name === fullPermissionName
+          );
 
-            const preChecked = rolePermission?.[index]?.id;
-            // console.log("pre checked", preChecked);
+          const isChecked = selectedPermissions?.includes(
+            currentPermission?.name
+          );
 
-            // const PreChecked =
-            //   rolePermission?.[index]?.id === allowed?.permissions[index]?.id;
-            // console.log("Pre Checked", PreChecked);
-            if (isChecked) {
-              return (
-                <td
-                  key={key}
-                  className="px-6 py-4 whitespace-nowrap border border-gray-200"
-                >
-                  <input
-                    type="checkbox"
-                    onChange={() =>
-                      handleRole(rolePermission?.[index]?.name, index)
-                    }
-                    // checked={preChecked}
-                    className="h-4 w-4 text-blue-600 cursor-pointer rounded border-gray-300"
-                    readOnly // Optional: prevent direct user editing if needed
-                  />
-                </td>
-              );
-            }
+          if (currentPermission) {
+            return (
+              <td
+                key={key}
+                className="px-6 py-4 whitespace-nowrap border border-gray-200"
+              >
+                <input
+                  type="checkbox"
+                  onChange={() => handleRole(currentPermission.name)}
+                  checked={isChecked}
+                  className="h-4 w-4 text-blue-600 cursor-pointer rounded border-gray-300"
+                />
+              </td>
+            );
+          } else {
+            return (
+              <td
+                key={key}
+                className="px-6 py-4 whitespace-nowrap border border-gray-200"
+              >
+                <input
+                  type="checkbox"
+                  disabled
+                  className="h-4 w-4 text-blue-600 cursor-not-allowed  rounded border-gray-300"
+                />
+              </td>
+            );
           }
-        )}
+        })}
       </tr>
     </tbody>
   );

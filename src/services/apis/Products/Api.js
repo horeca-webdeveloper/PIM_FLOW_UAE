@@ -22,8 +22,8 @@ export const deleteProduct = async (id) => {
 };
 
 export const fetchAllProducts = async (params) => {
-  const { page, per_page, search } = params;
-  return await apiCall("get", `${ProductsApiPath}?page=${page}&per_page=${per_page}&search=${search}`, null);
+  const { page, per_page, sort_dir, sort_by,search } = params;
+  return await apiCall("get", `${ProductsApiPath}?page=${page}&per_page=${per_page}&sort_by=${sort_by}&sort_dir=${sort_dir}&search=${search}`, null);
 };
 
 export const fetchCategoriesAttributes = async (params) => {

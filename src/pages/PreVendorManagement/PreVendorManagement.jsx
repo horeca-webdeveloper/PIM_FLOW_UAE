@@ -129,6 +129,18 @@ const PreVendorManagement = () => {
   useEffect(() => {
     setTotalPage(data?.total_pages);
   }, [data]);
+  
+  useEffect(() => {
+    if (showPopup || showEdit) {
+        document.body.style.overflow = "hidden"; // Lock scroll
+    } else {
+        document.body.style.overflow = "auto"; // Restore scroll
+    }
+  
+     return () => {
+        document.body.style.overflow = "auto"; // Cleanup on unmount
+     };
+  }, [showPopup,showEdit]);
 
   return (
     <div className="bg-[#f1f1f1] sm:max-w-[75vw] md:max-w-[79vw] 2xl:max-w-[90vw] min-h-[90vh]">
@@ -199,7 +211,7 @@ const PreVendorManagement = () => {
           deleteLoading={deleteLoading}
         />
       )}
-      <div className="flex items-center justify-center mt-[40px]">
+      <div className="flex items-center justify-center mt-[10px]">
         <PaginationComponent
           setPage={setPage}
           totalPages={totalPages}

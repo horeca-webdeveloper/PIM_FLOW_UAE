@@ -7,12 +7,15 @@ import axios from "axios";
 import Loader from "../../../utils/Loader";
 import { formatDate } from "../../../utils/formatDate";
 import { VendorManagementContext } from "../VendorManagementContext";
+import { AppContext } from "../../../Context/AppContext";
 
 const VendorMediaFiles = () => {
   const location = useLocation();
   const { file, type, vendorId } = location.state || {};
   const [docUrl, setDocUrl] = useState([]);
   const [loader, setLoader] = useState(false);
+  const { AllowedPermissions } = useContext(AppContext);
+  const permissions = AllowedPermissions?.permissions || [];
   const getDocuments = async () => {
     setLoader(true);
     const token = localStorage.getItem("token");
@@ -70,20 +73,22 @@ const VendorMediaFiles = () => {
                       </p>{" "}
                       : {vendorName}
                     </div>
-                    <div className="flex">
-                      <p className="font-bold whitespace-nowrap text-gray-600">
-                        Download
-                      </p>{" "}
-                      :{" "}
-                      <a
-                        target="_blank"
-                        href={item?.url}
-                        download={`${item?.name}.csv`}
-                        className="hover:text-blue-400 cursor-pointer ml-[4px]"
-                      >
-                        Click Here
-                      </a>
-                    </div>
+                    {permissions?.includes("download vendor") && (
+                      <div className="flex">
+                        <p className="font-bold whitespace-nowrap text-gray-600">
+                          Download
+                        </p>{" "}
+                        :{" "}
+                        <a
+                          target="_blank"
+                          href={item?.url}
+                          download={`${item?.name}.csv`}
+                          className="hover:text-blue-400 cursor-pointer ml-[4px]"
+                        >
+                          Click Here
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
